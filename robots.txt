@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://evalis-ai.github.io/sitemap.xml
