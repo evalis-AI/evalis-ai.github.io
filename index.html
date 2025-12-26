@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Evalis AI | Human-Led AI Data Services</title>
-<link rel="icon" href="favicon.png">
-<link rel="stylesheet" href="css/style.css">
-</head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evalis AI | Human-Led AI Data Services</title>
 
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
 <body>
 
+<!-- ================= HEADER ================= -->
 <header class="site-header">
   <div class="nav-container">
-    <img src="logo.png" class="logo">
+    <img src="logo.png" alt="Evalis AI Logo" class="logo">
+
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+
     <nav id="nav">
       <a href="index.html" class="active">Home</a>
       <a href="services.html">Services</a>
@@ -21,37 +25,122 @@
       <a href="about.html">About</a>
       <a href="contact.html">Contact</a>
     </nav>
-    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
   </div>
 </header>
 
+<!-- ================= HERO ================= -->
 <section class="hero">
-  <div class="container">
-    <h1>Human-Led AI Data Services</h1>
-    <p>High-quality evaluation, labeling, and validation for AI systems at scale.</p>
+  <h1>Human-Led AI Data Services</h1>
+  <p>
+    High-quality evaluation, data labeling, and validation for AI systems at scale.
+    Trusted human intelligence powering responsible AI.
+  </p>
+
+  <div class="hero-actions">
     <a href="services.html" class="btn-primary">Explore Services</a>
-    <a href="careers.html" class="btn-outline">Join as Contributor</a>
+    <a href="#contribute" class="btn-outline">Join as Contributor</a>
   </div>
 </section>
 
-<section class="section">
+<!-- ================= TRUST STRIP ================= -->
+<section class="trust-strip">
+  <p>Supporting AI platforms across search, e-commerce, healthcare, fintech, and generative AI</p>
+</section>
+
+<!-- ================= WHY EVALIS ================= -->
+<section>
   <div class="container">
     <h2>Why Evalis AI</h2>
+
     <div class="grid">
-      <div class="card">Human-in-the-loop quality</div>
-      <div class="card">Structured evaluation workflows</div>
-      <div class="card">Global scalable contributors</div>
+      <div class="card">
+        <h3>Human-in-the-Loop Quality</h3>
+        <p>Expert human judgment to evaluate accuracy, relevance, safety, and bias in AI outputs.</p>
+      </div>
+
+      <div class="card">
+        <h3>Structured Evaluation</h3>
+        <p>Clear guidelines, calibrated raters, and audit-ready workflows.</p>
+      </div>
+
+      <div class="card">
+        <h3>Global Workforce</h3>
+        <p>Skilled contributors across regions, languages, and domains.</p>
+      </div>
+
+      <div class="card">
+        <h3>Scalable & Secure</h3>
+        <p>Designed to support pilot programs through enterprise-scale deployments.</p>
+      </div>
     </div>
   </div>
 </section>
 
-<footer>© 2025 Evalis AI</footer>
+<!-- ================= SERVICES SNAPSHOT ================= -->
+<section class="section-alt">
+  <div class="container">
+    <h2>Our Core Services</h2>
+
+    <div class="grid">
+      <div class="card">
+        <h3>AI Evaluation</h3>
+        <p>Model accuracy, hallucination detection, relevance scoring, and safety checks.</p>
+      </div>
+
+      <div class="card">
+        <h3>Data Labeling</h3>
+        <p>High-quality text, image, audio, and video annotation.</p>
+      </div>
+
+      <div class="card">
+        <h3>Search Relevance</h3>
+        <p>Query intent analysis, ranking evaluation, and SERP quality review.</p>
+      </div>
+
+      <div class="card">
+        <h3>Language & Trust</h3>
+        <p>Multilingual review, toxicity detection, and content moderation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTRIBUTOR CTA ================= -->
+<section id="contribute">
+  <div class="container">
+    <h2>Join Our Global Contributor Network</h2>
+    <p>
+      Work remotely on flexible, skill-based AI projects.
+      Evaluators, annotators, raters, and language specialists are welcome.
+    </p>
+  </div>
+</section>
+
+<!-- ================= FORM (POLISHED) ================= -->
+<section class="section-alt">
+  <div class="container">
+    <div class="form-box">
+      <h3>Contributor Registration</h3>
+      <p>Apply once. Get matched to projects when your skills fit.</p>
+
+      <iframe
+        src="https://docs.google.com/forms/d/e/1FAIpQLSfyHK0Dt4zxeQszuFJacab0wqrMVY7ipYcnSL6UcJnpI6vHsg/viewform?embedded=true"
+        loading="lazy">
+      </iframe>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  © 2025 Evalis AI · Human-Led AI Data Services
+</footer>
 
 <script>
-function toggleMenu(){
-  const nav=document.getElementById("nav");
-  nav.style.display=nav.style.display==="flex"?"none":"flex";
-}
+  function toggleMenu() {
+    const nav = document.getElementById("nav");
+    nav.style.display = nav.style.display === "flex" ? "none" : "flex";
+  }
 </script>
 
 </body>
