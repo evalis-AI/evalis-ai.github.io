@@ -1,72 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Careers | Evalis AI</title>
-    <link rel="icon" href="favicon.png">
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Careers | Evalis AI</title>
+
+  <meta name="description" content="Join Evalis AI as a contributor. Remote AI evaluation, data labeling, search relevance, and language quality projects.">
+
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
-<!-- Navigation -->
-<nav class="navbar">
-    <a class="logo" href="index.html">
-        <img src="images/logo.png" alt="Evalis AI Logo">
-    </a>
-    <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="services.html">Services</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="careers.html" class="active">Careers</a></li>
-        <li><a href="clients.html">Clients</a></li>
-        <li><a href="contact.html">Contact</a></li>
-    </ul>
-</nav>
+<!-- ================= HEADER ================= -->
+<header class="site-header">
+  <div class="nav-container">
+    <img src="logo.png" alt="Evalis AI Logo" class="logo">
 
-<!-- Hero Section -->
-<section class="hero careers-hero">
-    <h1>Work With Us</h1>
-    <p>Grow your career in AI & Data Innovation at Evalis AI</p>
+    <nav id="nav">
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="clients.html">Clients</a>
+      <a href="careers.html" class="active">Careers</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero hero-small">
+  <div class="container">
+    <h1>Join Evalis AI as a Contributor</h1>
+    <p>
+      Work remotely on AI evaluation, data labeling, search relevance,
+      and language quality projects. Flexible schedules. Project-based work.
+    </p>
+  </div>
 </section>
 
-<!-- Careers Content -->
-<section class="content careers-content">
+<!-- ================= INFO SECTION ================= -->
+<section class="section">
+  <div class="container">
+    <div class="grid">
+
+      <div class="card">
+        <h3>Who Can Apply</h3>
+        <p>
+          AI evaluators, search quality raters, data annotators,
+          language specialists, and content reviewers.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>How It Works</h3>
+        <p>
+          Apply → Qualification → Project onboarding → Get paid
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>Why Work With Us</h3>
+        <p>
+          Remote-first, flexible hours, skill-based projects,
+          and fair evaluation standards.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTRIBUTOR REGISTRATION ================= -->
+<section class="section-alt">
+  <div class="container">
     <h2>Contributor Registration</h2>
-    <p>Want to join our team or contribute as a freelancer? Fill in your details below:</p>
+    <p>
+      Submit your details and upload your CV. Our team will review
+      your application and contact you when suitable projects are available.
+    </p>
 
-    <!-- Registration Form -->
-    <form action="mailto:careers@evalis-ai.com" method="post" enctype="multipart/form-data" class="career-form">
-        
-        <label for="full-name">Full Name *</label>
-        <input type="text" id="full-name" name="full-name" placeholder="Your full name" required>
-        
-        <label for="email">Email Address *</label>
-        <input type="email" id="email" name="email" placeholder="Your email address" required>
-
-        <label for="phone">Phone Number *</label>
-        <input type="tel" id="phone" name="phone" placeholder="Phone number" required>
-
-        <label for="cv-upload">Upload Your CV *</label>
-        <input type="file" id="cv-upload" name="cv-upload" accept=".pdf,.doc,.docx" required>
-
-        <label for="gdrive-link">Google Drive CV Link (optional)</label>
-        <input type="url" id="gdrive-link" name="gdrive-link" placeholder="https://drive.google.com/...">
-
-        <label for="position">Position Interested In</label>
-        <input type="text" id="position" name="position" placeholder="Ex: Data Annotator, QA Specialist">
-
-        <label for="message">Any Additional Info</label>
-        <textarea id="message" name="message" placeholder="Tell us about you..."></textarea>
-
-        <button type="submit" class="btn-primary">Submit Application</button>
-    </form>
+    <div class="form-box">
+      <iframe
+        src="https://docs.google.com/forms/d/e/1FAIpQLSfyHK0Dt4zxeQszuFJacab0wqrMVY7ipYcnSL6UcJnpI6vHsg/viewform?embedded=true"
+        width="100%"
+        height="950"
+        frameborder="0"
+        marginheight="0"
+        marginwidth="0"
+        loading="lazy">
+        Loading…
+      </iframe>
+    </div>
+  </div>
 </section>
 
-<!-- Site Footer -->
-<footer class="footer">
-    <p>&copy; 2025 Evalis AI. All rights reserved.</p>
+<!-- ================= FOOTER ================= -->
+<footer>
+  © 2025 Evalis AI · Human-Led AI Data Services
 </footer>
+
+<!-- ================= MOBILE MENU SCRIPT ================= -->
+<script>
+function toggleMenu() {
+  const nav = document.getElementById("nav");
+  nav.style.display = nav.style.display === "flex" ? "none" : "flex";
+}
+</script>
 
 </body>
 </html>
