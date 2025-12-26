@@ -1,19 +1,21 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clients | Evalis AI</title>
-<link rel="icon" href="favicon.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clients | Evalis AI</title>
+  <meta name="description" content="Industries and use cases supported by Evalis AI.">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-<header>
-  <div class="header-inner">
-    <img src="logo.png" height="45">
-    <nav>
+<header class="site-header">
+  <div class="nav-container">
+    <img src="logo.png" alt="Evalis AI Logo" class="logo">
+
+    <nav id="nav">
       <a href="index.html">Home</a>
       <a href="services.html">Services</a>
       <a href="clients.html">Clients</a>
@@ -21,30 +23,50 @@
       <a href="about.html">About</a>
       <a href="contact.html">Contact</a>
     </nav>
+
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
   </div>
 </header>
 
-<div class="container section">
-  <h1>Who We Support</h1>
+<section>
+  <div class="container">
+    <h1>Who We Support</h1>
 
-  <h3>Industries</h3>
-  <ul>
-    <li>AI & Machine Learning Platforms</li>
-    <li>Search & Discovery Engines</li>
-    <li>E-commerce</li>
-    <li>Healthcare AI</li>
-    <li>FinTech & EdTech</li>
-  </ul>
+    <div class="grid">
+      <div class="card">
+        <h3>Industries</h3>
+        <ul>
+          <li>AI & Machine Learning Platforms</li>
+          <li>Search & Discovery Engines</li>
+          <li>E-commerce</li>
+          <li>Healthcare AI</li>
+          <li>FinTech & EdTech</li>
+        </ul>
+      </div>
 
-  <h3>Use Cases</h3>
-  <ul>
-    <li>LLM response quality improvement</li>
-    <li>Search ranking optimization</li>
-    <li>Multilingual AI evaluation</li>
-    <li>Trust & safety assessment</li>
-  </ul>
-</div>
+      <div class="card">
+        <h3>Use Cases</h3>
+        <ul>
+          <li>LLM response quality improvement</li>
+          <li>Search ranking optimization</li>
+          <li>Multilingual AI evaluation</li>
+          <li>Trust & Safety assessment</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
 
-<footer>© 2025 Evalis AI</footer>
+<footer>
+  © 2025 Evalis AI · Human-Led AI Data Services
+</footer>
+
+<script>
+function toggleMenu() {
+  const nav = document.getElementById("nav");
+  nav.style.display = nav.style.display === "flex" ? "none" : "flex";
+}
+</script>
+
 </body>
 </html>
