@@ -1,109 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Careers | Evalis AI</title>
-<link rel="icon" href="favicon.png">
-<link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Careers | Evalis AI</title>
+    <link rel="icon" href="favicon.png">
+    <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
 
-<header class="site-header">
-  <div class="nav-container">
-    <img src="logo.png" class="logo" alt="Evalis AI">
-    <nav id="nav">
-      <a href="index.html">Home</a>
-      <a href="services.html">Services</a>
-      <a href="clients.html">Clients</a>
-      <a href="careers.html" class="active">Careers</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </nav>
-    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-  </div>
-</header>
+<!-- Navigation -->
+<nav class="navbar">
+    <a class="logo" href="index.html">
+        <img src="images/logo.png" alt="Evalis AI Logo">
+    </a>
+    <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="careers.html" class="active">Careers</a></li>
+        <li><a href="clients.html">Clients</a></li>
+        <li><a href="contact.html">Contact</a></li>
+    </ul>
+</nav>
 
-<!-- HERO -->
-<section class="hero hero-small">
-  <div class="container">
-    <h1>Join Evalis AI as a Contributor</h1>
-    <p>
-      Work remotely on AI evaluation, data labeling, search relevance,
-      language quality, and trust & safety projects.
-    </p>
-  </div>
+<!-- Hero Section -->
+<section class="hero careers-hero">
+    <h1>Work With Us</h1>
+    <p>Grow your career in AI & Data Innovation at Evalis AI</p>
 </section>
 
-<!-- INFO CARDS -->
-<section class="section">
-  <div class="container">
-    <div class="grid">
-      <div class="card">
-        <h3>Who Can Apply</h3>
-        <p>
-          AI evaluators, search quality raters, data annotators,
-          linguists, reviewers, and subject-matter experts.
-        </p>
-      </div>
-
-      <div class="card">
-        <h3>How It Works</h3>
-        <p>
-          Apply → Qualification → Project onboarding → Paid work
-        </p>
-      </div>
-
-      <div class="card">
-        <h3>Why Work With Us</h3>
-        <p>
-          Remote-first, flexible hours, project-based pay,
-          global opportunities, and fair quality standards.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CONTRIBUTOR REGISTRATION -->
-<section class="section-alt">
-  <div class="container">
+<!-- Careers Content -->
+<section class="content careers-content">
     <h2>Contributor Registration</h2>
-    <p>
-      Submit your details and upload your CV. Our team will review
-      and contact you when suitable projects are available.
-    </p>
+    <p>Want to join our team or contribute as a freelancer? Fill in your details below:</p>
 
-    <div class="form-box">
+    <!-- Registration Form -->
+    <form action="mailto:careers@evalis-ai.com" method="post" enctype="multipart/form-data" class="career-form">
+        
+        <label for="full-name">Full Name *</label>
+        <input type="text" id="full-name" name="full-name" placeholder="Your full name" required>
+        
+        <label for="email">Email Address *</label>
+        <input type="email" id="email" name="email" placeholder="Your email address" required>
 
-      <!-- 🔽 PASTE YOUR GOOGLE FORM IFRAME BELOW 🔽 -->
-      <!-- Example iframe shown — replace src with YOUR form link -->
+        <label for="phone">Phone Number *</label>
+        <input type="tel" id="phone" name="phone" placeholder="Phone number" required>
 
-      <iframe
-        src="https://docs.google.com/forms/d/e/XXXXXXXXXXXX/viewform?embedded=true"
-        width="100%"
-        height="900"
-        frameborder="0"
-        marginheight="0"
-        marginwidth="0">
-        Loading…
-      </iframe>
+        <label for="cv-upload">Upload Your CV *</label>
+        <input type="file" id="cv-upload" name="cv-upload" accept=".pdf,.doc,.docx" required>
 
-    </div>
-  </div>
+        <label for="gdrive-link">Google Drive CV Link (optional)</label>
+        <input type="url" id="gdrive-link" name="gdrive-link" placeholder="https://drive.google.com/...">
+
+        <label for="position">Position Interested In</label>
+        <input type="text" id="position" name="position" placeholder="Ex: Data Annotator, QA Specialist">
+
+        <label for="message">Any Additional Info</label>
+        <textarea id="message" name="message" placeholder="Tell us about you..."></textarea>
+
+        <button type="submit" class="btn-primary">Submit Application</button>
+    </form>
 </section>
 
-<footer>
-  © 2025 Evalis AI · Human-Led AI Data Services
+<!-- Site Footer -->
+<footer class="footer">
+    <p>&copy; 2025 Evalis AI. All rights reserved.</p>
 </footer>
-
-<script>
-function toggleMenu() {
-  const nav = document.getElementById("nav");
-  nav.style.display = nav.style.display === "flex" ? "none" : "flex";
-}
-</script>
 
 </body>
 </html>
