@@ -1,48 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>About | Evalis AI</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="favicon.png">
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About | Evalis AI</title>
+<link rel="icon" href="favicon.png">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <header class="site-header">
-  <div class="nav-container">
-    <img src="logo.png" class="logo">
-    <nav id="nav">
-      <a href="index.html">Home</a>
-      <a href="services.html">Services</a>
-      <a href="clients.html">Clients</a>
-      <a href="careers.html">Careers</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </nav>
-    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-  </div>
+<div class="nav-container">
+<img src="logo.png" class="logo">
+<nav id="nav">
+<a href="index.html">Home</a>
+<a href="services.html">Services</a>
+<a href="clients.html">Clients</a>
+<a href="careers.html">Careers</a>
+<a href="about.html" class="active">About</a>
+<a href="contact.html">Contact</a>
+</nav>
+<button class="menu-toggle" onclick="toggleMenu()">☰</button>
+</div>
 </header>
 
-<section class="section">
-  <div class="container">
-    <h1>About Evalis AI</h1>
-    <p>
-      Evalis AI delivers human-led evaluation, annotation, and validation
-      services supporting responsible, scalable AI development worldwide.
-    </p>
-  </div>
+<section class="hero hero-small">
+<div class="container">
+<h1>About Evalis AI</h1>
+<p>Human-led evaluation, annotation & validation supporting responsible AI.</p>
+</div>
 </section>
 
-<footer>
-  © 2025 Evalis AI
-</footer>
-
-<script>
-function toggleMenu(){
-  document.getElementById("nav").classList.toggle("open");
-}
-</script>
-
+<footer>© 2025 Evalis AI</footer>
+<script>function toggleMenu(){nav.style.display=nav.style.display==="flex"?"none":"flex";}</script>
 </body>
 </html>
