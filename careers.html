@@ -1,115 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Careers | Evalis AI</title>
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png">
-
-  <!-- Main CSS -->
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Careers | Evalis AI</title>
+<link rel="icon" href="favicon.png">
+<link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-  <!-- HEADER / NAVBAR -->
-  <header class="site-header">
-    <div class="nav-container">
-      <img src="logo.png" alt="Evalis AI Logo" class="logo">
+<header class="site-header">
+  <div class="nav-container">
+    <img src="logo.png" class="logo" alt="Evalis AI">
+    <nav id="nav">
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="clients.html">Clients</a>
+      <a href="careers.html" class="active">Careers</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+  </div>
+</header>
 
-      <nav id="nav">
-        <a href="index.html">Home</a>
-        <a href="services.html">Services</a>
-        <a href="clients.html">Clients</a>
-        <a href="careers.html" class="active">Careers</a>
-        <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
-      </nav>
+<!-- HERO -->
+<section class="hero hero-small">
+  <div class="container">
+    <h1>Join Evalis AI as a Contributor</h1>
+    <p>
+      Work remotely on AI evaluation, data labeling, search relevance,
+      language quality, and trust & safety projects.
+    </p>
+  </div>
+</section>
 
-      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-    </div>
-  </header>
+<!-- INFO CARDS -->
+<section class="section">
+  <div class="container">
+    <div class="grid">
+      <div class="card">
+        <h3>Who Can Apply</h3>
+        <p>
+          AI evaluators, search quality raters, data annotators,
+          linguists, reviewers, and subject-matter experts.
+        </p>
+      </div>
 
-  <!-- HERO SECTION -->
-  <section class="hero hero-small">
-    <div class="container">
-      <h1>Join Evalis AI as a Contributor</h1>
-      <p>
-        Work remotely on AI evaluation, data labeling, search relevance, 
-        and language quality projects. Flexible schedules. Project-based pay.
-      </p>
-    </div>
-  </section>
+      <div class="card">
+        <h3>How It Works</h3>
+        <p>
+          Apply → Qualification → Project onboarding → Paid work
+        </p>
+      </div>
 
-  <!-- INFO CARDS -->
-  <section class="section-alt">
-    <div class="container">
-      <div class="grid">
-
-        <div class="card">
-          <h3>Who Can Apply</h3>
-          <p>
-            AI evaluators, search quality raters, data annotators,
-            language specialists, and content reviewers.
-          </p>
-        </div>
-
-        <div class="card">
-          <h3>How It Works</h3>
-          <p>
-            Apply → Qualification → Project onboarding → Get paid
-          </p>
-        </div>
-
-        <div class="card">
-          <h3>Why Work With Us</h3>
-          <p>
-            Remote-first, flexible hours, skill-based projects,
-            and fair evaluation standards.
-          </p>
-        </div>
-
+      <div class="card">
+        <h3>Why Work With Us</h3>
+        <p>
+          Remote-first, flexible hours, project-based pay,
+          global opportunities, and fair quality standards.
+        </p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- CONTRIBUTOR REGISTRATION -->
-  <section class="section">
-    <div class="container">
-      <h2>Contributor Registration</h2>
-      <p>
-        Submit your details and upload your CV. 
-        Our team will contact you when a suitable project is available.
-      </p>
+<!-- CONTRIBUTOR REGISTRATION -->
+<section class="section-alt">
+  <div class="container">
+    <h2>Contributor Registration</h2>
+    <p>
+      Submit your details and upload your CV. Our team will review
+      and contact you when suitable projects are available.
+    </p>
 
-      <div class="form-box">
-        <iframe
-          src="https://docs.google.com/forms/d/e/PASTE_YOUR_GOOGLE_FORM_ID_HERE/viewform?embedded=true"
-          width="100%"
-          height="950"
-          frameborder="0"
-          marginheight="0"
-          marginwidth="0">
-          Loading…
-        </iframe>
-      </div>
+    <div class="form-box">
+
+      <!-- 🔽 PASTE YOUR GOOGLE FORM IFRAME BELOW 🔽 -->
+      <!-- Example iframe shown — replace src with YOUR form link -->
+
+      <iframe
+        src="https://docs.google.com/forms/d/e/XXXXXXXXXXXX/viewform?embedded=true"
+        width="100%"
+        height="900"
+        frameborder="0"
+        marginheight="0"
+        marginwidth="0">
+        Loading…
+      </iframe>
+
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- FOOTER -->
-  <footer>
-    <p>© 2025 Evalis AI · Human-Led AI Data Services</p>
-  </footer>
+<footer>
+  © 2025 Evalis AI · Human-Led AI Data Services
+</footer>
 
-  <!-- MOBILE MENU SCRIPT -->
-  <script>
-    function toggleMenu() {
-      const nav = document.getElementById("nav");
-      nav.style.display = nav.style.display === "flex" ? "none" : "flex";
-    }
-  </script>
+<script>
+function toggleMenu() {
+  const nav = document.getElementById("nav");
+  nav.style.display = nav.style.display === "flex" ? "none" : "flex";
+}
+</script>
 
 </body>
 </html>
