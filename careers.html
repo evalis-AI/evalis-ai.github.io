@@ -1,94 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Careers | Evalis AI</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Join Evalis AI as a contributor. Remote AI evaluation, data labeling, and language projects.">
-  <link rel="icon" href="favicon.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <!-- Main CSS -->
   <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-<header class="site-header">
-  <div class="nav-container">
-    <img src="logo.png" class="logo" alt="Evalis AI">
+  <!-- HEADER / NAVBAR -->
+  <header class="site-header">
+    <div class="nav-container">
+      <img src="logo.png" alt="Evalis AI Logo" class="logo">
 
-    <nav id="nav">
-      <a href="index.html">Home</a>
-      <a href="services.html">Services</a>
-      <a href="clients.html">Clients</a>
-      <a href="careers.html">Careers</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </nav>
+      <nav id="nav">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="clients.html">Clients</a>
+        <a href="careers.html" class="active">Careers</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
 
-    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-  </div>
-</header>
+      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    </div>
+  </header>
 
-<section class="section-alt">
-  <div class="container">
-    <h1>Join Evalis AI as a Contributor</h1>
+  <!-- HERO SECTION -->
+  <section class="hero hero-small">
+    <div class="container">
+      <h1>Join Evalis AI as a Contributor</h1>
+      <p>
+        Work remotely on AI evaluation, data labeling, search relevance, 
+        and language quality projects. Flexible schedules. Project-based pay.
+      </p>
+    </div>
+  </section>
 
-    <p>
-      Work remotely on AI evaluation, data labeling, search relevance,
-      and language quality projects. Flexible schedules. Project-based pay.
-    </p>
+  <!-- INFO CARDS -->
+  <section class="section-alt">
+    <div class="container">
+      <div class="grid">
 
-    <div class="grid">
-      <div class="card">
-        <h3>Who Can Apply</h3>
-        <p>
-          AI evaluators, search quality raters, data annotators,
-          language specialists, and content reviewers.
-        </p>
-      </div>
+        <div class="card">
+          <h3>Who Can Apply</h3>
+          <p>
+            AI evaluators, search quality raters, data annotators,
+            language specialists, and content reviewers.
+          </p>
+        </div>
 
-      <div class="card">
-        <h3>How It Works</h3>
-        <p>
-          Apply → Qualification → Project onboarding → Get paid
-        </p>
-      </div>
+        <div class="card">
+          <h3>How It Works</h3>
+          <p>
+            Apply → Qualification → Project onboarding → Get paid
+          </p>
+        </div>
 
-      <div class="card">
-        <h3>Why Work With Us</h3>
-        <p>
-          Remote work, flexible hours, skill-based projects,
-          and fair evaluation standards.
-        </p>
+        <div class="card">
+          <h3>Why Work With Us</h3>
+          <p>
+            Remote-first, flexible hours, skill-based projects,
+            and fair evaluation standards.
+          </p>
+        </div>
+
       </div>
     </div>
+  </section>
 
-    <br>
+  <!-- CONTRIBUTOR REGISTRATION -->
+  <section class="section">
+    <div class="container">
+      <h2>Contributor Registration</h2>
+      <p>
+        Submit your details and upload your CV. 
+        Our team will contact you when a suitable project is available.
+      </p>
 
-    <h2>Contributor Registration</h2>
+      <div class="form-box">
+        <iframe
+          src="https://docs.google.com/forms/d/e/PASTE_YOUR_GOOGLE_FORM_ID_HERE/viewform?embedded=true"
+          width="100%"
+          height="950"
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0">
+          Loading…
+        </iframe>
+      </div>
+    </div>
+  </section>
 
-    <!-- GOOGLE FORM EMBED -->
-    <iframe
-      src="PASTE_YOUR_GOOGLE_FORM_EMBED_URL_HERE"
-      width="100%"
-      height="900"
-      frameborder="0"
-      marginheight="0"
-      marginwidth="0">
-      Loading…
-    </iframe>
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 Evalis AI · Human-Led AI Data Services</p>
+  </footer>
 
-  </div>
-</section>
-
-<footer>
-  © 2025 Evalis AI · Human-Led AI Data Services
-</footer>
-
-<script>
-function toggleMenu() {
-  document.getElementById("nav").classList.toggle("open");
-}
-</script>
+  <!-- MOBILE MENU SCRIPT -->
+  <script>
+    function toggleMenu() {
+      const nav = document.getElementById("nav");
+      nav.style.display = nav.style.display === "flex" ? "none" : "flex";
+    }
+  </script>
 
 </body>
 </html>
