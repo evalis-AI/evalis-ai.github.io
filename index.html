@@ -2,192 +2,208 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- BASIC -->
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- GOOGLE SEARCH CONSOLE -->
-  <meta name="google-site-verification" content="Z5atJuYYyEFOFnhL4AKDdkeIBci777XVPKXTs2htJAo" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- SEO -->
-  <title>Evalis AI | Human-Led AI Data Evaluation & Search Quality Review</title>
-  <meta name="description" content="Evalis AI provides human-led AI data evaluation, data labeling, search engine evaluation, transcription, and AI quality review services." />
-  <meta name="keywords" content="AI data evaluation, data labeling, search engine evaluation, AI quality review, human AI evaluation, transcription, annotation" />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://evalis-ai.github.io/" />
+  <title>Evalis AI | Human-Led AI Data Evaluation Services</title>
+  <meta name="description" content="Evalis AI provides human-led AI data evaluation, data labeling, search engine evaluation, and AI quality validation services.">
+  <meta name="keywords" content="AI data evaluation, data labeling, search engine evaluation, human in the loop AI">
+  <meta name="author" content="Evalis AI">
 
-  <!-- OPEN GRAPH (Facebook / LinkedIn) -->
-  <meta property="og:title" content="Evalis AI – Human Intelligence for Accurate AI Data" />
-  <meta property="og:description" content="Human-led AI data evaluation, data labeling, and search engine quality review." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://evalis-ai.github.io/" />
-  <meta property="og:image" content="https://evalis-ai.github.io/cover.png" />
-
-  <!-- TWITTER -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Evalis AI – Human-Led AI Evaluation" />
-  <meta name="twitter:description" content="AI data evaluation, labeling, and search quality review by human experts." />
-  <meta name="twitter:image" content="https://evalis-ai.github.io/cover.png" />
+  <!-- FAVICON -->
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="favicon.png">
 
   <style>
-    :root {
-      --primary: #5b5bff;
-      --bg: #f5f7fb;
-      --card: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
-    }
-
-    * { box-sizing: border-box; }
-
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f6f9;
+      color: #222;
       line-height: 1.6;
     }
 
-    /* HERO */
-    .hero {
-      background: url("cover.png") center/cover no-repeat;
-      padding: 80px 20px;
+    header {
+      background: linear-gradient(135deg, #0b1c2d, #102b46);
       color: #fff;
       text-align: center;
-      position: relative;
+      padding: 60px 20px 40px;
     }
 
-    .hero::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: rgba(5, 15, 35, 0.6);
+    header img {
+      max-width: 170px;
+      margin-bottom: 15px;
     }
 
-    .hero-content {
-      position: relative;
-      max-width: 900px;
-      margin: auto;
+    header h1 {
+      margin: 10px 0 5px;
+      font-size: 30px;
     }
 
-    .hero img {
-      max-height: 70px;
-      margin-bottom: 16px;
+    header p {
+      margin: 5px 0;
+      font-size: 15px;
+      opacity: 0.9;
     }
 
-    .hero h1 {
-      margin: 0;
-      font-size: 36px;
+    nav {
+      margin-top: 20px;
     }
 
-    .hero p {
-      margin-top: 10px;
-      font-size: 18px;
-      opacity: 0.95;
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 12px;
+      font-size: 14px;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
     }
 
     .container {
-      max-width: 1100px;
-      margin: 50px auto;
-      padding: 0 20px;
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 15px;
     }
 
     .section {
-      background: var(--card);
-      border-radius: 16px;
-      padding: 32px;
-      margin-bottom: 30px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      background: #fff;
+      border-radius: 8px;
+      padding: 30px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
     h2 {
       margin-top: 0;
-      font-size: 26px;
+      color: #102b46;
     }
 
     ul {
-      padding-left: 18px;
+      padding-left: 20px;
     }
 
     li {
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+    }
+
+    .contact-details a {
+      color: #0b5ed7;
+      text-decoration: none;
+    }
+
+    .contact-details a:hover {
+      text-decoration: underline;
+    }
+
+    form input, form textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    form button {
+      background: #102b46;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    form button:hover {
+      background: #0b1c2d;
     }
 
     footer {
       text-align: center;
-      padding: 30px 15px;
-      font-size: 14px;
-      color: var(--muted);
+      font-size: 13px;
+      padding: 25px;
+      color: #666;
     }
 
-    footer a {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 600;
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 24px;
+      }
     }
   </style>
 </head>
 
 <body>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-content">
+  <!-- HEADER / HERO -->
+  <header>
     <img src="logo.png" alt="Evalis AI Logo">
     <h1>Evalis AI</h1>
     <p>Human Intelligence for Accurate AI Data</p>
-    <p>AI Data Evaluation • Data Labeling • Search Engine Evaluation</p>
+    <p>AI Data Evaluation · Data Labeling · Search Engine Evaluation</p>
+
+    <nav>
+      <a href="#about">About</a>
+      <a href="#services">Services</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <div class="container">
+
+    <!-- ABOUT -->
+    <section class="section" id="about">
+      <h2>About Us</h2>
+      <p>
+        Evalis AI delivers human-led evaluation services that improve the accuracy,
+        relevance, and reliability of AI systems and search platforms. We combine
+        domain expertise with structured quality processes to support responsible
+        and scalable AI development.
+      </p>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="section" id="services">
+      <h2>Our Services</h2>
+      <ul>
+        <li>AI Data Evaluation & Quality Review</li>
+        <li>Data Labeling & Annotation</li>
+        <li>Search Engine Evaluation & Relevance Testing</li>
+        <li>Transcription & Linguistic Review</li>
+        <li>AI Output Validation & Hallucination Detection</li>
+      </ul>
+    </section>
+
+    <!-- CONTACT DETAILS -->
+    <section class="section contact-details" id="contact">
+      <h2>Contact Us</h2>
+      <p>Email: <a href="mailto:evalisglobal@gmail.com">evalisglobal@gmail.com</a></p>
+      <p>WhatsApp: +91 95448 42260</p>
+      <p>LinkedIn: <a href="https://www.linkedin.com/company/evalis-ai/" target="_blank">Evalis AI</a></p>
+      <p>Facebook: <a href="https://www.facebook.com/" target="_blank">Evalis AI</a></p>
+    </section>
+
+    <!-- CONTACT FORM -->
+    <section class="section">
+      <h2>Send Us a Message</h2>
+
+      <!-- Replace with your Formspree form ID -->
+      <form action="https://formspree.io/f/xxxxabcd" method="POST">
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <textarea name="message" rows="4" placeholder="Your Message" required></textarea>
+        <button type="submit">Send Message</button>
+      </form>
+    </section>
+
   </div>
-</section>
 
-<div class="container">
-
-  <!-- ABOUT -->
-  <div class="section">
-    <h2>What We Do</h2>
-    <p>
-      Evalis AI provides human-led evaluation services for AI systems, search engines,
-      and digital platforms. We focus on accuracy, relevance, and quality through
-      expert human judgment — not crowdsourcing or automation-only reviews.
-    </p>
-  </div>
-
-  <!-- SERVICES -->
-  <div class="section">
-    <h2>Core Services</h2>
-    <ul>
-      <li>AI Data Evaluation & Quality Review</li>
-      <li>Data Labeling & Annotation</li>
-      <li>Search Engine Evaluation & Relevance Testing</li>
-      <li>Transcription & Linguistic Review</li>
-      <li>AI Output Validation & Hallucination Checks</li>
-    </ul>
-  </div>
-
-  <!-- CONTACT -->
-  <div class="section">
-    <h2>Connect With Us</h2>
-    <p>Email: <a href="mailto:evalisglobal@gmail.com">evalisglobal@gmail.com</a></p>
-    <p>WhatsApp: +91 95448 42260</p>
-    <p>
-      Facebook:
-      <a href="https://www.facebook.com/profile.php?id=61585377735411" target="_blank">
-        Evalis AI
-      </a>
-    </p>
-    <p>
-      LinkedIn:
-      <a href="https://www.linkedin.com/company/evalis-ai/" target="_blank">
-        Evalis AI
-      </a>
-    </p>
-  </div>
-
-</div>
-
-<footer>
-  © 2025 Evalis AI • Human-Led AI Evaluation Services
-</footer>
+  <footer>
+    © 2025 Evalis AI · Human-Led AI Evaluation Services
+  </footer>
 
 </body>
 </html>
