@@ -1,41 +1,101 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evalis AI - Home</title>
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="css/style.css">
+  <!-- BASIC META -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- TITLE & SEO -->
+  <title>Evalis AI | Human-Led AI Data Services</title>
+  <meta name="description" content="Evalis AI provides human-led AI data evaluation, data labeling, search relevance, and AI quality validation services.">
+
+  <!-- FAVICON -->
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <!-- GLOBAL STYLESHEET (STEP 2 DONE HERE) -->
+  <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <a class="logo" href="index.html"><img src="images/logo.png" alt="Evalis AI Logo"></a>
-        <ul class="nav-links">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="services.html">Services</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="careers.html">Careers</a></li>
-            <li><a href="clients.html">Clients</a></li>
-            <li><a href="contact.html">Contact</a></li>
-        </ul>
-    </nav>
 
-    <!-- Hero Section -->
-    <header class="hero">
-        <h1>Welcome to Evalis AI</h1>
-        <p>AI Solutions that Power Innovation</p>
-    </header>
+  <!-- HEADER / NAVIGATION -->
+  <header class="site-header">
+    <div class="nav-container">
+      <img src="logo.png" alt="Evalis AI Logo" class="logo">
 
-    <!-- Intro -->
-    <section class="intro">
-        <h2>We Deliver Results Like:</h2>
-        <p>Quality Crowd Work like Appen, TELUS Digital, OneForma but tailored to you.</p>
-    </section>
+      <nav id="nav">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="clients.html">Clients</a>
+        <a href="careers.html">Careers</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
 
-    <footer>
-        <p>&copy; 2025 Evalis AI. All rights reserved.</p>
-    </footer>
+      <!-- MOBILE MENU BUTTON -->
+      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <h1>Human-Led AI Data Services</h1>
+    <p>
+      High-quality evaluation, labeling, and validation for AI systems
+      delivered by trained human experts at scale.
+    </p>
+
+    <div class="hero-actions">
+      <a href="services.html" class="btn-primary">Explore Services</a>
+      <a href="careers.html" class="btn-outline">Join as Contributor</a>
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <section>
+    <div class="container">
+      <h2>Why Evalis AI</h2>
+
+      <div class="grid">
+        <div class="card">
+          <h3>Human-in-the-Loop</h3>
+          <p>
+            Expert human judgment to evaluate accuracy, relevance,
+            and reliability of AI outputs.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Structured Quality</h3>
+          <p>
+            Clear guidelines, multi-step reviews, and consistent
+            evaluation standards.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Scalable Workforce</h3>
+          <p>
+            Flexible contributor network to support pilot and
+            ongoing AI projects.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    © 2025 Evalis AI · Human-Led AI Data Services
+  </footer>
+
+  <!-- MOBILE MENU SCRIPT -->
+  <script>
+    function toggleMenu() {
+      const nav = document.getElementById("nav");
+      nav.style.display = nav.style.display === "flex" ? "none" : "flex";
+    }
+  </script>
+
 </body>
 </html>
