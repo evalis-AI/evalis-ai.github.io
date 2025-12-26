@@ -1,66 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Clients | Evalis AI</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="favicon.png">
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clients | Evalis AI</title>
+<link rel="icon" href="favicon.png">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <header class="site-header">
-  <div class="nav-container">
-    <img src="logo.png" class="logo">
-    <nav id="nav">
-      <a href="index.html">Home</a>
-      <a href="services.html">Services</a>
-      <a href="clients.html">Clients</a>
-      <a href="careers.html">Careers</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </nav>
-    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-  </div>
+<div class="nav-container">
+<img src="logo.png" class="logo">
+<nav id="nav">
+<a href="index.html">Home</a>
+<a href="services.html">Services</a>
+<a href="clients.html" class="active">Clients</a>
+<a href="careers.html">Careers</a>
+<a href="about.html">About</a>
+<a href="contact.html">Contact</a>
+</nav>
+<button class="menu-toggle" onclick="toggleMenu()">☰</button>
+</div>
 </header>
 
-<section class="section-alt">
-  <div class="container">
-    <h1>Clients & Use Cases</h1>
-
-    <div class="grid">
-      <div class="card">
-        <h3>AI Platforms</h3>
-        <p>LLM evaluation, safety, relevance, multilingual quality.</p>
-      </div>
-
-      <div class="card">
-        <h3>Search Engines</h3>
-        <p>Query intent analysis, ranking relevance, spam detection.</p>
-      </div>
-
-      <div class="card">
-        <h3>E-commerce</h3>
-        <p>Product categorization, listing quality, reviews moderation.</p>
-      </div>
-
-      <div class="card">
-        <h3>Healthcare & FinTech</h3>
-        <p>High-precision annotation, compliance-aware AI validation.</p>
-      </div>
-    </div>
-  </div>
+<section class="hero hero-small">
+<div class="container">
+<h1>Clients & Use Cases</h1>
+</div>
 </section>
 
-<footer>
-  © 2025 Evalis AI
-</footer>
+<section class="section">
+<div class="container">
+<div class="grid">
+<div class="card">AI & ML Platforms</div>
+<div class="card">Search Engines</div>
+<div class="card">E-commerce</div>
+<div class="card">Healthcare AI</div>
+</div>
+</div>
+</section>
 
-<script>
-function toggleMenu(){
-  document.getElementById("nav").classList.toggle("open");
-}
-</script>
-
+<footer>© 2025 Evalis AI</footer>
+<script>function toggleMenu(){nav.style.display=nav.style.display==="flex"?"none":"flex";}</script>
 </body>
 </html>
