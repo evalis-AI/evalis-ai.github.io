@@ -1,21 +1,17 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Services | Evalis AI</title>
-  <meta name="description" content="AI data evaluation, data labeling, search relevance, and AI quality validation services.">
-  <link rel="icon" type="image/png" href="favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
 
 <header class="site-header">
   <div class="nav-container">
-    <img src="logo.png" alt="Evalis AI Logo" class="logo">
-
+    <img src="logo.png" class="logo">
     <nav id="nav">
       <a href="index.html">Home</a>
       <a href="services.html">Services</a>
@@ -24,52 +20,50 @@
       <a href="about.html">About</a>
       <a href="contact.html">Contact</a>
     </nav>
-
     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
   </div>
 </header>
 
-<section>
+<section class="section">
   <div class="container">
     <h1>Our Services</h1>
 
     <div class="grid">
       <div class="card">
         <h3>AI Data Evaluation</h3>
-        <p>Human-led assessment of accuracy, relevance, and usefulness of AI-generated outputs.</p>
+        <p>Human-led assessment of accuracy, relevance, and safety.</p>
       </div>
 
       <div class="card">
         <h3>Data Labeling & Annotation</h3>
-        <p>High-quality text, image, audio, and multimodal annotation using trained evaluators.</p>
+        <p>High-quality text, image, audio, and video annotation.</p>
       </div>
 
       <div class="card">
-        <h3>Search Engine Evaluation</h3>
-        <p>Query intent analysis, ranking relevance, and search quality assessment.</p>
+        <h3>Search Evaluation</h3>
+        <p>Query intent, ranking relevance, and spam detection.</p>
       </div>
 
       <div class="card">
         <h3>AI Output Validation</h3>
-        <p>Hallucination detection, factual verification, and response quality checks.</p>
+        <p>Hallucination detection and factual verification.</p>
       </div>
 
       <div class="card">
         <h3>Linguistic & Transcription</h3>
-        <p>Multilingual transcription, language normalization, and linguistic QA.</p>
+        <p>Multilingual transcription and language normalization.</p>
       </div>
     </div>
   </div>
 </section>
 
 <footer>
-  © 2025 Evalis AI · Human-Led AI Data Services
+  © 2025 Evalis AI
 </footer>
 
 <script>
-function toggleMenu() {
-  const nav = document.getElementById("nav");
-  nav.style.display = nav.style.display === "flex" ? "none" : "flex";
+function toggleMenu(){
+  document.getElementById("nav").classList.toggle("open");
 }
 </script>
 
