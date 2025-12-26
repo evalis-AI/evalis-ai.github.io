@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Evalis AI | Human-Led AI Data Services</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="favicon.png">
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evalis AI | Human-Led AI Data Services</title>
+<link rel="icon" href="favicon.png">
+<link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
 <header class="site-header">
   <div class="nav-container">
-    <img src="logo.png" class="logo" alt="Evalis AI">
+    <img src="logo.png" class="logo">
     <nav id="nav">
-      <a href="index.html">Home</a>
+      <a href="index.html" class="active">Home</a>
       <a href="services.html">Services</a>
       <a href="clients.html">Clients</a>
       <a href="careers.html">Careers</a>
@@ -28,10 +29,8 @@
   <div class="container">
     <h1>Human-Led AI Data Services</h1>
     <p>High-quality evaluation, labeling, and validation for AI systems at scale.</p>
-    <div class="hero-actions">
-      <a href="services.html" class="btn-primary">Explore Services</a>
-      <a href="careers.html" class="btn-outline">Join as Contributor</a>
-    </div>
+    <a href="services.html" class="btn-primary">Explore Services</a>
+    <a href="careers.html" class="btn-outline">Join as Contributor</a>
   </div>
 </section>
 
@@ -41,30 +40,17 @@
     <div class="grid">
       <div class="card">Human-in-the-loop quality</div>
       <div class="card">Structured evaluation workflows</div>
-      <div class="card">Scalable global contributors</div>
+      <div class="card">Global scalable contributors</div>
     </div>
   </div>
 </section>
 
-<section class="section-alt">
-  <div class="container">
-    <h2>Industries We Support</h2>
-    <div class="grid">
-      <div class="card">AI & ML Platforms</div>
-      <div class="card">Search Engines</div>
-      <div class="card">E-commerce</div>
-      <div class="card">Healthcare & FinTech</div>
-    </div>
-  </div>
-</section>
-
-<footer>
-  © 2025 Evalis AI · Human-Led AI Data Services
-</footer>
+<footer>© 2025 Evalis AI</footer>
 
 <script>
 function toggleMenu(){
-  document.getElementById("nav").classList.toggle("open");
+  const nav=document.getElementById("nav");
+  nav.style.display=nav.style.display==="flex"?"none":"flex";
 }
 </script>
 
