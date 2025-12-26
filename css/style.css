@@ -1,51 +1,63 @@
-/* ========== RESET ========== */
+
+/* ================= RESET ================= */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* ========== VARIABLES ========== */
+/* ================= COLOR SYSTEM ================= */
 :root {
-  --primary: #0b1c2d;
-  --secondary: #102b46;
-  --accent: #2563eb;
-  --bg: #f8fafc;
-  --card: #ffffff;
-  --text: #1f2937;
-  --muted: #6b7280;
+  --primary: #4f46e5;        /* Indigo */
+  --secondary: #0ea5e9;      /* Sky Blue */
+  --accent: #22c55e;         /* Green */
+  --bg-main: #0b1220;        /* DARK BLUE BACKGROUND */
+  --bg-soft: #111827;        /* Section dark */
+  --bg-alt: #1e293b;         /* Alternate section */
+  --card: #020617;           /* Card dark */
+  --text: #e5e7eb;           /* Light text */
+  --muted: #9ca3af;          /* Muted text */
+  --border: #334155;
 }
 
-/* ========== BASE ========== */
+/* ================= BASE ================= */
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-               Roboto, Helvetica, Arial, sans-serif;
-  background: var(--bg);
+    Roboto, Helvetica, Arial, sans-serif;
+  background: linear-gradient(180deg, #020617, #0b1220);
   color: var(--text);
   line-height: 1.6;
 }
 
 a {
-  color: inherit;
   text-decoration: none;
+  color: inherit;
 }
 
-/* ========== LAYOUT ========== */
+/* ================= LAYOUT ================= */
 .container {
   max-width: 1200px;
   margin: auto;
   padding: 0 20px;
 }
 
+/* Reduced padding to avoid blank space */
 section {
-  padding: 80px 0;
+  padding: 56px 0;
+  background: var(--bg-soft);
 }
 
-/* ========== HEADER / NAV ========== */
+@media (max-width: 768px) {
+  section {
+    padding: 36px 0;
+  }
+}
+
+/* ================= HEADER / NAV ================= */
 .site-header {
   position: sticky;
   top: 0;
-  background: var(--primary);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
   z-index: 1000;
 }
 
@@ -60,63 +72,91 @@ section {
   height: 42px;
 }
 
+nav {
+  display: flex;
+}
+
 nav a {
-  margin-left: 20px;
+  margin-left: 18px;
   font-size: 14px;
-  color: #fff;
+  color: #ffffff;
+  font-weight: 500;
 }
 
 .menu-toggle {
   display: none;
   background: none;
   border: none;
-  color: #fff;
   font-size: 26px;
+  color: #ffffff;
 }
 
-/* ========== HERO ========== */
+/* MOBILE NAV */
+@media (max-width: 768px) {
+  nav {
+    display: none;
+    flex-direction: column;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+  }
+
+  nav.open {
+    display: flex;
+  }
+
+  nav a {
+    padding: 14px 20px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+}
+
+/* ================= HERO ================= */
 .hero {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: #fff;
+  background: linear-gradient(135deg, #1e3a8a, #0ea5e9);
+  color: white;
   text-align: center;
-  padding: 120px 20px;
+  padding: 100px 20px;
 }
 
 .hero h1 {
-  font-size: clamp(28px, 5vw, 48px);
-  margin-bottom: 16px;
+  font-size: clamp(28px, 5vw, 46px);
+  margin-bottom: 12px;
 }
 
 .hero p {
   max-width: 700px;
   margin: auto;
-  font-size: 16px;
-  opacity: 0.9;
+  opacity: 0.95;
 }
 
-.hero-actions {
-  margin-top: 30px;
-}
-
-/* ========== BUTTONS ========== */
+/* ================= BUTTONS ================= */
 .btn-primary {
   display: inline-block;
   background: var(--accent);
-  color: #fff;
+  color: #022c22;
   padding: 12px 22px;
-  border-radius: 6px;
-  margin: 6px;
+  border-radius: 10px;
+  margin: 10px;
+  font-weight: 600;
 }
 
 .btn-outline {
   display: inline-block;
-  border: 1px solid #fff;
+  border: 1px solid #ffffff;
   padding: 12px 22px;
-  border-radius: 6px;
-  margin: 6px;
+  border-radius: 10px;
+  margin: 10px;
+  color: #ffffff;
 }
 
-/* ========== GRID / CARDS ========== */
+/* ================= GRID / CARDS ================= */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -124,39 +164,36 @@ nav a {
 }
 
 .card {
-  background: var(--card);
-  padding: 28px;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  background: linear-gradient(180deg, #020617, #020617);
+  padding: 26px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
 }
 
-/* ========== FOOTER ========== */
+.card h3 {
+  margin-bottom: 10px;
+  color: #e0e7ff;
+}
+
+.card p {
+  color: var(--muted);
+}
+
+/* ================= SECTION VARIANTS ================= */
+.section-alt {
+  background: linear-gradient(180deg, #020617, #1e293b);
+}
+
+.section-soft {
+  background: linear-gradient(180deg, #020617, #0f172a);
+}
+
+/* ================= FOOTER ================= */
 footer {
-  background: #0b1c2d;
-  color: #cbd5e1;
+  background: #020617;
+  color: #9ca3af;
   text-align: center;
   padding: 30px 20px;
   font-size: 13px;
-}
-
-/* ========== MOBILE NAV ========== */
-@media (max-width: 768px) {
-  nav {
-    display: none;
-    flex-direction: column;
-    background: var(--primary);
-    position: absolute;
-    top: 64px;
-    left: 0;
-    width: 100%;
-  }
-
-  nav a {
-    padding: 14px 20px;
-    border-top: 1px solid rgba(255,255,255,0.1);
-  }
-
-  .menu-toggle {
-    display: block;
-  }
 }
