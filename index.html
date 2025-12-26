@@ -2,208 +2,231 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- SEO -->
-  <title>Evalis AI | Human-Led AI Data Evaluation Services</title>
-  <meta name="description" content="Evalis AI provides human-led AI data evaluation, data labeling, search engine evaluation, and AI quality validation services.">
-  <meta name="keywords" content="AI data evaluation, data labeling, search engine evaluation, human in the loop AI">
-  <meta name="author" content="Evalis AI">
+<title>Evalis AI | Human-Led AI Data Evaluation</title>
+<meta name="description" content="Evalis AI provides human-led AI data evaluation, data labeling, search engine evaluation, and AI quality validation services.">
 
-  <!-- FAVICON -->
-  <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="apple-touch-icon" href="favicon.png">
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f4f6f9;
-      color: #222;
-      line-height: 1.6;
-    }
+<style>
+html {
+  scroll-behavior: smooth;
+}
 
-    header {
-      background: linear-gradient(135deg, #0b1c2d, #102b46);
-      color: #fff;
-      text-align: center;
-      padding: 60px 20px 40px;
-    }
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f6f9;
+  color: #222;
+}
 
-    header img {
-      max-width: 170px;
-      margin-bottom: 15px;
-    }
+/* HEADER */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: linear-gradient(135deg, #0b1c2d, #102b46);
+  color: #fff;
+  text-align: center;
+  padding: 20px 15px;
+}
 
-    header h1 {
-      margin: 10px 0 5px;
-      font-size: 30px;
-    }
+header img {
+  max-width: 140px;
+}
 
-    header p {
-      margin: 5px 0;
-      font-size: 15px;
-      opacity: 0.9;
-    }
+header h1 {
+  margin: 10px 0 5px;
+  font-size: 26px;
+}
 
-    nav {
-      margin-top: 20px;
-    }
+header p {
+  font-size: 14px;
+  margin: 4px 0;
+  opacity: 0.9;
+}
 
-    nav a {
-      color: #fff;
-      text-decoration: none;
-      margin: 0 12px;
-      font-size: 14px;
-    }
+/* NAV */
+nav {
+  margin-top: 10px;
+}
 
-    nav a:hover {
-      text-decoration: underline;
-    }
+nav a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 12px;
+  font-size: 14px;
+  padding-bottom: 4px;
+}
 
-    .container {
-      max-width: 1000px;
-      margin: 40px auto;
-      padding: 0 15px;
-    }
+nav a.active {
+  border-bottom: 2px solid #fff;
+}
 
-    .section {
-      background: #fff;
-      border-radius: 8px;
-      padding: 30px;
-      margin-bottom: 25px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
+/* CONTENT */
+.container {
+  max-width: 1000px;
+  margin: 30px auto;
+  padding: 0 15px;
+}
 
-    h2 {
-      margin-top: 0;
-      color: #102b46;
-    }
+section {
+  background: #fff;
+  border-radius: 8px;
+  padding: 30px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  scroll-margin-top: 140px;
+}
 
-    ul {
-      padding-left: 20px;
-    }
+h2 {
+  margin-top: 0;
+  color: #102b46;
+}
 
-    li {
-      margin-bottom: 10px;
-    }
+ul {
+  padding-left: 20px;
+}
 
-    .contact-details a {
-      color: #0b5ed7;
-      text-decoration: none;
-    }
+li {
+  margin-bottom: 10px;
+}
 
-    .contact-details a:hover {
-      text-decoration: underline;
-    }
+/* CONTACT */
+.contact a {
+  color: #0b5ed7;
+  text-decoration: none;
+}
 
-    form input, form textarea {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 14px;
-    }
+.contact a:hover {
+  text-decoration: underline;
+}
 
-    form button {
-      background: #102b46;
-      color: #fff;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 5px;
-      font-size: 14px;
-      cursor: pointer;
-    }
+/* FORM */
+form input, form textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
 
-    form button:hover {
-      background: #0b1c2d;
-    }
+form button {
+  background: #102b46;
+  color: #fff;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 5px;
+  cursor: pointer;
+}
 
-    footer {
-      text-align: center;
-      font-size: 13px;
-      padding: 25px;
-      color: #666;
-    }
+form button:hover {
+  background: #0b1c2d;
+}
 
-    @media (max-width: 600px) {
-      header h1 {
-        font-size: 24px;
-      }
-    }
-  </style>
+/* FOOTER */
+footer {
+  text-align: center;
+  font-size: 13px;
+  padding: 25px;
+  color: #666;
+}
+</style>
 </head>
 
 <body>
 
-  <!-- HEADER / HERO -->
-  <header>
-    <img src="logo.png" alt="Evalis AI Logo">
-    <h1>Evalis AI</h1>
-    <p>Human Intelligence for Accurate AI Data</p>
-    <p>AI Data Evaluation · Data Labeling · Search Engine Evaluation</p>
+<!-- HEADER -->
+<header>
+  <img src="logo.png" alt="Evalis AI Logo">
+  <h1>Evalis AI</h1>
+  <p>Human Intelligence for Accurate AI Data</p>
+  <p>AI Data Evaluation · Data Labeling · Search Engine Evaluation</p>
 
-    <nav>
-      <a href="#about">About</a>
-      <a href="#services">Services</a>
-      <a href="#contact">Contact</a>
-    </nav>
-  </header>
+  <nav>
+    <a href="#about" class="nav-link">About</a>
+    <a href="#services" class="nav-link">Services</a>
+    <a href="#contact" class="nav-link">Contact</a>
+  </nav>
+</header>
 
-  <div class="container">
+<div class="container">
 
-    <!-- ABOUT -->
-    <section class="section" id="about">
-      <h2>About Us</h2>
-      <p>
-        Evalis AI delivers human-led evaluation services that improve the accuracy,
-        relevance, and reliability of AI systems and search platforms. We combine
-        domain expertise with structured quality processes to support responsible
-        and scalable AI development.
-      </p>
-    </section>
+<!-- ABOUT -->
+<section id="about">
+  <h2>About Us</h2>
+  <p>
+    Evalis AI provides human-led evaluation services that enhance the accuracy,
+    relevance, and reliability of AI systems and search platforms. We combine
+    expert human judgment with structured quality frameworks to support
+    responsible and scalable AI development.
+  </p>
+</section>
 
-    <!-- SERVICES -->
-    <section class="section" id="services">
-      <h2>Our Services</h2>
-      <ul>
-        <li>AI Data Evaluation & Quality Review</li>
-        <li>Data Labeling & Annotation</li>
-        <li>Search Engine Evaluation & Relevance Testing</li>
-        <li>Transcription & Linguistic Review</li>
-        <li>AI Output Validation & Hallucination Detection</li>
-      </ul>
-    </section>
+<!-- SERVICES -->
+<section id="services">
+  <h2>Our Services</h2>
+  <ul>
+    <li>AI Data Evaluation & Quality Review</li>
+    <li>Data Labeling & Annotation</li>
+    <li>Search Engine Evaluation & Relevance Testing</li>
+    <li>Transcription & Linguistic Review</li>
+    <li>AI Output Validation & Hallucination Detection</li>
+  </ul>
+</section>
 
-    <!-- CONTACT DETAILS -->
-    <section class="section contact-details" id="contact">
-      <h2>Contact Us</h2>
-      <p>Email: <a href="mailto:evalisglobal@gmail.com">evalisglobal@gmail.com</a></p>
-      <p>WhatsApp: +91 95448 42260</p>
-      <p>LinkedIn: <a href="https://www.linkedin.com/company/evalis-ai/" target="_blank">Evalis AI</a></p>
-      <p>Facebook: <a href="https://www.facebook.com/" target="_blank">Evalis AI</a></p>
-    </section>
+<!-- CONTACT -->
+<section id="contact" class="contact">
+  <h2>Contact Us</h2>
+  <p>Email: <a href="mailto:evalisglobal@gmail.com">evalisglobal@gmail.com</a></p>
+  <p>WhatsApp: +91 95448 42260</p>
+  <p>LinkedIn: <a href="https://www.linkedin.com/company/evalis-ai/" target="_blank">Evalis AI</a></p>
+  <p>Facebook: <a href="https://www.facebook.com/" target="_blank">Evalis AI</a></p>
+</section>
 
-    <!-- CONTACT FORM -->
-    <section class="section">
-      <h2>Send Us a Message</h2>
+<!-- FORM -->
+<section>
+  <h2>Send Us a Message</h2>
+  <form action="https://formspree.io/f/xxxxabcd" method="POST">
+    <input type="text" name="name" placeholder="Your Name" required>
+    <input type="email" name="email" placeholder="Your Email" required>
+    <textarea name="message" rows="4" placeholder="Your Message" required></textarea>
+    <button type="submit">Send Message</button>
+  </form>
+</section>
 
-      <!-- Replace with your Formspree form ID -->
-      <form action="https://formspree.io/f/xxxxabcd" method="POST">
-        <input type="text" name="name" placeholder="Your Name" required>
-        <input type="email" name="email" placeholder="Your Email" required>
-        <textarea name="message" rows="4" placeholder="Your Message" required></textarea>
-        <button type="submit">Send Message</button>
-      </form>
-    </section>
+</div>
 
-  </div>
+<footer>
+© 2025 Evalis AI · Human-Led AI Evaluation Services
+</footer>
 
-  <footer>
-    © 2025 Evalis AI · Human-Led AI Evaluation Services
-  </footer>
+<!-- ACTIVE MENU SCRIPT -->
+<script>
+const sections = document.querySelectorAll("section");
+const navLinks = document.querySelectorAll(".nav-link");
+
+window.addEventListener("scroll", () => {
+  let current = "";
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 160;
+    if (scrollY >= sectionTop) {
+      current = section.getAttribute("id");
+    }
+  });
+
+  navLinks.forEach(link => {
+    link.classList.remove("active");
+    if (link.getAttribute("href") === "#" + current) {
+      link.classList.add("active");
+    }
+  });
+});
+</script>
 
 </body>
 </html>
