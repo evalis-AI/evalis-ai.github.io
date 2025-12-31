@@ -15,10 +15,10 @@
 
     header {
       padding: 20px 40px;
+      background: #0f172a;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #0f172a;
     }
 
     header img {
@@ -34,12 +34,12 @@
 
     .hero {
       text-align: center;
-      padding: 80px 20px;
+      padding: 70px 20px 40px;
     }
 
     .hero h1 {
       font-size: 42px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .hero p {
@@ -48,16 +48,58 @@
     }
 
     .container {
-      max-width: 900px;
+      max-width: 1000px;
       margin: auto;
       padding: 40px 20px 80px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
     }
 
     .card {
-      background: rgba(255,255,255,0.04);
+      background: rgba(255,255,255,0.05);
       padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      border-radius: 18px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.45);
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #93c5fd;
+    }
+
+    .info p {
+      margin: 12px 0;
+      font-size: 16px;
+      color: #cbd5f5;
+    }
+
+    .info a {
+      color: #c7d2fe;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .social-links {
+      margin-top: 20px;
+    }
+
+    .social-links a {
+      display: inline-block;
+      margin-right: 14px;
+      margin-top: 10px;
+      padding: 10px 16px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.08);
+      color: #e5e7eb;
+      text-decoration: none;
+      font-weight: 600;
     }
 
     label {
@@ -109,21 +151,48 @@
   <nav>
     <a href="index.html">Home</a>
     <a href="services.html">Services</a>
-    <a href="careers.html">Careers</a>
+    <a href="careers.html">Contributors</a>
     <a href="about.html">About</a>
     <a href="contact.html">Contact</a>
   </nav>
 </header>
 
 <section class="hero">
-  <h1>Contact Evalis AI</h1>
-  <p>Tell us about your project or collaboration idea</p>
+  <h1>Contact Us</h1>
+  <p>Let’s discuss your AI evaluation or data project</p>
 </section>
 
 <div class="container">
+
+  <!-- CONTACT INFO -->
+  <div class="card info">
+    <h2>Get in Touch</h2>
+
+    <p><strong>Email:</strong><br>
+      <a href="mailto:evalisglobal@gmail.com">evalisglobal@gmail.com</a>
+    </p>
+
+    <p><strong>Phone / WhatsApp:</strong><br>
+      <a href="https://wa.me/919544842260" target="_blank">+91 95448 42260</a>
+    </p>
+
+    <p><strong>Availability:</strong> Remote • Global Projects</p>
+
+    <div class="social-links">
+      <a href="https://www.facebook.com/profile.php?id=61585377735411" target="_blank">
+        Facebook Page
+      </a>
+      <a href="https://www.linkedin.com/company/evalis-ai/" target="_blank">
+        LinkedIn Page
+      </a>
+    </div>
+  </div>
+
+  <!-- CONTACT FORM -->
   <div class="card">
+    <h2>Send a Message</h2>
     <form action="https://formspree.io/f/mdanqopk" method="POST">
-      <label>Name</label>
+      <label>Your Name</label>
       <input type="text" name="name" required>
 
       <label>Email</label>
@@ -135,10 +204,11 @@
       <button type="submit">Send Message</button>
     </form>
   </div>
+
 </div>
 
 <footer>
-  © 2025 Evalis AI • evalisglobal@gmail.com
+  © 2025 Evalis AI • Human-Led AI Data Services
 </footer>
 
 </body>
