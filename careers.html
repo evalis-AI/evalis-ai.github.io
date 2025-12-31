@@ -2,102 +2,301 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>Contributors | Evalis AI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Careers | Evalis AI</title>
+  <meta name="robots" content="index, follow" />
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png">
+  <meta name="description" content="Join Evalis AI as an independent contributor. Work on AI data evaluation, data labeling, search relevance, and language quality projects." />
 
-  <!-- Main CSS -->
-  <link rel="stylesheet" href="css/style.css">
+  <style>
+    :root {
+      --primary: #5b5bff;
+      --secondary: #7c7cff;
+      --bg: #070b18;
+      --card: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.12);
+      --text: #e5e7eb;
+      --muted: #9aa4b2;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at top, #0b1230, #050814);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 28px;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    nav .logo {
+      font-weight: 700;
+      font-size: 20px;
+      color: #fff;
+    }
+
+    nav a {
+      color: #c7d2fe;
+      text-decoration: none;
+      margin-left: 18px;
+      font-size: 14px;
+    }
+
+    nav a:hover {
+      color: #fff;
+    }
+
+    /* HERO */
+    .hero {
+      padding: 100px 20px 70px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 42px;
+      margin-bottom: 12px;
+    }
+
+    .hero p {
+      max-width: 800px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    /* INFO CARDS */
+    .info {
+      max-width: 1100px;
+      margin: 0 auto 80px;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px;
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      font-size: 20px;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    /* FORM */
+    .form-section {
+      max-width: 900px;
+      margin: 0 auto 100px;
+      padding: 40px 20px;
+    }
+
+    .form-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+    }
+
+    .form-box h2 {
+      text-align: center;
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .form-box p {
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.45);
+      color: #fff;
+      font-size: 15px;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: #9aa4b2;
+    }
+
+    button {
+      padding: 16px;
+      border-radius: 14px;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .disclaimer {
+      font-size: 13px;
+      color: #9aa4b2;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 15px;
+      font-size: 13px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+
+    footer a {
+      color: #a5b4fc;
+      text-decoration: none;
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- ================= HEADER ================= -->
-<header class="site-header">
-  <div class="nav-container">
-    <img src="logo.png" alt="Evalis AI Logo" class="logo">
-
-    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-
-    <nav id="nav">
-      <a href="index.html">Home</a>
-      <a href="services.html">Services</a>
-      <a href="clients.html">Clients</a>
-      <a href="careers.html" class="active">Careers</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </nav>
+<nav>
+  <div class="logo">Evalis AI</div>
+  <div>
+    <a href="index.html">Home</a>
+    <a href="services.html">Services</a>
+    <a href="about.html">About</a>
+    <a href="careers.html">Contributors</a>
+    <a href="contact.html">Contact</a>
   </div>
-</header>
+</nav>
 
-<!-- ================= HERO ================= -->
 <section class="hero">
   <h1>Join Evalis AI as a Contributor</h1>
   <p>
-    Work remotely on AI evaluation, data labeling, search relevance,
-    and language quality projects. Flexible schedules and project-based work.
+    Work independently on AI data evaluation, data labeling, search relevance,
+    and language quality projects. Flexible, skill-based, and project-driven.
   </p>
 </section>
 
-<!-- ================= INFO CARDS ================= -->
-<section>
-  <div class="container">
-    <div class="grid">
-      <div class="card">
-        <h3>Who Can Apply</h3>
-        <p>
-          AI evaluators, search quality raters, data annotators,
-          language specialists, and content reviewers.
-        </p>
-      </div>
+<section class="info">
+  <div class="card">
+    <h3>Who Can Apply</h3>
+    <p>
+      AI evaluators, data labelers, search quality raters,
+      language specialists, and content reviewers.
+    </p>
+  </div>
 
-      <div class="card">
-        <h3>How It Works</h3>
-        <p>
-          Apply → Qualification → Project onboarding → Get paid.
-        </p>
-      </div>
+  <div class="card">
+    <h3>How It Works</h3>
+    <p>
+      Register once → Qualification review → Project matching → Paid per project.
+    </p>
+  </div>
 
-      <div class="card">
-        <h3>Why Work With Us</h3>
-        <p>
-          Remote-first, flexible hours, skill-based projects,
-          and fair evaluation standards.
-        </p>
-      </div>
-    </div>
+  <div class="card">
+    <h3>Work Model</h3>
+    <p>
+      Remote, independent, non-exclusive, and task-based.
+      This is not employment or recruitment.
+    </p>
   </div>
 </section>
 
-<!-- ================= FORM ================= -->
-<section class="section-alt">
-  <div class="container">
+<section class="form-section">
+  <div class="form-box">
     <h2>Contributor Registration</h2>
     <p>
-      Submit your details and upload your CV. Our team will review your
-      application and contact you when suitable projects are available.
+      Submit your details once. We’ll contact you when suitable projects are available.
     </p>
 
-    <iframe
-      src="https://docs.google.com/forms/d/e/1FAIpQLSfyHK0Dt4zxeQszuFJacab0wqrMVY7ipYcnSL6UcJnpI6vHsg/viewform?embedded=true"
-      loading="lazy">
-    </iframe>
+    <form action="https://formspree.io/f/YOURENDPOINT" method="POST">
+      <div class="row">
+        <input type="text" name="name" placeholder="Full Name" required>
+        <input type="email" name="email" placeholder="Email Address" required>
+      </div>
+
+      <div class="row">
+        <select name="primary_skill" required>
+          <option value="">Primary Skill Area</option>
+          <option>AI Data Evaluation</option>
+          <option>Data Labeling / Annotation</option>
+          <option>Search Engine Evaluation</option>
+          <option>Language & Content Review</option>
+          <option>Speech / Audio Evaluation</option>
+        </select>
+
+        <select name="experience" required>
+          <option value="">Experience Level</option>
+          <option>Beginner</option>
+          <option>Intermediate</option>
+          <option>Advanced</option>
+        </select>
+      </div>
+
+      <input type="text" name="languages" placeholder="Languages Known (e.g. English, Hindi, Malayalam)">
+
+      <textarea name="about" placeholder="Briefly describe your skills or relevant experience" required></textarea>
+
+      <button type="submit">Submit Registration</button>
+
+      <p class="disclaimer">
+        By submitting this form, you acknowledge that this is independent,
+        project-based contributor work and not an employment offer.
+      </p>
+    </form>
   </div>
 </section>
 
-<!-- ================= FOOTER ================= -->
 <footer>
-  © 2025 Evalis AI · Human-Led AI Data Services
+  © 2025 Evalis AI · Human-Led AI Data Services<br>
+  Contact: <a href="mailto:evalisglobal@gmail.com">evalisglobal@gmail.com</a>
 </footer>
-
-<!-- ================= SCRIPT ================= -->
-<script>
-  function toggleMenu() {
-    const nav = document.getElementById("nav");
-    nav.style.display = nav.style.display === "flex" ? "none" : "flex";
-  }
-</script>
 
 </body>
 </html>
