@@ -1,273 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- SEO -->
-  <title>About Evalis AI | Human-Led AI Evaluation & Data Quality</title>
-  <meta name="description" content="Evalis AI is a human-led AI evaluation and data quality service specializing in AI data evaluation, data labeling, and search engine quality review." />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://evalis-ai.github.io/about.html" />
+  <title>About Evalis AI | Human Intelligence for AI</title>
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="About Evalis AI" />
-  <meta property="og:description" content="Human-led AI evaluation, data labeling, and search engine quality review services." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://evalis-ai.github.io/about.html" />
+  <meta name="description" content="Evalis AI provides human-led AI data evaluation, data labeling, and search engine evaluation services.">
+  <meta name="robots" content="index, follow">
 
   <style>
-    :root {
-      --primary:#5b5bff;
-      --secondary:#7c7cff;
-      --bg:#f4f6fb;
-      --card:#ffffff;
-      --text:#1f2937;
-      --muted:#6b7280;
-      --radius:16px;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     }
 
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      background:var(--bg);
-      color:var(--text);
-      line-height:1.7;
+    body {
+      background: #050b1a;
+      color: #ffffff;
     }
 
-    /* HERO */
-    .hero{
-      background:linear-gradient(135deg,var(--primary),var(--secondary));
-      color:#fff;
-      padding:90px 20px 70px;
-      text-align:center;
+    /* HERO SECTION */
+    .hero {
+      min-height: 100vh;
+      background: 
+        linear-gradient(rgba(5,11,26,0.75), rgba(5,11,26,0.75)),
+        url("cover.png") center/cover no-repeat;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 40px 20px;
     }
 
-    .hero h1{
-      margin:0;
-      font-size:42px;
-      letter-spacing:-0.5px;
+    .hero-content {
+      max-width: 1100px;
+      margin: auto;
     }
 
-    .hero p{
-      margin-top:14px;
-      font-size:19px;
-      opacity:0.95;
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 30px;
+      padding: 10px 18px;
+      border-radius: 30px;
+      background: rgba(255,255,255,0.15);
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 600;
+      backdrop-filter: blur(6px);
     }
 
-    .back-btn{
-      margin-top:28px;
-      display:inline-block;
-      padding:10px 20px;
-      background:#ffffff;
-      color:var(--primary);
-      border-radius:12px;
-      font-weight:600;
-      text-decoration:none;
+    .back-btn:hover {
+      background: rgba(255,255,255,0.25);
     }
 
-    /* CONTAINER */
-    .container{
-      max-width:1100px;
-      margin:60px auto;
-      padding:0 20px;
+    h1 {
+      font-size: clamp(36px, 5vw, 60px);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 20px;
     }
 
-    /* SECTIONS */
-    .section{
-      margin-bottom:60px;
+    .highlight {
+      color: #6ce1ff;
     }
 
-    .section h2{
-      font-size:30px;
-      margin-bottom:14px;
-    }
-
-    .section p{
-      color:var(--muted);
-      max-width:900px;
-    }
-
-    /* SPLIT */
-    .split{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:40px;
-      align-items:center;
-    }
-
-    /* CARDS */
-    .cards{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-      gap:22px;
-      margin-top:30px;
-    }
-
-    .card{
-      background:var(--card);
-      border-radius:var(--radius);
-      padding:26px;
-      box-shadow:0 10px 30px rgba(0,0,0,0.08);
-    }
-
-    .card h3{
-      margin-top:0;
-      font-size:18px;
-    }
-
-    .card p{
-      font-size:15px;
-      color:var(--muted);
-    }
-
-    /* LIST */
-    ul{
-      padding-left:20px;
-    }
-
-    li{
-      margin-bottom:10px;
-      color:var(--muted);
+    .tagline {
+      font-size: clamp(16px, 2.5vw, 20px);
+      max-width: 700px;
+      opacity: 0.95;
     }
 
     /* FOOTER */
-    footer{
-      text-align:center;
-      padding:40px 15px;
-      font-size:14px;
-      color:var(--muted);
-    }
-
-    footer a{
-      color:var(--primary);
-      text-decoration:none;
-      font-weight:600;
-    }
-
-    /* RESPONSIVE */
-    @media(max-width:800px){
-      .split{grid-template-columns:1fr}
-      .hero h1{font-size:32px}
+    footer {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 14px;
+      opacity: 0.7;
     }
   </style>
 </head>
 
 <body>
 
-<!-- HERO -->
-<section class="hero">
-  <h1>About Evalis AI</h1>
-  <p>Human-Led AI Evaluation, Data Labeling & Search Quality Review</p>
-  <a href="index.html" class="back-btn">← Back to Home</a>
-</section>
+  <section class="hero">
+    <div class="hero-content">
 
-<div class="container">
+      <a href="index.html" class="back-btn">← Back to Home</a>
 
-  <!-- WHO WE ARE -->
-  <section class="section split">
-    <div>
-      <h2>Who We Are</h2>
-      <p>
-        Evalis AI is an independent AI evaluation and data quality service built on
-        human intelligence. We help AI systems perform better by applying real
-        human judgment to data, search results, and AI-generated outputs.
+      <h1>
+        About <span class="highlight">Evalis AI</span>
+      </h1>
+
+      <p class="tagline">
+        Human intelligence powering accurate AI data evaluation, data labeling,
+        and search engine quality assessment.
       </p>
-      <p>
-        Our work focuses on accuracy, relevance, safety, and usefulness —
-        the qualities that automated systems alone cannot reliably measure.
-      </p>
+
     </div>
-    <div>
-      <div class="card">
-        <h3>Human-First Evaluation</h3>
-        <p>
-          Every task is reviewed with contextual understanding, not automated scoring
-          or blind crowdsourcing.
-        </p>
-      </div>
-    </div>
+
+    <footer>
+      © 2025 Evalis AI
+    </footer>
   </section>
-
-  <!-- PHILOSOPHY -->
-  <section class="section">
-    <h2>Our Philosophy</h2>
-    <div class="cards">
-      <div class="card">
-        <h3>No Blind Crowdsourcing</h3>
-        <p>Controlled evaluation with accountability and context awareness.</p>
-      </div>
-      <div class="card">
-        <h3>No Automation-Only Scores</h3>
-        <p>Human insight is essential for relevance and quality judgment.</p>
-      </div>
-      <div class="card">
-        <h3>Confidential & Independent</h3>
-        <p>No subcontracting, no data reuse, no third-party exposure.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- SERVICES -->
-  <section class="section">
-    <h2>What We Do</h2>
-    <div class="cards">
-      <div class="card">
-        <h3>AI Data Evaluation</h3>
-        <p>Assessing AI outputs for correctness, usefulness, and intent alignment.</p>
-      </div>
-      <div class="card">
-        <h3>Data Labeling & Annotation</h3>
-        <p>High-precision labeling for search, NLP, and ML datasets.</p>
-      </div>
-      <div class="card">
-        <h3>Search Engine Evaluation</h3>
-        <p>Relevance testing, intent matching, and side-by-side comparison.</p>
-      </div>
-      <div class="card">
-        <h3>Transcription & Linguistic QA</h3>
-        <p>Speech-to-text quality review and error analysis.</p>
-      </div>
-      <div class="card">
-        <h3>AI Output Safety Review</h3>
-        <p>Detection of hallucinations, bias, and misinformation risks.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- WHY -->
-  <section class="section">
-    <h2>Why Evalis AI</h2>
-    <ul>
-      <li>Human intelligence first, always</li>
-      <li>Independent and confidential workflows</li>
-      <li>Quality-focused, not volume-driven</li>
-      <li>Experience in real search and AI evaluation tasks</li>
-      <li>Language expertise: English, Hindi, Malayalam</li>
-    </ul>
-  </section>
-
-  <!-- CONTACT -->
-  <section class="section">
-    <h2>Contact</h2>
-    <p>Email: <a href="mailto:evalisglobal@gmail.com">evalisglobal@gmail.com</a></p>
-    <p>WhatsApp: +91 95448 42260</p>
-    <p>
-      LinkedIn:
-      <a href="https://www.linkedin.com/company/evalis-ai/" target="_blank">Evalis AI</a>
-    </p>
-    <p>
-      Facebook:
-      <a href="https://www.facebook.com/profile.php?id=61585377735411" target="_blank">Evalis AI</a>
-    </p>
-  </section>
-
-</div>
-
-<footer>
-  © 2025 Evalis AI • Human-Led AI Evaluation Services
-</footer>
 
 </body>
 </html>
