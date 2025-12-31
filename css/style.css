@@ -1,284 +1,79 @@
-/* ===============================
-   GLOBAL RESET & BASE
-================================ */
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+.contributor-section {
+  max-width: 900px;
+  margin: 80px auto;
+  padding: 40px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 18px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
-  background: radial-gradient(circle at top, #0f172a, #020617);
-  color: #e5e7eb;
-  line-height: 1.6;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-/* ===============================
-   HEADER & NAV
-================================ */
-
-.site-header {
-  background: linear-gradient(90deg, #2563eb, #4f8cff);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-.nav-container {
-  max-width: 1200px;
-  margin: auto;
-  padding: 14px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.logo {
-  height: 46px;
-}
-
-nav {
-  display: flex;
-  gap: 20px;
-}
-
-nav a {
-  color: #fff;
-  font-weight: 500;
-  font-size: 15px;
-  opacity: 0.9;
-}
-
-nav a:hover,
-nav a.active {
-  opacity: 1;
-  text-decoration: underline;
-}
-
-.menu-toggle {
-  display: none;
-  font-size: 22px;
-  background: none;
-  border: none;
-  color: #fff;
-}
-
-/* ===============================
-   HERO
-================================ */
-
-.hero {
+.contributor-section h2 {
   text-align: center;
-  padding: 110px 20px 90px;
-  background: linear-gradient(180deg, #2563eb, #1e40af);
+  font-size: 32px;
+  margin-bottom: 10px;
 }
 
-.hero h1 {
-  font-size: 42px;
-  margin-bottom: 16px;
+.contributor-section .subtext {
+  text-align: center;
+  color: #bfc7d5;
+  margin-bottom: 30px;
+  font-size: 15px;
 }
 
-.hero p {
-  max-width: 720px;
-  margin: auto;
-  font-size: 18px;
-  opacity: 0.95;
-}
-
-.hero-actions {
-  margin-top: 30px;
+.contributor-form {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-row {
+  display: flex;
   gap: 16px;
   flex-wrap: wrap;
 }
 
-/* ===============================
-   BUTTONS
-================================ */
-
-.btn-primary {
-  background: #020617;
-  color: #fff;
-  padding: 14px 26px;
-  border-radius: 30px;
-  font-weight: 600;
-}
-
-.btn-primary:hover {
-  background: #000;
-}
-
-.btn-outline {
-  border: 2px solid #fff;
-  color: #fff;
-  padding: 12px 26px;
-  border-radius: 30px;
-  font-weight: 600;
-}
-
-.btn-outline:hover {
-  background: rgba(255,255,255,0.15);
-}
-
-/* ===============================
-   TRUST STRIP
-================================ */
-
-.trust-strip {
-  background: linear-gradient(90deg, #1a3cff, #4f8cff);
-  color: #fff;
-  text-align: center;
-  padding: 14px;
-  font-size: 14px;
-}
-
-/* ===============================
-   SECTIONS
-================================ */
-
-section {
-  padding: 80px 20px;
-}
-
-.section-alt {
-  background: linear-gradient(180deg, #020617, #0f172a);
-}
-
-.container {
-  max-width: 1100px;
-  margin: auto;
-}
-
-h2 {
-  text-align: center;
-  font-size: 32px;
-  margin-bottom: 14px;
-}
-
-section p {
-  text-align: center;
-  max-width: 700px;
-  margin: auto auto 50px;
-  opacity: 0.9;
-}
-
-/* ===============================
-   GRID & CARDS
-================================ */
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 24px;
-}
-
-.card {
-  background: rgba(255,255,255,0.05);
-  border-radius: 18px;
-  padding: 28px;
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.04),
-    0 20px 50px rgba(0,0,0,0.6);
-}
-
-.card h3 {
-  margin-bottom: 10px;
-  font-size: 18px;
-}
-
-.card p {
-  text-align: left;
-  font-size: 14px;
-  opacity: 0.9;
-}
-
-/* ===============================
-   CONTRIBUTOR SECTION
-================================ */
-
-#contribute {
-  text-align: center;
-}
-
-#contribute h2 {
-  margin-bottom: 12px;
-}
-
-/* ===============================
-   FORM BOX (GOOGLE FORM FIX)
-================================ */
-
-.form-box {
-  background: linear-gradient(180deg, #0f172a, #020617);
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.05),
-    0 30px 80px rgba(0,0,0,0.7);
-}
-
-.form-box h3 {
-  text-align: center;
-  margin-bottom: 8px;
-}
-
-.form-box p {
-  margin-bottom: 20px;
-}
-
-.form-box iframe {
+.contributor-form input,
+.contributor-form select,
+.contributor-form textarea {
   width: 100%;
-  min-height: 760px;
-  border: none;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(0,0,0,0.4);
+  color: #fff;
+  font-size: 15px;
+}
+
+.contributor-form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.contributor-form input::placeholder,
+.contributor-form textarea::placeholder {
+  color: #9aa4b2;
+}
+
+.contributor-form button {
+  margin-top: 10px;
+  padding: 16px;
   border-radius: 14px;
-  background: #fff;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #5b5bff, #7c7cff);
+  cursor: pointer;
 }
 
-/* ===============================
-   FOOTER
-================================ */
+.contributor-form button:hover {
+  opacity: 0.9;
+}
 
-footer {
-  background: #020617;
-  color: #94a3b8;
+.contributor-form .note {
   text-align: center;
-  padding: 30px;
   font-size: 13px;
-}
-
-/* ===============================
-   RESPONSIVE
-================================ */
-
-@media (max-width: 768px) {
-  nav {
-    display: none;
-    flex-direction: column;
-    background: #1e40af;
-    position: absolute;
-    top: 64px;
-    right: 0;
-    width: 100%;
-    padding: 20px;
-  }
-
-  .menu-toggle {
-    display: block;
-  }
-
-  .hero h1 {
-    font-size: 32px;
-  }
+  color: #9aa4b2;
+  margin-top: 10px;
 }
