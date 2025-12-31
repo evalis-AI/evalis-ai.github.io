@@ -1,147 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Evalis AI | Human-Led AI Data Services</title>
+<meta charset="UTF-8">
+<title>Evalis AI | Human-Led AI Data Services</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Evalis AI provides human-led AI data evaluation, data labeling, search relevance, and language quality services.">
 
-  <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="css/style.css">
+<style>
+:root {
+  --primary:#5b5bff;
+  --secondary:#7c7cff;
+  --bg:#060a18;
+  --card:rgba(255,255,255,0.05);
+  --border:rgba(255,255,255,0.12);
+  --text:#e5e7eb;
+  --muted:#9aa4b2;
+}
+
+* { box-sizing:border-box; margin:0; padding:0; }
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  background: radial-gradient(circle at top, #0b1230, #050814);
+  color:var(--text);
+  line-height:1.6;
+}
+
+/* NAV */
+nav {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 28px;
+  background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(12px);
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+nav .logo {
+  font-size:20px;
+  font-weight:700;
+}
+
+nav a {
+  color:#c7d2fe;
+  text-decoration:none;
+  margin-left:18px;
+  font-size:14px;
+}
+
+nav a:hover { color:#fff; }
+
+/* HERO */
+.hero {
+  padding:120px 20px 90px;
+  text-align:center;
+  background:
+    linear-gradient(rgba(5,8,20,.85), rgba(5,8,20,.95)),
+    url("cover.png") center/cover no-repeat;
+}
+
+.hero h1 {
+  font-size:44px;
+  margin-bottom:14px;
+}
+
+.hero p {
+  max-width:850px;
+  margin:0 auto 28px;
+  color:var(--muted);
+  font-size:17px;
+}
+
+.hero a {
+  display:inline-block;
+  padding:14px 26px;
+  border-radius:14px;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
+}
+
+/* SECTIONS */
+section {
+  max-width:1100px;
+  margin:80px auto;
+  padding:0 20px;
+}
+
+h2 {
+  text-align:center;
+  font-size:34px;
+  margin-bottom:40px;
+}
+
+/* CARDS */
+.grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:26px;
+}
+
+.card {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:28px;
+}
+
+.card h3 {
+  margin-bottom:10px;
+  font-size:20px;
+}
+
+.card p {
+  color:var(--muted);
+  font-size:15px;
+}
+
+/* CTA */
+.cta {
+  text-align:center;
+  margin-top:40px;
+}
+
+.cta a {
+  padding:14px 24px;
+  border-radius:14px;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
+}
+
+/* FOOTER */
+footer {
+  text-align:center;
+  padding:30px 15px;
+  font-size:13px;
+  color:var(--muted);
+  border-top:1px solid var(--border);
+}
+</style>
 </head>
+
 <body>
 
-<!-- ================= HEADER ================= -->
-<header class="site-header">
-  <div class="nav-container">
-    <img src="logo.png" alt="Evalis AI Logo" class="logo">
-
-    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-
-    <nav id="nav">
-      <a href="index.html" class="active">Home</a>
-      <a href="services.html">Services</a>
-      <a href="clients.html">Clients</a>
-      <a href="careers.html">Careers</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </nav>
+<nav>
+  <div class="logo">Evalis AI</div>
+  <div>
+    <a href="index.html">Home</a>
+    <a href="services.html">Services</a>
+    <a href="about.html">About</a>
+    <a href="careers.html">Contributors</a>
+    <a href="contact.html">Contact</a>
   </div>
-</header>
+</nav>
 
-<!-- ================= HERO ================= -->
 <section class="hero">
   <h1>Human-Led AI Data Services</h1>
   <p>
-    High-quality evaluation, data labeling, and validation for AI systems at scale.
-    Trusted human intelligence powering responsible AI.
+    Independent human intelligence powering AI systems through
+    data evaluation, data labeling, search relevance, and language quality review.
   </p>
-
-  <div class="hero-actions">
-    <a href="services.html" class="btn-primary">Explore Services</a>
-    <a href="#contribute" class="btn-outline">Join as Contributor</a>
-  </div>
+  <a href="services.html">Explore Services</a>
 </section>
 
-<!-- ================= TRUST STRIP ================= -->
-<section class="trust-strip">
-  <p>Supporting AI platforms across search, e-commerce, healthcare, fintech, and generative AI</p>
-</section>
-
-<!-- ================= WHY EVALIS ================= -->
 <section>
-  <div class="container">
-    <h2>Why Evalis AI</h2>
-
-    <div class="grid">
-      <div class="card">
-        <h3>Human-in-the-Loop Quality</h3>
-        <p>Expert human judgment to evaluate accuracy, relevance, safety, and bias in AI outputs.</p>
-      </div>
-
-      <div class="card">
-        <h3>Structured Evaluation</h3>
-        <p>Clear guidelines, calibrated raters, and audit-ready workflows.</p>
-      </div>
-
-      <div class="card">
-        <h3>Global Workforce</h3>
-        <p>Skilled contributors across regions, languages, and domains.</p>
-      </div>
-
-      <div class="card">
-        <h3>Scalable & Secure</h3>
-        <p>Designed to support pilot programs through enterprise-scale deployments.</p>
-      </div>
+  <h2>Why Evalis AI</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>Human-in-the-Loop</h3>
+      <p>Expert human judgment for accuracy, relevance, safety, and bias control.</p>
+    </div>
+    <div class="card">
+      <h3>Structured Evaluation</h3>
+      <p>Clear guidelines, calibrated reviewers, and audit-ready workflows.</p>
+    </div>
+    <div class="card">
+      <h3>Independent & Secure</h3>
+      <p>No crowdsourcing. No resale. Confidential and project-specific work.</p>
+    </div>
+    <div class="card">
+      <h3>Scalable Delivery</h3>
+      <p>From pilot programs to large-scale AI deployments.</p>
     </div>
   </div>
 </section>
 
-<!-- ================= SERVICES SNAPSHOT ================= -->
-<section class="section-alt">
-  <div class="container">
-    <h2>Our Core Services</h2>
-
-    <div class="grid">
-      <div class="card">
-        <h3>AI Evaluation</h3>
-        <p>Model accuracy, hallucination detection, relevance scoring, and safety checks.</p>
-      </div>
-
-      <div class="card">
-        <h3>Data Labeling</h3>
-        <p>High-quality text, image, audio, and video annotation.</p>
-      </div>
-
-      <div class="card">
-        <h3>Search Relevance</h3>
-        <p>Query intent analysis, ranking evaluation, and SERP quality review.</p>
-      </div>
-
-      <div class="card">
-        <h3>Language & Trust</h3>
-        <p>Multilingual review, toxicity detection, and content moderation.</p>
-      </div>
+<section>
+  <h2>Core Services</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>AI Output Evaluation</h3>
+      <p>Model accuracy, hallucination detection, and safety checks.</p>
+    </div>
+    <div class="card">
+      <h3>Data Labeling</h3>
+      <p>High-quality text, image, audio, and video annotation.</p>
+    </div>
+    <div class="card">
+      <h3>Search Relevance</h3>
+      <p>Query intent analysis, ranking evaluation, and SERP review.</p>
+    </div>
+    <div class="card">
+      <h3>Language & Trust</h3>
+      <p>Multilingual review, toxicity detection, and content moderation.</p>
     </div>
   </div>
-</section>
 
-<!-- ================= CONTRIBUTOR CTA ================= -->
-<section id="contribute">
-  <div class="container">
-    <h2>Join Our Global Contributor Network</h2>
-    <p>
-      Work remotely on flexible, skill-based AI projects.
-      Evaluators, annotators, raters, and language specialists are welcome.
-    </p>
+  <div class="cta">
+    <a href="careers.html">Join as a Contributor</a>
   </div>
 </section>
 
-<!-- ================= FORM (POLISHED) ================= -->
-<section class="section-alt">
-  <div class="container">
-    <div class="form-box">
-      <h3>Contributor Registration</h3>
-      <p>Apply once. Get matched to projects when your skills fit.</p>
-
-      <iframe
-        src="https://docs.google.com/forms/d/e/1FAIpQLSfyHK0Dt4zxeQszuFJacab0wqrMVY7ipYcnSL6UcJnpI6vHsg/viewform?embedded=true"
-        loading="lazy">
-      </iframe>
-    </div>
-  </div>
-</section>
-
-<!-- ================= FOOTER ================= -->
 <footer>
-  © 2025 Evalis AI · Human-Led AI Data Services
+© 2025 Evalis AI · Human-Led AI Data Services  
 </footer>
-
-<script>
-  function toggleMenu() {
-    const nav = document.getElementById("nav");
-    nav.style.display = nav.style.display === "flex" ? "none" : "flex";
-  }
-</script>
 
 </body>
 </html>
