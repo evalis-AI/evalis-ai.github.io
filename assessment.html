@@ -4,66 +4,59 @@
     <meta charset="UTF-8">
     <title>AI Readiness Assessment | Evalis AI</title>
     <style>
-        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: white; text-align: center; padding: 50px; }
-        .quiz-container { max-width: 600px; margin: auto; background: #111; padding: 30px; border-radius: 15px; border: 1px solid #333; }
-        .question { display: none; margin-bottom: 20px; }
-        .question.active { display: block; }
-        button { background: #007bff; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px; }
-        .option { display: block; background: #222; margin: 10px 0; padding: 15px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
-        .option:hover { background: #333; border-color: #007bff; }
-        #result { display: none; font-size: 20px; color: #00ffcc; }
+        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .quiz-card { background: #111; padding: 40px; border-radius: 20px; border: 1px solid #333; max-width: 500px; width: 90%; text-align: center; }
+        .q-box { display: none; }
+        .q-box.active { display: block; }
+        .option { display: block; background: #1a1a1a; padding: 15px; margin: 10px 0; border-radius: 10px; cursor: pointer; border: 1px solid #222; transition: 0.2s; }
+        .option:hover { border-color: #007bff; background: #222; }
+        #res-box { display: none; }
+        .btn-call { background: #007bff; color: white; padding: 15px 30px; border-radius: 5px; text-decoration: none; display: inline-block; margin-top: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="quiz-container">
-    <h2>AI Readiness Assessment</h2>
-    <p>See if your data is ready for the next level.</p>
-
-    <div class="question active" id="q1">
-        <p>1. How would you rate your current data cleanliness?</p>
-        <div class="option" onclick="next(1, 1)">Siloed / Messy</div>
-        <div class="option" onclick="next(1, 3)">Partially Centralized</div>
-        <div class="option" onclick="next(1, 5)">AI-Ready / Labeled</div>
+<div class="quiz-card">
+    <div id="q1" class="q-box active">
+        <h2>How clean is your data?</h2>
+        <div class="option" onclick="move(1, 20)">Siloed / Unorganized</div>
+        <div class="option" onclick="move(1, 60)">Partially Labeled</div>
+        <div class="option" onclick="move(1, 100)">Fully Ready for Training</div>
     </div>
 
-    <div class="question" id="q2">
-        <p>2. Do you have a "Human-in-the-Loop" for your AI outputs?</p>
-        <div class="option" onclick="next(2, 1)">No, we trust the AI</div>
-        <div class="option" onclick="next(2, 3)">Sometimes, manually</div>
-        <div class="option" onclick="next(2, 5)">Yes, systematic human review</div>
+    <div id="q2" class="q-box">
+        <h2>Do humans audit your AI?</h2>
+        <div class="option" onclick="move(2, 0)">No, it's fully automated</div>
+        <div class="option" onclick="move(2, 50)">Occasionally</div>
+        <div class="option" onclick="move(2, 100)">Yes, systematic review</div>
     </div>
 
-    <div id="result">
-        <h3>Your Maturity Score: <span id="score">0</span>%</h3>
+    <div id="res-box">
+        <h2 style="color: #007bff;">Your Score: <span id="final-score">0</span>%</h2>
         <p id="feedback"></p>
-        <button onclick="window.location.href='index.html#contact'">Book a Strategy Call</button>
+        <p>Your current path has hidden risks. Let's fix them.</p>
+        <a href="index.html#contact" class="btn-call">Book a Free Data Audit</a>
     </div>
 </div>
 
 <script>
-    let totalScore = 0;
-    function next(qNum, points) {
-        totalScore += points;
-        document.getElementById('q' + qNum).classList.remove('active');
-        let nextQ = document.getElementById('q' + (qNum + 1));
-        if (nextQ) {
-            nextQ.classList.add('active');
-        } else {
-            showResult();
-        }
+    let score = 0;
+    function move(current, points) {
+        score += points;
+        document.getElementById('q' + current).classList.remove('active');
+        let next = document.getElementById('q' + (current + 1));
+        if (next) { next.classList.add('active'); } 
+        else { showResults(); }
     }
-
-    function showResult() {
-        document.getElementById('result').style.display = 'block';
-        let percentage = (totalScore / 10) * 100; // Adjust based on total possible points
-        document.getElementById('score').innerText = percentage;
-        if(percentage < 50) {
-            document.getElementById('feedback').innerText = "You are in the 'Explorer' phase. You need a data strategy before scaling.";
-        } else {
-            document.getElementById('feedback').innerText = "You are 'AI-Competent'. Evalis AI can help you reach 'Market Leader' status.";
-        }
+    function showResults() {
+        document.getElementById('res-box').style.display = 'block';
+        let avg = score / 2;
+        document.getElementById('final-score').innerText = avg;
+        document.getElementById('feedback').innerText = avg < 70 ? 
+            "Your AI model is at high risk of hallucinating." : 
+            "You have a strong foundation, but need optimization.";
     }
 </script>
 </body>
 </html>
+
