@@ -3,17 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evalis AI | Human-in-the-Loop Intelligence</title>
+    
+    <title>Evalis AI | Human-Led AI Data Services</title>
+    <meta name="description" content="Evalis AI provides human-led AI data evaluation, data labeling, search relevance, and language quality services.">
+    <meta name="google-site-verification" content="YOUR_KEY_HERE" />
+
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --bg: #02040a;
-            --accent: #6366f1;
-            --accent-glow: rgba(99, 102, 241, 0.3);
-            --card-bg: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.08);
-            --text-high: #ffffff;
-            --text-low: #94a3b8;
+            --primary: #5b5bff;
+            --secondary: #7c7cff;
+            --bg: #060a18;
+            --card: rgba(255, 255, 255, 0.04);
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #e5e7eb;
+            --muted: #9aa4b2;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -21,176 +26,223 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg);
-            color: var(--text-high);
+            color: var(--text);
             line-height: 1.6;
             overflow-x: hidden;
         }
 
-        /* Animated Mesh Background */
-        .mesh {
+        /* --- MODERN ANIMATED BACKGROUND --- */
+        .mesh-bg {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: 
-                radial-gradient(circle at 10% 10%, var(--accent-glow) 0%, transparent 40%),
-                radial-gradient(circle at 90% 90%, rgba(168, 85, 247, 0.2) 0%, transparent 40%);
             z-index: -1;
-            filter: blur(80px);
+            background: 
+                radial-gradient(circle at 15% 15%, rgba(91, 91, 255, 0.15) 0%, transparent 35%),
+                radial-gradient(circle at 85% 85%, rgba(124, 124, 255, 0.1) 0%, transparent 35%);
         }
 
-        /* Navigation Upgrade */
+        /* --- NAVIGATION (RESTORED ALL TABS) --- */
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.5rem 8%;
-            backdrop-filter: blur(20px);
+            padding: 1.2rem 8%;
+            background: rgba(6, 10, 24, 0.8);
+            backdrop-filter: blur(15px);
             border-bottom: 1px solid var(--border);
             position: sticky;
             top: 0;
             z-index: 1000;
         }
 
-        .logo { font-weight: 800; font-size: 1.4rem; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; }
-        .logo-icon { width: 24px; height: 24px; background: var(--accent); border-radius: 6px; rotate: 45deg; }
+        .logo-container { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-img { height: 32px; width: auto; } /* Adjust height for your actual logo */
+        .logo-text { font-weight: 800; font-size: 1.3rem; color: #fff; letter-spacing: -0.5px; }
 
-        .nav-links { display: flex; gap: 2rem; }
-        .nav-links a { text-decoration: none; color: var(--text-low); font-size: 0.9rem; transition: 0.3s; font-weight: 500; }
-        .nav-links a:hover { color: var(--accent); }
+        .nav-links { display: flex; gap: 1.8rem; }
+        .nav-links a { text-decoration: none; color: var(--muted); font-size: 0.9rem; transition: 0.3s; font-weight: 500; }
+        .nav-links a:hover { color: #fff; }
 
-        /* Hero Section - High Impact */
+        /* --- HERO (RESTORED CONTENT) --- */
         .hero {
-            padding: 120px 8% 80px;
+            padding: 140px 8% 100px;
             text-align: center;
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
-        }
-
-        .hero-tag {
-            display: inline-block;
-            padding: 6px 14px;
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid var(--accent);
-            border-radius: 100px;
-            color: var(--accent);
-            font-size: 0.75rem;
-            font-weight: 700;
-            margin-bottom: 2rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            background: url("cover.png") center/contain no-repeat; /* Integrates your cover image subtly */
         }
 
         h1 {
-            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-size: clamp(2.5rem, 5vw, 4rem);
             font-weight: 800;
             line-height: 1.1;
-            background: linear-gradient(180deg, #fff 0%, #64748b 100%);
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to bottom, #fff 40%, var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 1.5rem;
         }
 
         .hero p {
-            font-size: 1.25rem;
-            color: var(--text-low);
-            max-width: 700px;
-            margin: 0 auto 3rem;
+            font-size: 1.15rem;
+            color: var(--muted);
+            max-width: 750px;
+            margin: 0 auto 2.5rem;
         }
 
-        .cta-group { display: flex; gap: 1rem; justify-content: center; }
-        
         .btn {
-            padding: 16px 32px;
+            display: inline-block;
+            padding: 14px 28px;
             border-radius: 12px;
-            font-weight: 600;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
             text-decoration: none;
+            font-weight: 600;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(91, 91, 255, 0.2);
+        }
+
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(91, 91, 255, 0.4); }
+
+        /* --- SECTIONS --- */
+        section { padding: 80px 8%; max-width: 1200px; margin: 0 auto; }
+        h2 { text-align: center; font-size: 2.2rem; margin-bottom: 3rem; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 2.5rem;
+            border-radius: 20px;
             transition: 0.4s;
         }
 
-        .btn-primary { background: var(--accent); color: white; box-shadow: 0 10px 20px var(--accent-glow); }
-        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 30px var(--accent-glow); }
-
-        /* Services Grid - Modern Asymmetry */
-        .section-header { text-align: center; padding: 100px 8% 50px; }
-        .section-header h2 { font-size: 2.5rem; }
-
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            padding: 0 8% 100px;
+        .card:hover {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.07);
+            transform: scale(1.02);
         }
 
-        .service-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            padding: 40px;
-            border-radius: 24px;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
+        .card h3 { margin-bottom: 0.8rem; font-size: 1.3rem; }
+        .card p { color: var(--muted); font-size: 0.95rem; }
+
+        /* --- ANIMATIONS --- */
+        .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        footer {
+            text-align: center;
+            padding: 40px 8%;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 0.85rem;
         }
 
-        .service-card:hover {
-            border-color: var(--accent);
-            background: rgba(255,255,255,0.05);
-            transform: translateY(-10px) scale(1.02);
-        }
-
-        .service-card h3 { font-size: 1.5rem; margin-bottom: 1rem; }
-        .service-card p { color: var(--text-low); font-size: 0.95rem; }
-
-        /* Responsive Mobile Tweak */
+        /* Mobile Adjustments */
         @media (max-width: 768px) {
-            .nav-links { display: none; }
-            h1 { font-size: 3rem; }
+            nav { flex-direction: column; gap: 15px; text-align: center; }
+            .nav-links { gap: 1rem; flex-wrap: wrap; justify-content: center; }
+            h1 { font-size: 2.5rem; }
         }
     </style>
 </head>
 <body>
 
-<div class="mesh"></div>
+<div class="mesh-bg"></div>
 
 <nav>
-    <div class="logo">
-        <div class="logo-icon"></div>
-        EVALIS AI
-    </div>
+    <a href="index.html" class="logo-container">
+        <img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'"> 
+        <span class="logo-text">Evalis AI</span>
+    </a>
     <div class="nav-links">
-        <a href="#services">Services</a>
-        <a href="#about">Our Approach</a>
-        <a href="#contributors">Contributors</a>
-        <a href="#contact">Contact</a>
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="about.html">About</a>
+        <a href="careers.html">Contributors</a>
+        <a href="contact.html">Contact</a>
     </div>
 </nav>
 
-<section class="hero">
-    <div class="hero-tag">The Human Feedback Layer</div>
-    <h1>Refining AI with Human Precision.</h1>
-    <p>We provide the critical data evaluation and reinforcement learning human loops (RLHF) required to build safe, accurate, and world-class AI models.</p>
-    <div class="cta-group">
-        <a href="#" class="btn btn-primary">Start a Project</a>
-        <a href="#" class="btn" style="border: 1px solid var(--border); color: #fff;">Join as Contributor</a>
+<section class="hero reveal">
+    <h1>Human-Led AI Data Services</h1>
+    <p>
+        Independent human intelligence powering AI systems through
+        data evaluation, data labeling, search relevance, and language quality review.
+    </p>
+    <a href="services.html" class="btn">Explore Services</a>
+</section>
+
+<section class="reveal">
+    <h2>Why Evalis AI</h2>
+    <div class="grid">
+        <div class="card">
+            <h3>Human-in-the-Loop</h3>
+            <p>Expert human judgment for accuracy, relevance, safety, and bias control.</p>
+        </div>
+        <div class="card">
+            <h3>Structured Evaluation</h3>
+            <p>Clear guidelines, calibrated reviewers, and audit-ready workflows.</p>
+        </div>
+        <div class="card">
+            <h3>Independent & Secure</h3>
+            <p>No crowdsourcing. No resale. Confidential and project-specific work.</p>
+        </div>
+        <div class="card">
+            <h3>Scalable Delivery</h3>
+            <p>From pilot programs to large-scale AI deployments.</p>
+        </div>
     </div>
 </section>
 
-<div class="section-header">
-    <h2>Enterprise Data Solutions</h2>
-</div>
-
-<section class="services-grid">
-    <div class="service-card">
-        <h3>Model Evaluation</h3>
-        <p>Rigorous human-led testing for hallucination detection, safety alignment, and response quality scoring.</p>
+<section class="reveal">
+    <h2>Core Services</h2>
+    <div class="grid">
+        <div class="card">
+            <h3>AI Output Evaluation</h3>
+            <p>Model accuracy, hallucination detection, and safety checks.</p>
+        </div>
+        <div class="card">
+            <h3>Data Labeling</h3>
+            <p>High-quality text, image, audio, and video annotation.</p>
+        </div>
+        <div class="card">
+            <h3>Search Relevance</h3>
+            <p>Query intent analysis, ranking evaluation, and SERP review.</p>
+        </div>
+        <div class="card">
+            <h3>Language & Trust</h3>
+            <p>Multilingual review, toxicity detection, and content moderation.</p>
+        </div>
     </div>
-    <div class="service-card">
-        <h3>Multimodal Labeling</h3>
-        <p>High-fidelity annotation for text, audio, and visual datasets to train your next-generation models.</p>
-    </div>
-    <div class="service-card">
-        <h3>RAG Optimization</h3>
-        <p>Improving search relevance and information retrieval through expert intent analysis and ranking.</p>
+    <div style="text-align:center; margin-top:50px;">
+        <a href="careers.html" class="btn">Join as a Contributor</a>
     </div>
 </section>
+
+<footer>
+    © 2025 Evalis AI · Human-Led AI Data Services
+</footer>
+
+<script>
+    // Scroll Reveal Animation Script
+    const reveal = () => {
+        const reveals = document.querySelectorAll(".reveal");
+        reveals.forEach(el => {
+            const windowHeight = window.innerHeight;
+            const elementTop = el.getBoundingClientRect().top;
+            if (elementTop < windowHeight - 100) {
+                el.classList.add("active");
+            }
+        });
+    };
+    window.addEventListener("scroll", reveal);
+    reveal(); // Initial check
+</script>
 
 </body>
 </html>
