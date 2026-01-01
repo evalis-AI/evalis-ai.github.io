@@ -32,7 +32,6 @@
             overflow-x: hidden;
         }
 
-        /* --- BACKGROUND EFFECTS --- */
         .mesh-bg {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -42,7 +41,6 @@
                 radial-gradient(circle at 90% 90%, rgba(124, 124, 255, 0.08) 0%, transparent 40%);
         }
 
-        /* --- NAVIGATION --- */
         nav {
             display: flex;
             justify-content: space-between;
@@ -51,9 +49,7 @@
             background: rgba(3, 6, 18, 0.85);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            position: sticky; top: 0; z-index: 1000;
         }
 
         .logo-container { display: flex; align-items: center; gap: 12px; text-decoration: none; }
@@ -64,118 +60,26 @@
         .nav-links a { text-decoration: none; color: var(--muted); font-size: 0.9rem; transition: 0.3s; font-weight: 500; }
         .nav-links a:hover { color: var(--secondary); }
 
-        /* Assessment Nav Button */
-        .nav-btn-alt {
-            border: 1px solid var(--primary);
-            padding: 8px 16px;
-            border-radius: 10px;
-            color: #fff !important;
-        }
+        .btn-nav { border: 1px solid var(--primary); padding: 8px 16px; border-radius: 10px; color: #fff !important; }
 
-        /* --- HERO SECTION --- */
-        .hero {
-            padding: 100px 8% 60px;
-            text-align: center;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .hero { padding: 100px 8% 60px; text-align: center; max-width: 1200px; margin: 0 auto; }
+        h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; background: linear-gradient(to bottom, #fff 50%, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { font-size: 1.2rem; color: var(--muted); margin-bottom: 2.5rem; max-width: 800px; margin-left: auto; margin-right: auto; }
 
-        .hero-content {
-            max-width: 850px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 2;
-        }
-
-        h1 {
-            font-size: clamp(2.5rem, 6vw, 4.5rem);
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(to bottom, #fff 50%, #6366f1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            color: var(--muted);
-            margin-bottom: 2.5rem;
-        }
-
-        .btn-group {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 16px 36px;
-            border-radius: 14px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: #fff;
-            text-decoration: none;
-            font-weight: 600;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .btn-secondary {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
-        }
-
+        .btn { display: inline-block; padding: 16px 36px; border-radius: 14px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; text-decoration: none; font-weight: 600; transition: 0.4s; }
+        .btn-alt { background: rgba(255,255,255,0.05); border: 1px solid var(--border); margin-left: 10px; }
         .btn:hover { transform: translateY(-4px); box-shadow: 0 15px 30px rgba(91, 91, 255, 0.2); }
 
-        .hero-image-frame {
-            margin-top: 60px;
-            position: relative;
-            border-radius: 24px;
-            padding: 10px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
-            border: 1px solid var(--border);
-            box-shadow: 0 40px 100px rgba(0,0,0,0.6);
-            overflow: hidden;
-            line-height: 0;
-        }
+        section { padding: 80px 8%; max-width: 1300px; margin: 0 auto; }
+        h2 { text-align: center; font-size: 2.5rem; margin-bottom: 3rem; }
 
-        .hero-image-frame img {
-            width: 100%;
-            border-radius: 16px;
-            opacity: 0.9;
-        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .card { background: var(--card); border: 1px solid var(--border); padding: 2.5rem; border-radius: 24px; transition: 0.4s; }
+        .card:hover { border-color: var(--primary); transform: translateY(-5px); background: rgba(255, 255, 255, 0.05); }
+        .card h3 { margin-bottom: 1rem; color: #fff; font-size: 1.4rem; }
+        .card p { color: var(--muted); font-size: 0.95rem; }
 
-        /* --- SECTIONS --- */
-        section { padding: 100px 8%; max-width: 1300px; margin: 0 auto; }
-        h2 { text-align: center; font-size: 2.5rem; margin-bottom: 4rem; letter-spacing: -1px; }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-        }
-
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            padding: 3rem;
-            border-radius: 24px;
-            transition: 0.4s;
-        }
-
-        .card:hover {
-            border-color: var(--primary);
-            background: rgba(255, 255, 255, 0.06);
-            transform: translateY(-8px);
-        }
-
-        footer {
-            text-align: center;
-            padding: 60px 8%;
-            border-top: 1px solid var(--border);
-            color: var(--muted);
-        }
+        footer { text-align: center; padding: 50px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; }
 
         .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s ease-out; }
         .reveal.active { opacity: 1; transform: translateY(0); }
@@ -192,63 +96,56 @@
     </a>
     <div class="nav-links">
         <a href="index.html">Home</a>
-        <a href="assessment.html" class="nav-btn-alt">Take Assessment</a>
+        <a href="assessment.html" class="btn-nav">AI Assessment</a>
         <a href="services.html">Services</a>
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
     </div>
 </nav>
 
-<section class="hero reveal">
-    <div class="hero-content">
-        <h1>Human-Led AI Data Services</h1>
-        <p>Independent human intelligence powering AI systems through data evaluation, labeling, search relevance, and language quality review.</p>
-        <div class="btn-group">
-            <a href="services.html" class="btn">Explore Services</a>
-            <a href="assessment.html" class="btn btn-secondary">AI Readiness Assessment</a>
-        </div>
+<header class="hero reveal">
+    <h1>Human-Led AI Data Services</h1>
+    <p>Empowering global AI systems through independent human intelligence, high-fidelity labeling, and linguistic expertise.</p>
+    <div style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap;">
+        <a href="services.html" class="btn">Explore Services</a>
+        <a href="assessment.html" class="btn btn-alt">AI Readiness Test</a>
     </div>
-
-    <div class="hero-image-frame">
-        <img src="cover.png" alt="Evalis AI Interface">
-    </div>
-</section>
+</header>
 
 <section class="reveal">
-    <h2>Our Expertise</h2>
+    <h2>Core Services</h2>
     <div class="grid">
         <div class="card">
-            <h3>Human-in-the-Loop</h3>
-            <p>High-precision human feedback to eliminate AI hallucinations and bias.</p>
+            <h3>AI Output Evaluation</h3>
+            <p>Detection of hallucinations, safety audits, and fact-checking to ensure model reliability.</p>
         </div>
         <div class="card">
-            <h3>Structured Data</h3>
-            <p>Clean, labeled datasets that serve as the ground truth for your models.</p>
+            <h3>Data Labeling</h3>
+            <p>Precision annotation for text, image, and video to provide high-quality training data.</p>
         </div>
         <div class="card">
-            <h3>Global Scalability</h3>
-            <p>Multilingual evaluation and cultural nuance for worldwide deployment.</p>
+            <h3>Search Relevance</h3>
+            <p>Expert analysis of query intent and ranking to optimize retrieval-augmented generation (RAG).</p>
+        </div>
+        <div class="card">
+            <h3>Translation & Localization</h3>
+            <p>Multilingual evaluation and cultural adaptation to help AI models reach global audiences accurately.</p>
         </div>
     </div>
 </section>
 
 <footer>
-    © 2026 Evalis AI · All Rights Reserved
+    © 2026 Evalis AI · High-Fidelity Data for the AI Era
 </footer>
 
 <script>
     const reveal = () => {
-        const reveals = document.querySelectorAll(".reveal");
-        reveals.forEach(el => {
-            const windowHeight = window.innerHeight;
-            const elementTop = el.getBoundingClientRect().top;
-            if (elementTop < windowHeight - 50) {
-                el.classList.add("active");
-            }
+        document.querySelectorAll(".reveal").forEach(el => {
+            if (el.getBoundingClientRect().top < window.innerHeight - 50) el.classList.add("active");
         });
     };
     window.addEventListener("scroll", reveal);
-    reveal(); 
+    reveal();
 </script>
 
 </body>
