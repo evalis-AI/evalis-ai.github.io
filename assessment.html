@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Readiness Assessment | Evalis AI</title>
     <style>
         body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
@@ -35,7 +36,7 @@
         <h2 style="color: #007bff;">Your Score: <span id="final-score">0</span>%</h2>
         <p id="feedback"></p>
         <p>Your current path has hidden risks. Let's fix them.</p>
-        <a href="index.html#contact" class="btn-call">Book a Free Data Audit</a>
+        <a href="index.html#contact" class="btn-call">Back to Home</a>
     </div>
 </div>
 
@@ -53,8 +54,8 @@
         let avg = score / 2;
         document.getElementById('final-score').innerText = avg;
         document.getElementById('feedback').innerText = avg < 70 ? 
-            "Your AI model is at high risk of hallucinating." : 
-            "You have a strong foundation, but need optimization.";
+            "Risk Detected: Your model needs human-led verification." : 
+            "Great foundation! Let's optimize your RLHF workflow.";
     }
 </script>
 </body>
