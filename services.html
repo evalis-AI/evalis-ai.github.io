@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detailed Services | Evalis AI</title>
+    <title>Our Services | Evalis AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -26,86 +25,116 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 80px 8%;
+            padding: 60px 5%;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             width: 100%;
         }
 
-        h1 {
+        header {
             text-align: center;
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 50px;
+            margin-bottom: 60px;
         }
 
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+
+        /* Detailed Service Blocks */
         .service-block {
             background: var(--card);
             border: 1px solid var(--border);
             padding: 40px;
             border-radius: 24px;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
+            transition: border-color 0.3s ease;
+        }
+
+        .service-block:hover {
+            border-color: var(--primary);
         }
 
         h3 {
             color: var(--primary);
-            font-size: 1.5rem;
-            margin-bottom: 15px;
+            font-size: 1.6rem;
+            margin-bottom: 20px;
             font-weight: 700;
         }
 
-        p {
+        .service-description {
             color: var(--text);
-            margin-bottom: 15px;
-            font-size: 1rem;
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+            font-weight: 400;
         }
 
         ul {
             list-style: none;
-            padding-left: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
         }
 
         li {
             color: var(--muted);
             font-size: 0.95rem;
-            margin-bottom: 10px;
             display: flex;
             align-items: flex-start;
         }
 
         li::before {
-            content: "•";
+            content: "→";
             color: var(--primary);
+            margin-right: 12px;
             font-weight: bold;
-            display: inline-block;
-            width: 1em;
-            margin-left: 0;
+        }
+
+        .back-nav {
+            margin-top: 40px;
+            text-align: center;
         }
 
         .back-link {
-            display: inline-block;
-            margin-top: 20px;
             color: var(--muted);
             text-decoration: none;
             font-size: 0.9rem;
+            border-bottom: 1px solid transparent;
             transition: 0.3s;
         }
 
         .back-link:hover {
             color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        footer {
+            margin-top: 80px;
+            color: var(--muted);
+            font-size: 0.8rem;
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Detailed Services</h1>
+        <header>
+            <h1>Our Services</h1>
+            <p class="subtitle">Human-led intelligence for accurate, responsible AI systems.</p>
+        </header>
 
         <div class="service-block">
             <h3>AI Translation & Localization</h3>
-            <p>We bridge the gap between machine translation and human-quality communication.</p>
+            <p class="service-description">Bridging the gap between machine translation and human-quality communication.</p>
             <ul>
                 <li>Linguistic Quality Assurance (LQA) for LLM outputs.</li>
                 <li>Cultural nuance auditing for global deployments.</li>
@@ -115,6 +144,7 @@
 
         <div class="service-block">
             <h3>Human-In-the-Loop Evaluation</h3>
+            <p class="service-description">Rigorous human oversight to refine model performance and safety.</p>
             <ul>
                 <li>RLHF (Reinforcement Learning from Human Feedback) data generation.</li>
                 <li>Red-teaming for safety and toxicity detection.</li>
@@ -122,8 +152,25 @@
             </ul>
         </div>
 
-        <a href="index.html" class="back-link">Return to Home</a>
+        <div class="service-block">
+            <h3>Data Labeling & Annotation</h3>
+            <p class="service-description">High-quality multi-modal data annotation by trained contributors.</p>
+            <ul>
+                <li>Text classification and entity recognition.</li>
+                <li>Image and video bounding boxes/segmentation.</li>
+                <li>Audio transcription and sentiment tagging.</li>
+            </ul>
+        </div>
+
+        <div class="back-nav">
+            <a href="index.html" class="back-link">Return to Home</a>
+        </div>
+
+        <footer>
+            © 2025 Evalis AI · Human-Led AI Data Services
+        </footer>
     </div>
 
 </body>
 </html>
+
