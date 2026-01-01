@@ -6,6 +6,7 @@
     
     <title>Evalis AI | Human-Led AI Data Services</title>
     <meta name="description" content="Evalis AI provides human-led AI data evaluation, data labeling, search relevance, and language quality services.">
+    
     <meta name="google-site-verification" content="googlecfa2dfd06c44f49f" />
 
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -31,6 +32,7 @@
             overflow-x: hidden;
         }
 
+        /* --- BACKGROUND EFFECTS --- */
         .mesh-bg {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -40,6 +42,7 @@
                 radial-gradient(circle at 90% 90%, rgba(124, 124, 255, 0.08) 0%, transparent 40%);
         }
 
+        /* --- NAVIGATION --- */
         nav {
             display: flex;
             justify-content: space-between;
@@ -61,8 +64,28 @@
         .nav-links a { text-decoration: none; color: var(--muted); font-size: 0.9rem; transition: 0.3s; font-weight: 500; }
         .nav-links a:hover { color: var(--secondary); }
 
-        .hero { padding: 100px 8% 60px; text-align: center; max-width: 1200px; margin: 0 auto; }
-        .hero-content { max-width: 850px; margin: 0 auto; position: relative; z-index: 2; }
+        /* Assessment Nav Button */
+        .nav-btn-alt {
+            border: 1px solid var(--primary);
+            padding: 8px 16px;
+            border-radius: 10px;
+            color: #fff !important;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            padding: 100px 8% 60px;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero-content {
+            max-width: 850px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
 
         h1 {
             font-size: clamp(2.5rem, 6vw, 4.5rem);
@@ -74,7 +97,36 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .hero p { font-size: 1.2rem; color: var(--muted); margin-bottom: 2.5rem; }
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--muted);
+            margin-bottom: 2.5rem;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 16px 36px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+        }
+
+        .btn:hover { transform: translateY(-4px); box-shadow: 0 15px 30px rgba(91, 91, 255, 0.2); }
 
         .hero-image-frame {
             margin-top: 60px;
@@ -88,43 +140,45 @@
             line-height: 0;
         }
 
-        .hero-image-frame img { width: 100%; border-radius: 16px; opacity: 0.9; }
-
-        .btn {
-            display: inline-block;
-            padding: 16px 36px;
-            border-radius: 14px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: #fff;
-            text-decoration: none;
-            font-weight: 600;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        .hero-image-frame img {
+            width: 100%;
+            border-radius: 16px;
+            opacity: 0.9;
         }
 
-        .btn:hover { transform: translateY(-4px); box-shadow: 0 15px 30px rgba(91, 91, 255, 0.3); }
-        
-        /* Specific Style for the Assessment Button to stand out */
-        .btn-test {
-            background: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            margin-left: 10px;
-        }
-        .btn-test:hover { background: var(--primary); color: white; }
-
+        /* --- SECTIONS --- */
         section { padding: 100px 8%; max-width: 1300px; margin: 0 auto; }
         h2 { text-align: center; font-size: 2.5rem; margin-bottom: 4rem; letter-spacing: -1px; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
-        .card { background: var(--card); border: 1px solid var(--border); padding: 3rem; border-radius: 24px; transition: 0.4s; height: 100%; }
-        .card:hover { border-color: var(--primary); background: rgba(255, 255, 255, 0.06); transform: translateY(-8px); }
-        .card h3 { margin-bottom: 1rem; font-size: 1.4rem; color: #fff; }
-        .card p { color: var(--muted); font-size: 1rem; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
 
-        .reveal { opacity: 0; transform: translateY(40px); transition: 1s cubic-bezier(0.2, 0, 0.2, 1); }
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 3rem;
+            border-radius: 24px;
+            transition: 0.4s;
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-8px);
+        }
+
+        footer {
+            text-align: center;
+            padding: 60px 8%;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+        }
+
+        .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s ease-out; }
         .reveal.active { opacity: 1; transform: translateY(0); }
-
-        footer { text-align: center; padding: 60px 8%; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -133,12 +187,12 @@
 
 <nav>
     <a href="index.html" class="logo-container">
-        <img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'"> 
+        <img src="logo.png" alt="Evalis AI" class="logo-img"> 
         <span class="logo-text">Evalis AI</span>
     </a>
     <div class="nav-links">
         <a href="index.html">Home</a>
-        <a href="assessment.html" style="color: #fff; font-weight: 800; border: 1px solid var(--primary); padding: 5px 12px; border-radius: 8px;">Take Assessment</a>
+        <a href="assessment.html" class="nav-btn-alt">Take Assessment</a>
         <a href="services.html">Services</a>
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
@@ -149,16 +203,38 @@
     <div class="hero-content">
         <h1>Human-Led AI Data Services</h1>
         <p>Independent human intelligence powering AI systems through data evaluation, labeling, search relevance, and language quality review.</p>
-        <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+        <div class="btn-group">
             <a href="services.html" class="btn">Explore Services</a>
-            <a href="assessment.html" class="btn btn-test">AI Readiness Assessment</a>
+            <a href="assessment.html" class="btn btn-secondary">AI Readiness Assessment</a>
         </div>
     </div>
 
     <div class="hero-image-frame">
-        <img src="cover.png" alt="Evalis AI Platform Interface">
+        <img src="cover.png" alt="Evalis AI Interface">
     </div>
 </section>
+
+<section class="reveal">
+    <h2>Our Expertise</h2>
+    <div class="grid">
+        <div class="card">
+            <h3>Human-in-the-Loop</h3>
+            <p>High-precision human feedback to eliminate AI hallucinations and bias.</p>
+        </div>
+        <div class="card">
+            <h3>Structured Data</h3>
+            <p>Clean, labeled datasets that serve as the ground truth for your models.</p>
+        </div>
+        <div class="card">
+            <h3>Global Scalability</h3>
+            <p>Multilingual evaluation and cultural nuance for worldwide deployment.</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    © 2026 Evalis AI · All Rights Reserved
+</footer>
 
 <script>
     const reveal = () => {
@@ -166,7 +242,7 @@
         reveals.forEach(el => {
             const windowHeight = window.innerHeight;
             const elementTop = el.getBoundingClientRect().top;
-            if (elementTop < windowHeight - 100) {
+            if (elementTop < windowHeight - 50) {
                 el.classList.add("active");
             }
         });
