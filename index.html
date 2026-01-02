@@ -57,7 +57,7 @@
         .logo-img { height: 35px; width: auto; }
         .logo-text { font-weight: 800; font-size: 1.4rem; color: #FFF; letter-spacing: -0.5px; }
 
-        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
         .nav-links a { text-decoration: none; color: var(--muted); font-size: 0.9rem; transition: 0.3s; }
         .nav-links a:hover { color: var(--secondary); }
 
@@ -88,12 +88,12 @@
 
         /* Mobile Optimization */
         @media (max-width: 768px) {
-            nav { flex-direction: column; padding: 1rem 5%; gap: 15px; }
-            .nav-links { flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; }
-            .nav-links a { font-size: 0.85rem; }
+            nav { flex-direction: column; padding: 1.5rem 5%; gap: 15px; }
+            .nav-links { flex-wrap: wrap; justify-content: center; gap: 12px; width: 100%; }
+            .nav-links a { font-size: 0.8rem; }
             .hero h1 { font-size: 2.2rem; }
             .btn-alt { margin-left: 0; margin-top: 10px; width: 100%; }
-            .btn { width: 100%; }
+            .btn { width: 100%; text-align: center; }
         }
     </style>
 </head>
@@ -156,7 +156,7 @@
             });
         };
         window.addEventListener("scroll", reveal);
-        reveal(); // Initial check
+        reveal();
     </script>
 </body>
 </html>
