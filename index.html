@@ -48,7 +48,8 @@
         }
 
         .logo-container { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-        .logo-text { font-weight: 800; font-size: 1.5rem; color: #fff !important; }
+        /* Ensures Evalis AI is always visible in white */
+        .logo-text { font-weight: 800; font-size: 1.5rem; color: #ffffff !important; }
 
         .nav-links { display: flex; gap: 1.5rem; align-items: center; }
         .nav-links a { text-decoration: none; color: var(--muted); font-size: 0.9rem; transition: 0.3s; }
@@ -57,20 +58,30 @@
         .btn-nav { border: 1px solid var(--primary); padding: 8px 16px; border-radius: 10px; color: var(--primary) !important; font-weight: 600; }
 
         .hero { padding: 80px 8% 40px; text-align: center; max-width: 1200px; margin: 0 auto; }
-        h1 { font-size: clamp(2.2rem, 6vw, 4rem); font-weight: 800; margin-bottom: 1.5rem; }
+        h1 { font-size: clamp(2.2rem, 6vw, 4rem); font-weight: 800; line-height: 1.2; margin-bottom: 1.5rem; }
         h1 span { color: var(--secondary); }
 
         .hero-banner {
             width: 100%;
             max-width: 900px;
-            margin: 40px auto 0;
+            margin: 40px auto;
             border-radius: 24px;
             overflow: hidden;
             border: 1px solid var(--border);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
         }
         .hero-banner img { width: 100%; display: block; }
 
-        /* Mobile Optimization */
+        section { padding: 60px 8%; max-width: 1300px; margin: 0 auto; }
+        h2 { text-align: center; font-size: 2.5rem; margin-bottom: 3rem; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .card { background: var(--card); border: 1px solid var(--border); padding: 2.5rem; border-radius: 24px; }
+        .card h3 { margin-bottom: 1rem; color: #fff; }
+        .card p { color: var(--muted); }
+
+        footer { text-align: center; padding: 40px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.9rem; }
+
         @media (max-width: 768px) {
             nav { flex-direction: column; padding: 1.5rem 5%; gap: 15px; }
             .nav-links { flex-wrap: wrap; justify-content: center; gap: 12px; width: 100%; }
@@ -103,8 +114,26 @@
         </div>
     </header>
 
+    <section>
+        <h2>Why Evalis AI?</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>Human-in-the-Loop</h3>
+                <p>Expert human judgment for accuracy, relevance, safety, and bias control in AI outputs.</p>
+            </div>
+            <div class="card">
+                <h3>Structured Evaluation</h3>
+                <p>Clear guidelines, calibrated reviewers, and audit-ready workflows for high-quality data.</p>
+            </div>
+            <div class="card">
+                <h3>Independent & Secure</h3>
+                <p>No crowdsourcing. Confidential and project-specific work performed by internal specialists.</p>
+            </div>
+        </div>
+    </section>
+
     <footer>
-        <center>&copy; 2026 Evalis AI - Human-Led AI Data Services</center>
+        &copy; 2026 Evalis AI - Human-Led AI Data Services
     </footer>
 </body>
 </html>
