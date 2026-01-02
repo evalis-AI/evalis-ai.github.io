@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us | Evalis AI</title>
     <link rel="icon" type="image/png" href="favicon-96x96.png">
-    
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
 
     <style>
@@ -26,16 +25,13 @@
             background-color: var(--bg);
             color: var(--text);
             line-height: 1.6;
-            overflow-x: hidden;
         }
 
         .mesh-bg {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
-            background: 
-                radial-gradient(circle at 10% 10%, rgba(91, 139, 255, 0.12) 0%, transparent 40%),
-                radial-gradient(circle at 90% 90%, rgba(124, 124, 255, 0.08) 0%, transparent 40%);
+            background: radial-gradient(circle at 10% 10%, rgba(91, 139, 255, 0.1) 0%, transparent 40%);
         }
 
         nav {
@@ -43,166 +39,143 @@
             justify-content: space-between;
             align-items: center;
             padding: 1.2rem 8%;
-            background: rgba(3, 6, 18, 0.85);
+            background: rgba(5, 6, 18, 0.85);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
             position: sticky;
             top: 0; z-index: 1000;
         }
 
-        .logo-text { font-weight: 800; font-size: 1.4rem; color: #FFF; text-decoration: none; }
-        .nav-links a { margin-left: 2rem; color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: 0.3s; }
-        .nav-links a:hover { color: var(--secondary); }
+        .logo-container { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-img { height: 32px; width: auto; }
+        .logo-text { font-weight: 800; font-size: 1.5rem; color: #ffffff !important; }
 
-        .contact-container {
-            max-width: 1100px;
-            margin: 80px auto;
-            padding: 0 5%;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 40px;
-        }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--muted); font-size: 0.85rem; transition: 0.3s; }
+        .btn-nav { border: 1px solid var(--primary); padding: 8px 16px; border-radius: 10px; color: var(--primary) !important; }
 
-        .contact-header { text-align: center; margin-bottom: 50px; padding-top: 40px; }
-        .contact-header h1 { font-size: 3rem; margin-bottom: 10px; }
+        .container { max-width: 800px; margin: 80px auto; padding: 0 5%; }
+        h1 { font-size: 3rem; font-weight: 800; text-align: center; margin-bottom: 1rem; }
+        .subtitle { text-align: center; color: var(--muted); margin-bottom: 3rem; }
 
-        .glass-card {
+        .contact-card {
             background: var(--card);
-            backdrop-filter: blur(15px);
             border: 1px solid var(--border);
+            padding: 3rem;
             border-radius: 24px;
-            padding: 40px;
         }
 
-        .contact-info h2, .contact-form h2 { margin-bottom: 25px; font-size: 1.5rem; }
-        
-        .info-item { margin-bottom: 25px; }
-        .info-item label { display: block; color: var(--muted); font-size: 0.85rem; margin-bottom: 5px; }
-        .info-item a, .info-item p { 
-            color: #fff; 
-            text-decoration: none; 
-            font-size: 1.1rem; 
-            font-weight: 500; 
-            transition: 0.3s; 
-        }
-        .info-item a:hover { color: var(--primary); }
-
-        /* Social Buttons */
-        .social-grid { display: flex; gap: 15px; margin-top: 30px; }
-        .social-btn {
-            padding: 12px 20px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: 0.3s;
-            text-align: center;
-            flex: 1;
-        }
-        .fb { background: #1877F2; color: white; }
-        .li { background: #0077B5; color: white; }
-        .social-btn:hover { opacity: 0.8; transform: translateY(-3px); }
-
-        /* Form Styling */
-        .form-group { margin-bottom: 20px; }
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; margin-bottom: 0.5rem; color: var(--text); font-weight: 600; font-size: 0.9rem; }
         input, select, textarea {
             width: 100%;
             padding: 12px;
             background: rgba(255,255,255,0.05);
             border: 1px solid var(--border);
-            border-radius: 8px;
-            color: #fff;
+            border-radius: 10px;
+            color: white;
             font-family: inherit;
         }
-        .submit-btn {
+        textarea { height: 120px; resize: none; }
+
+        .btn-submit {
             width: 100%;
-            padding: 15px;
+            padding: 14px;
             background: var(--primary);
             color: white;
             border: none;
             border-radius: 12px;
-            font-weight: 800;
+            font-weight: 700;
             cursor: pointer;
             transition: 0.3s;
         }
-        .submit-btn:hover { background: var(--secondary); transform: scale(1.02); }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(91, 139, 255, 0.3); }
 
-        footer { text-align: center; padding: 50px; color: var(--muted); font-size: 0.8rem; }
+        .social-section {
+            margin-top: 40px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            padding-top: 30px;
+        }
+        .social-links { display: flex; justify-content: center; gap: 20px; margin-top: 15px; }
+        .social-links a { 
+            color: var(--primary); 
+            text-decoration: none; 
+            font-weight: 600; 
+            font-size: 1rem;
+        }
+
+        footer { text-align: center; padding: 40px; color: var(--muted); font-size: 0.8rem; }
+
+        @media (max-width: 768px) {
+            nav { flex-direction: column; padding: 1.5rem 5%; gap: 15px; }
+            .container { margin: 40px auto; }
+            .contact-card { padding: 1.5rem; }
+        }
     </style>
 </head>
 <body>
-
     <div class="mesh-bg"></div>
 
     <nav>
-        <a href="index.html" class="logo-text">Evalis AI</a>
+        <a href="index.html" class="logo-container">
+            <img src="logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+            <span class="logo-text">Evalis AI</span>
+        </a>
         <div class="nav-links">
             <a href="index.html">Home</a>
+            <a href="assessment.html" class="btn-nav">Take Assessment</a>
             <a href="services.html">Services</a>
             <a href="about.html">About</a>
-            <a href="contact.html" style="color: var(--primary);">Contact</a>
+            <a href="contact.html">Contact</a>
+            <a href="careers.html">Contributors</a>
         </div>
     </nav>
 
-    <div class="contact-header">
+    <div class="container">
         <h1>Contact Us</h1>
-        <p style="color: var(--muted);">Let's discuss your AI evaluation or data project</p>
-    </div>
+        <p class="subtitle">Partner with us for high-quality AI data services.</p>
 
-    <main class="contact-container">
-        <div class="glass-card contact-info">
-            <h2>Get in Touch</h2>
-            
-            <div class="info-item">
-                <label>Email</label>
-                <a href="mailto:evalisglobal@gmail.com">evalisglobal@gmail.com</a>
-            </div>
-
-            <div class="info-item">
-                <label>Phone / WhatsApp</label>
-                <a href="https://wa.me/919544842260" target="_blank">+91 95448 42260</a>
-            </div>
-
-            <div class="info-item">
-                <label>Availability</label>
-                <p>Remote - Global Projects</p>
-            </div>
-
-            <div class="social-grid">
-                <a href="https://www.facebook.com/evalisai" target="_blank" class="social-btn fb">Facebook</a>
-                <a href="https://www.linkedin.com/company/evalis-ai" target="_blank" class="social-btn li">LinkedIn</a>
-            </div>
-        </div>
-
-        <div class="glass-card contact-form">
-            <h2>Send a Message</h2>
-            <form action="#">
+        <div class="contact-card">
+            <form action="https://formspree.io/f/xvgzgeol" method="POST">
                 <div class="form-group">
-                    <input type="text" placeholder="Your Name" required>
+                    <label>Full Name</label>
+                    <input type="text" name="name" placeholder="Enter your name" required>
                 </div>
                 <div class="form-group">
-                    <input type="email" placeholder="Email Address" required>
+                    <label>Company Email</label>
+                    <input type="email" name="email" placeholder="email@company.com" required>
                 </div>
                 <div class="form-group">
-                    <select>
-                        <option>AI Output Evaluation</option>
-                        <option>Data Labeling</option>
-                        <option>Search Relevance</option>
-                        <option>Other</option>
+                    <label>Service Needed</label>
+                    <select name="service">
+                        <option value="data-evaluation">AI Data Evaluation</option>
+                        <option value="search-relevance">Search Relevance</option>
+                        <option value="content-moderation">Content Moderation</option>
+                        <option value="other">Other / General Inquiry</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <textarea rows="4" placeholder="How can we help?"></textarea>
+                    <label>Message</label>
+                    <textarea name="message" placeholder="How can we help your project?"></textarea>
                 </div>
-                <button type="submit" class="submit-btn">Send Message</button>
+                <button type="submit" class="btn-submit">Send Message</button>
             </form>
+
+            <div class="social-section">
+                <p style="color: var(--muted); font-size: 0.9rem;">Follow our updates</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/profile.php?id=61571550993863" target="_blank" rel="noopener noreferrer">Facebook</a>
+                    <a href="https://www.linkedin.com/company/evalis-ai/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                </div>
+            </div>
         </div>
-    </main>
+    </div>
 
     <footer>
-        &copy; 2026 Evalis AI - Human-Led AI Data Services
+        &copy; 2026 Evalis AI - Human-Led AI Data Services<br>
+        Email: evalisglobal@gmail.com
     </footer>
-
 </body>
 </html>
 
