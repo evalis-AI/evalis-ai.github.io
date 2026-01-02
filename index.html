@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Evalis AI | Human-Led AI Data Services</title>
     <link rel="icon" type="image/png" href="favicon-96x96.png">
+    
+    <meta name="description" content="Evalis AI provides human-led AI data evaluation, labeling, and search relevance services.">
+    <meta name="google-site-verification" content="googlecfa2dfd06c44f49f" />
+
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
 
     <style>
@@ -32,42 +36,54 @@
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
-            background: radial-gradient(circle at 10% 10%, rgba(91, 139, 255, 0.12) 0%, transparent 40%);
+            background: 
+                radial-gradient(circle at 10% 10%, rgba(91, 139, 255, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(124, 124, 255, 0.08) 0%, transparent 40%);
         }
-<nav>
-    <a href="/" class="logo-container">
-        <span class="logo-text">Evalis AI</span>
-    </a>
 
-    <div class="nav-links">
-        <a href="/">Home</a>
-        <a href="/assessment.html" class="btn-nav">Take Assessment</a>
-        <a href="/services.html">Services</a>
-        <a href="/about.html">About</a>
-        <a href="/contact.html">Contact</a>
-        <a href="/contributors.html">Contributors</a>
-    </div>
-</nav>
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 8%;
+            background: rgba(5, 6, 18, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0; z-index: 1000;
         }
 
         .logo-container { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-        /* This ensures "Evalis AI" is visible in white */
-        .logo-text { font-weight: 800; font-size: 1.5rem; color: #ffffff !important; }
+        /* Fixes visibility of the brand name in the header */
+        .logo-text { font-weight: 800; font-size: 1.5rem; color: #ffffff !important; letter-spacing: -0.5px; }
 
         .nav-links { display: flex; gap: 1.5rem; align-items: center; }
         .nav-links a { text-decoration: none; color: var(--muted); font-size: 0.9rem; transition: 0.3s; }
         .nav-links a:hover { color: var(--secondary); }
 
-        .btn-nav { border: 1px solid var(--primary); padding: 8px 16px; border-radius: 10px; color: var(--primary) !important; font-weight: 600; }
+        .btn-nav { 
+            border: 1px solid var(--primary); 
+            padding: 8px 16px; 
+            border-radius: 10px; 
+            color: var(--primary) !important; 
+            font-weight: 600;
+        }
+        .btn-nav:hover { background: var(--primary); color: white !important; }
 
         .hero { padding: 80px 8% 40px; text-align: center; max-width: 1200px; margin: 0 auto; }
         h1 { font-size: clamp(2.2rem, 6vw, 4rem); font-weight: 800; line-height: 1.2; margin-bottom: 1.5rem; }
         h1 span { color: var(--secondary); }
+        .hero p { font-size: 1.1rem; color: var(--muted); margin-bottom: 2.5rem; max-width: 800px; margin-inline: auto; }
+
+        .hero-btns { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 50px; }
+        .btn { display: inline-block; padding: 14px 30px; border-radius: 12px; background: var(--primary); color: white; text-decoration: none; font-weight: 700; transition: 0.3s; }
+        .btn-alt { background: transparent; border: 1px solid var(--border); color: var(--primary); }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(91, 139, 255, 0.2); }
 
         .hero-banner {
             width: 100%;
             max-width: 900px;
-            margin: 40px auto;
+            margin: 0 auto;
             border-radius: 24px;
             overflow: hidden;
             border: 1px solid var(--border);
@@ -75,23 +91,29 @@
         }
         .hero-banner img { width: 100%; display: block; }
 
-        section { padding: 60px 8%; max-width: 1300px; margin: 0 auto; }
+        section { padding: 80px 8%; max-width: 1300px; margin: 0 auto; }
         h2 { text-align: center; font-size: 2.5rem; margin-bottom: 3rem; }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
-        .card { background: var(--card); border: 1px solid var(--border); padding: 2.5rem; border-radius: 24px; }
-        .card h3 { margin-bottom: 1rem; color: #fff; }
-        .card p { color: var(--muted); }
+        .card { background: var(--card); border: 1px solid var(--border); padding: 2.5rem; border-radius: 24px; transition: 0.4s; }
+        .card:hover { border-color: var(--primary); transform: translateY(-5px); background: rgba(255,255,255,0.06); }
+        .card h3 { margin-bottom: 1rem; color: #fff; font-size: 1.4rem; }
+        .card p { color: var(--muted); font-size: 0.95rem; }
 
-        footer { text-align: center; padding: 40px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.9rem; }
+        footer { text-align: center; padding: 50px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.9rem; }
 
         @media (max-width: 768px) {
             nav { flex-direction: column; padding: 1.5rem 5%; gap: 15px; }
             .nav-links { flex-wrap: wrap; justify-content: center; gap: 12px; width: 100%; }
+            .nav-links a { font-size: 0.8rem; }
+            .hero h1 { font-size: 2.2rem; }
+            .btn { width: 100%; text-align: center; }
+            .btn-alt { margin-left: 0; }
         }
     </style>
 </head>
 <body>
+
     <div class="mesh-bg"></div>
 
     <nav>
@@ -110,13 +132,19 @@
 
     <header class="hero">
         <h1>Human–Led AI Data<br><span>Services</span></h1>
-        <p>Independent human intelligence powering AI systems through data evaluation and search relevance review.</p>
+        <p>Independent human intelligence powering AI systems through data evaluation, labeling, search relevance, and language quality review.</p>
+        
+        <div class="hero-btns">
+            <a href="services.html" class="btn">Explore Services</a>
+            <a href="assessment.html" class="btn btn-alt">AI Readiness Assessment</a>
+        </div>
+
         <div class="hero-banner">
             <img src="cover.png" alt="Evalis AI Banner">
         </div>
     </header>
 
-    <section>
+    <section id="why">
         <h2>Why Evalis AI?</h2>
         <div class="grid">
             <div class="card">
@@ -137,6 +165,7 @@
     <footer>
         &copy; 2026 Evalis AI - Human-Led AI Data Services
     </footer>
+
 </body>
 </html>
 
