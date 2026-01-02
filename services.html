@@ -29,6 +29,26 @@
             overflow-x: hidden;
         }
 
+        /* Logo and Navigation CSS */
+        .logo-container { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            text-decoration: none; 
+        }
+
+        .logo-img { 
+            height: 32px; 
+            width: auto; 
+            display: block; 
+        }
+
+        .logo-text { 
+            font-weight: 800; 
+            font-size: 1.5rem; 
+            color: #ffffff !important; 
+        }
+
         /* Mesh Background */
         .mesh-bg {
             position: fixed;
@@ -39,7 +59,7 @@
                 radial-gradient(circle at 90% 90%, rgba(124, 124, 255, 0.08) 0%, transparent 40%);
         }
 
-        /* Navigation Style (Matches your Index) */
+        /* Navigation Style */
         nav {
             display: flex;
             justify-content: space-between;
@@ -52,9 +72,10 @@
             top: 0; z-index: 1000;
         }
 
-        .logo-text { font-weight: 800; font-size: 1.4rem; color: #FFF; text-decoration: none;}
-        .nav-links a { margin-left: 2rem; color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: 0.3s; }
+        .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+        .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.85rem; transition: 0.3s; }
         .nav-links a:hover { color: var(--secondary); }
+        .btn-nav { border: 1px solid var(--primary); padding: 8px 16px; border-radius: 10px; color: var(--primary) !important; font-weight: 600; }
 
         /* Modern Service Page Styles */
         .services-hero {
@@ -100,6 +121,11 @@
         .service-card p { color: var(--muted); font-size: 0.95rem; }
 
         footer { text-align: center; padding: 50px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.9rem; }
+
+        @media (max-width: 768px) {
+            nav { flex-direction: column; padding: 1.5rem 5%; gap: 15px; }
+            .nav-links { flex-wrap: wrap; justify-content: center; gap: 10px; }
+        }
     </style>
 </head>
 <body>
@@ -107,20 +133,19 @@
     <div class="mesh-bg"></div>
 
     <nav>
-    <a href="index.html" class="logo-container">
-        <img src="logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
-        <span class="logo-text">Evalis AI</span>
-    </a>
-    <div class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="assessment.html" class="btn-nav">Take Assessment</a>
-        <a href="services.html">Services</a>
-        <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
-        <a href="careers.html">Contributors</a>
-    </div>
-</nav>
-
+        <a href="index.html" class="logo-container">
+            <img src="logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+            <span class="logo-text">Evalis AI</span>
+        </a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="assessment.html" class="btn-nav">Take Assessment</a>
+            <a href="services.html" style="color: var(--primary);">Services</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="careers.html">Contributors</a>
+        </div>
+    </nav>
 
     <main>
         <section class="services-hero">
@@ -156,7 +181,7 @@
     </main>
 
     <footer>
-        &copy; 2026 Evalis AI - Human-Led AI Data Services
+        &copy; 2026 Evalis AI - Human-Led AI Data Services | Perinthalmanna, Kerala
     </footer>
 
 </body>
