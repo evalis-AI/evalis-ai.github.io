@@ -6,8 +6,9 @@
     <title>Evalis AI | Human-Led AI Data Services</title>
     <link rel="icon" type="image/png" href="favicon-96x96.png">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
     <style>
         :root {
@@ -97,7 +98,7 @@
 <body>
     <div class="mesh-bg"></div>
 
-    <nav>
+    <nav class="animate__animated animate__fadeInDown">
         <a href="index.html" class="logo-container">
             <img src="logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
             <span class="logo-text">Evalis AI</span>
@@ -113,25 +114,26 @@
     </nav>
 
     <header class="hero">
-        <h1>Human–Led AI Data<br><span>Services</span></h1>
-        <p>Independent human intelligence powering AI systems through expert evaluation and data labeling.</p>
-        <div class="hero-banner">
+        <h1 class="animate__animated animate__fadeInUp">Human–Led AI Data<br><span>Services</span></h1>
+        <p class="animate__animated animate__fadeInUp animate__delay-1s">Independent human intelligence powering AI systems through expert evaluation and data labeling.</p>
+        
+        <div class="hero-banner animate__animated animate__zoomIn animate__delay-1s">
             <img src="cover.png" alt="Evalis AI Banner">
         </div>
     </header>
 
     <section id="why-us">
-        <h2>Why Evalis AI?</h2>
+        <h2 data-aos="fade-up">Why Evalis AI?</h2>
         <div class="grid">
-            <div class="card">
+            <div class="card" data-aos="fade-up" data-aos-delay="100">
                 <h3>Human-in-the-Loop</h3>
                 <p>Expert human judgment for accuracy, relevance, and safety in AI outputs.</p>
             </div>
-            <div class="card">
+            <div class="card" data-aos="fade-up" data-aos-delay="200">
                 <h3>Structured Evaluation</h3>
                 <p>Clear guidelines and audit-ready workflows for high-quality data.</p>
             </div>
-            <div class="card">
+            <div class="card" data-aos="fade-up" data-aos-delay="300">
                 <h3>Independent & Secure</h3>
                 <p>Confidential work performed by internal specialists, not crowdsourced.</p>
             </div>
@@ -139,24 +141,24 @@
     </section>
 
     <section id="services">
-        <h2>Our Services</h2>
+        <h2 data-aos="fade-up">Our Services</h2>
         <div class="grid">
-            <div class="card">
+            <div class="card" data-aos="zoom-in">
                 <h3>Data Annotation</h3>
                 <p>Precise labeling for text, images, and video to train robust ML models.</p>
             </div>
-            <div class="card">
+            <div class="card" data-aos="zoom-in" data-aos-delay="100">
                 <h3>Search Evaluation</h3>
                 <p>Optimizing search algorithms through human relevance ranking.</p>
             </div>
-            <div class="card">
+            <div class="card" data-aos="zoom-in" data-aos-delay="200">
                 <h3>LLM Testing</h3>
                 <p>Rigorous red-teaming and safety evaluation for Large Language Models.</p>
             </div>
         </div>
     </section>
 
-    <section id="about" style="text-align: center; max-width: 800px;">
+    <section id="about" style="text-align: center; max-width: 800px;" data-aos="fade-up">
         <h2>About Evalis AI</h2>
         <p style="color: var(--muted); font-size: 1.1rem;">
             Evalis AI is a specialized data services provider dedicated to the ethical development of Artificial Intelligence. 
@@ -165,22 +167,22 @@
         </p>
     </section>
 
-    <footer>
+    <footer data-aos="fade-in">
         <div class="social-links">
             <a href="https://www.facebook.com/share/14arF3zkgWU/" target="_blank">Facebook</a>
             <a href="contact.html">Contact Support</a>
         </div>
         &copy; 2026 Evalis AI - Human-Led AI Data Services
     </footer>
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-<script>
-    AOS.init({
-        duration: 800, // Speed of animation (ms)
-        once: true,    // Whether animation should happen only once
-        offset: 100    // Trigger point from the bottom of the screen
-    });
-</script>
 
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 120,
+            easing: 'ease-out-quad'
+        });
+    </script>
 </body>
 </html>
-
