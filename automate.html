@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutomateAI | B2B Intelligent Automation Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                fontFamily: { sans: ['Inter', 'sans-serif'] },
+            }
+        }
+    }
+    </script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+
+        /* Glass Morphism */
+        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
+        .glass-light { background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
+        .glass-card { background: linear-gradient(135deg, rgba(30,41,59,0.8), rgba(15,23,42,0.9)); border: 1px solid rgba(255,255,255,0.06); }
+
+        /* Gradient Backgrounds */
+        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #020617 50%, #0f172a 100%); }
+        .accent-gradient { background: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7); }
+        .accent-gradient-text { background: linear-gradient(135deg, #818cf8, #a78bfa, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .green-gradient { background: linear-gradient(135deg, #10b981, #34d399); }
+        .blue-gradient { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+        .orange-gradient { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+
+        /* Animations */
+        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+        @keyframes pulse-glow { 0%,100% { box-shadow: 0 0 20px rgba(99,102,241,0.3); } 50% { box-shadow: 0 0 40px rgba(99,102,241,0.6); } }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+        .float { animation: float 3s ease-in-out infinite; }
+        .slide-up { animation: slideUp 0.5s ease forwards; }
+        .fade-in { animation: fadeIn 0.3s ease forwards; }
+        .pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+
+        /* Workflow Canvas */
+        .node { transition: all 0.3s; cursor: grab; }
+        .node:hover { transform: scale(1.02); }
+        .node.active { border-color: #6366f1; box-shadow: 0 0 20px rgba(99,102,241,0.3); }
+        .node-connector { width: 12px; height: 12px; border-radius: 50%; background: #334155; border: 2px solid #475569; cursor: crosshair; }
+        .node-connector:hover { background: #6366f1; border-color: #818cf8; }
+
+        /* Sidebar */
+        .sidebar { transition: width 0.3s, transform 0.3s; }
+        .sidebar-collapsed { width: 64px; }
+        .sidebar-expanded { width: 260px; }
+
+        .nav-item { transition: all 0.2s; }
+        .nav-item:hover { background: rgba(99,102,241,0.1); }
+        .nav-item.active { background: rgba(99,102,241,0.15); color: #818cf8; border-right: 2px solid #6366f1; }
+
+        /* Data Table */
+        .data-row:hover { background: rgba(99,102,241,0.05); }
+
+        /* Toggle */
+        .toggle-track { transition: background 0.3s; }
+        .toggle-thumb { transition: transform 0.3s; }
+        .toggle-active .toggle-track { background: #6366f1; }
+        .toggle-active .toggle-thumb { transform: translateX(20px); }
+
+        /* Kanban */
+        .kanban-col { min-height: 400px; }
+        .kanban-card { transition: all 0.2s; cursor: grab; }
+        .kanban-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+
+        /* Chart bars */
+        .chart-bar { transition: height 1s ease; }
+
+        /* Status colors */
+        .status-active { background: rgba(16,185,129,0.15); color: #34d399; }
+        .status-paused { background: rgba(251,191,36,0.15); color: #fbbf24; }
+        .status-error { background: rgba(239,68,68,0.15); color: #f87171; }
+        .status-draft { background: rgba(100,116,139,0.15); color: #94a3b8; }
+
+        /* Notification badge */
+        .notif-badge {
+            position: absolute; top: -4px; right: -4px;
+            width: 18px; height: 18px; border-radius: 50%;
+            background: #ef4444; color: white; font-size: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="gradient-bg text-white min-h-screen">
+
+    <!-- ===== LOGIN GATE ===== -->
+    <div id="loginGate" class="fixed inset-0 z-[100] gradient-bg flex items-center justify-center">
+        <div class="glass-card rounded-3xl p-10 max-w-md w-full mx-4 text-center">
+            <div class="w-14 h-14 accent-gradient rounded-2xl flex items-center justify-center text-2xl font-black mx-auto mb-6">A</div>
+            <h1 class="text-2xl font-bold mb-2">AutomateAI</h1>
+            <p class="text-slate-400 text-sm mb-8">B2B Intelligent Automation Platform</p>
+
+            <input type="text" id="loginEmail" class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700/50 text-white text-sm mb-3 outline-none focus:border-indigo-500 transition" placeholder="Email or Company ID" />
+            <input type="password" id="loginPass" class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700/50 text-white text-sm mb-4 outline-none focus:border-indigo-500 transition" placeholder="Password" />
+
+            <button onclick="login()" class="w-full py-3 accent-gradient rounded-xl font-semibold text-sm hover:opacity-90 transition">Sign In →</button>
+
+            <p class="text-slate-600 text-xs mt-6">Demo: any email + password "admin"</p>
+        </div>
+    </div>
+
+    <!-- ===== MAIN APP ===== -->
+    <div id="mainApp" class="hidden flex h-screen overflow-hidden">
+
+        <!-- SIDEBAR -->
+        <aside id="sidebar" class="sidebar sidebar-expanded glass border-r border-white/5 flex flex-col z-40 shrink-0">
+            <!-- Logo -->
+            <div class="p-4 border-b border-white/5 flex items-center gap-3">
+                <div class="w-9 h-9 accent-gradient rounded-xl flex items-center justify-center font-black text-sm shrink-0">A</div>
+                <div class="sidebar-text overflow-hidden">
+                    <div class="font-bold text-sm whitespace-nowrap">AutomateAI</div>
+                    <div class="text-[10px] text-slate-500 whitespace-nowrap">Enterprise Platform</div>
+                </div>
+            </div>
+
+            <!-- Nav Items -->
+            <nav class="flex-1 py-4 space-y-1 px-2 overflow-y-auto">
+                <div class="nav-item active flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer" onclick="navigate('dashboard')">
+                    <span class="text-lg shrink-0">📊</span>
+                    <span class="sidebar-text text-sm font-medium whitespace-nowrap">Dashboard</span>
+                </div>
+                <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer" onclick="navigate('workflows')">
+                    <span class="text-lg shrink-0">⚡</span>
+                    <span class="sidebar-text text-sm font-medium whitespace-nowrap">Workflows</span>
+                </div>
+                <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer" onclick="navigate('ai-agents')">
+                    <span class="text-lg shrink-0">🤖</span>
+                    <span class="sidebar-text text-sm font-medium whitespace-nowrap">AI Agents</span>
+                </div>
+                <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer" onclick="navigate('pipelines')">
+                    <span class="text-lg shrink-0">🔄</span>
+                    <span class="sidebar-text text-sm font-medium whitespace-nowrap">Data Pipelines</span>
+                </div>
+                <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer relative" onclick="navigate('inbox')">
+                    <span class="text-lg shrink-0">📬</span>
+                    <span class="sidebar-text text-sm font-medium whitespace-nowrap">Smart Inbox</span>
+                    <span class="notif-badge sidebar-text">5</span>
+                </div>
+                <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer" onclick="navigate('clients')">
+                    <span class="text-lg shrink-0">🏢</span>
+                    <span class="sidebar-text text-sm font-medium whitespace-nowrap">Clients</span>
+                </div>
+                <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer" onclick="navigate('analytics')">
+                    <span class="text-lg shrink-0">📈</span>
+                    <span class="sidebar-text text-sm font-medium whitespace-nowrap">Analytics</span>
+                </div>
+                <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer" onclick="navigate('integrations')">
+                    <span class="text-lg shrink-0">🔌</span>
+                    <span class="sidebar-text text-sm font-medium whitespace-nowrap">Integrations</span>
+                </div>
+                <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer" onclick="navigate('templates')">
+                    <span class="text-lg shrink-0">📋</span>
+                    <span class="sidebar-text text-sm font-medium whitespace-nowrap">Templates</span>
+                </div>
+                <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer" onclick="navigate('api-hub')">
+                    <span class="text-lg shrink-0">🌐</span>
+                    <span class="sidebar-text text-sm font-medium whitespace-nowrap">API Hub</span>
+                </div>
+
+                <div class="border-t border-white/5 my-3"></div>
+
+                <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer" onclick="navigate('settings')">
+                    <span class="text-lg shrink-0">⚙️</span>
+                    <span class="sidebar-text text-sm font-medium whitespace-nowrap">Settings</span>
+                </div>
+                <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer" onclick="navigate('billing')">
+                    <span class="text-lg shrink-0">💳</span>
+                    <span class="sidebar-text text-sm font-medium whitespace-nowrap">Billing</span>
+                </div>
+            </nav>
+
+            <!-- User -->
+            <div class="p-4 border-t border-white/5">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-xs font-bold text-indigo-400 shrink-0" id="userAvatar">JD</div>
+                    <div class="sidebar-text overflow-hidden">
+                        <div class="text-xs font-semibold whitespace-nowrap" id="userName">John Doe</div>
+                        <div class="text-[10px] text-slate-500 whitespace-nowrap" id="userPlan">Pro Plan</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+
+            <!-- TOP BAR -->
+            <header class="glass border-b border-white/5 px-6 py-3 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="text-slate-400 hover:text-white transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    </button>
+                    <h2 class="font-semibold text-base" id="pageTitle">Dashboard</h2>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <!-- Search -->
+                    <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/50 border border-slate-700/30 text-sm">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        <input type="text" placeholder="Search anything... (⌘K)" class="bg-transparent outline-none text-xs text-slate-300 w-40" id="globalSearch" onkeyup="handleSearch(event)" />
+                    </div>
+
+                    <!-- AI Assistant -->
+                    <button onclick="toggleAI()" class="relative px-3 py-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-xs font-semibold text-indigo-400 hover:bg-indigo-500/20 transition flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
+                        AI Assistant
+                    </button>
+
+                    <!-- Notifications -->
+                    <button class="relative text-slate-400 hover:text-white transition" onclick="navigate('inbox')">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                        <span class="notif-badge">3</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- PAGE CONTENT -->
+            <div class="flex-1 overflow-y-auto p-6" id="pageContent">
+
+                <!-- ===== DASHBOARD VIEW ===== -->
+                <div id="view-dashboard" class="space-y-6">
+
+                    <!-- Welcome Banner -->
+                    <div class="glass-card rounded-2xl p-6 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                        <div class="relative z-10">
+                            <h1 class="text-xl font-bold mb-1">Good <span id="greeting">morning</span>, <span id="greetName">John</span> 👋</h1>
+                            <p class="text-slate-400 text-sm">Your automation platform saved <strong class="text-indigo-400">142 hours</strong> this month across <strong class="text-indigo-400">23 clients</strong>.</p>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="glass-card rounded-2xl p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs text-slate-400 font-medium">Active Workflows</span>
+                                <span class="text-lg">⚡</span>
+                            </div>
+                            <div class="text-2xl font-bold">47</div>
+                            <div class="text-xs text-emerald-400 mt-1">↑ 12% from last month</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs text-slate-400 font-medium">AI Tasks Today</span>
+                                <span class="text-lg">🤖</span>
+                            </div>
+                            <div class="text-2xl font-bold">1,284</div>
+                            <div class="text-xs text-emerald-400 mt-1">↑ 28% from yesterday</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs text-slate-400 font-medium">Hours Saved</span>
+                                <span class="text-lg">⏱️</span>
+                            </div>
+                            <div class="text-2xl font-bold">142h</div>
+                            <div class="text-xs text-emerald-400 mt-1">↑ 35% this month</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs text-slate-400 font-medium">Revenue Impact</span>
+                                <span class="text-lg">💰</span>
+                            </div>
+                            <div class="text-2xl font-bold">$48.2K</div>
+                            <div class="text-xs text-emerald-400 mt-1">↑ 18% MoM</div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                        <!-- Activity Chart -->
+                        <div class="glass-card rounded-2xl p-5 lg:col-span-2">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-semibold text-sm">Automation Activity (7 Days)</h3>
+                                <div class="flex gap-2">
+                                    <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400">Workflows</span>
+                                    <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400">AI Tasks</span>
+                                </div>
+                            </div>
+                            <div class="flex items-end gap-2 h-40" id="activityChart">
+                                <!-- Generated by JS -->
+                            </div>
+                            <div class="flex justify-between mt-2 text-[10px] text-slate-600">
+                                <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="glass-card rounded-2xl p-5">
+                            <h3 class="font-semibold text-sm mb-4">Quick Actions</h3>
+                            <div class="space-y-2">
+                                <button onclick="navigate('workflows'); showWorkflowBuilder()" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition text-left">
+                                    <span class="w-8 h-8 rounded-lg accent-gradient flex items-center justify-center text-sm">+</span>
+                                    <div>
+                                        <div class="text-xs font-semibold">New Workflow</div>
+                                        <div class="text-[10px] text-slate-500">Build from scratch or template</div>
+                                    </div>
+                                </button>
+                                <button onclick="navigate('ai-agents')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition text-left">
+                                    <span class="w-8 h-8 rounded-lg green-gradient flex items-center justify-center text-sm">🤖</span>
+                                    <div>
+                                        <div class="text-xs font-semibold">Deploy AI Agent</div>
+                                        <div class="text-[10px] text-slate-500">Auto-handle client tasks</div>
+                                    </div>
+                                </button>
+                                <button onclick="navigate('pipelines')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition text-left">
+                                    <span class="w-8 h-8 rounded-lg blue-gradient flex items-center justify-center text-sm">🔄</span>
+                                    <div>
+                                        <div class="text-xs font-semibold">New Pipeline</div>
+                                        <div class="text-[10px] text-slate-500">Connect data sources</div>
+                                    </div>
+                                </button>
+                                <button onclick="toggleAI()" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition text-left">
+                                    <span class="w-8 h-8 rounded-lg orange-gradient flex items-center justify-center text-sm">✨</span>
+                                    <div>
+                                        <div class="text-xs font-semibold">Ask AI Assistant</div>
+                                        <div class="text-[10px] text-slate-500">Natural language automation</div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity & Live Workflows -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <!-- Recent Workflows -->
+                        <div class="glass-card rounded-2xl p-5">
+                            <h3 class="font-semibold text-sm mb-4">Active Workflows</h3>
+                            <div class="space-y-3" id="recentWorkflows">
+                                <!-- Generated -->
+                            </div>
+                        </div>
+
+                        <!-- Live Activity Feed -->
+                        <div class="glass-card rounded-2xl p-5">
+                            <h3 class="font-semibold text-sm mb-4">Live Feed</h3>
+                            <div class="space-y-3 max-h-72 overflow-y-auto" id="liveFeed">
+                                <!-- Generated -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== WORKFLOWS VIEW ===== -->
+                <div id="view-workflows" class="hidden space-y-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-lg font-bold">Workflow Automation</h2>
+                            <p class="text-xs text-slate-400 mt-1">Build, manage, and monitor automated workflows</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="showWorkflowBuilder()" class="px-4 py-2 accent-gradient rounded-xl text-xs font-semibold hover:opacity-90 transition">+ New Workflow</button>
+                            <button class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 transition">Import</button>
+                        </div>
+                    </div>
+
+                    <!-- Workflow Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="workflowGrid">
+                        <!-- Generated -->
+                    </div>
+                </div>
+
+                <!-- ===== AI AGENTS VIEW ===== -->
+                <div id="view-ai-agents" class="hidden space-y-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-lg font-bold">AI Agents</h2>
+                            <p class="text-xs text-slate-400 mt-1">Deploy intelligent agents that work 24/7</p>
+                        </div>
+                        <button onclick="createAgent()" class="px-4 py-2 accent-gradient rounded-xl text-xs font-semibold">+ New Agent</button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="agentsGrid">
+                        <!-- Generated -->
+                    </div>
+                </div>
+
+                <!-- ===== DATA PIPELINES VIEW ===== -->
+                <div id="view-pipelines" class="hidden space-y-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-lg font-bold">Data Pipelines</h2>
+                            <p class="text-xs text-slate-400 mt-1">ETL, sync, and transform data across platforms</p>
+                        </div>
+                        <button class="px-4 py-2 accent-gradient rounded-xl text-xs font-semibold">+ New Pipeline</button>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4" id="pipelinesGrid">
+                        <!-- Generated -->
+                    </div>
+                </div>
+
+                <!-- ===== SMART INBOX VIEW ===== -->
+                <div id="view-inbox" class="hidden space-y-6">
+                    <h2 class="text-lg font-bold">Smart Inbox</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                        <div class="lg:col-span-1 glass-card rounded-2xl p-4 space-y-2 max-h-[600px] overflow-y-auto" id="inboxList"></div>
+                        <div class="lg:col-span-2 glass-card rounded-2xl p-6" id="inboxDetail">
+                            <div class="text-center text-slate-600 py-20">Select a message to view</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== CLIENTS VIEW ===== -->
+                <div id="view-clients" class="hidden space-y-6">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-bold">Client Management</h2>
+                        <button onclick="addClient()" class="px-4 py-2 accent-gradient rounded-xl text-xs font-semibold">+ Add Client</button>
+                    </div>
+                    <div class="glass-card rounded-2xl overflow-hidden">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-white/5">
+                                    <th class="text-left px-5 py-3 text-xs text-slate-400 font-medium">Company</th>
+                                    <th class="text-left px-5 py-3 text-xs text-slate-400 font-medium">Contact</th>
+                                    <th class="text-left px-5 py-3 text-xs text-slate-400 font-medium">Workflows</th>
+                                    <th class="text-left px-5 py-3 text-xs text-slate-400 font-medium">Status</th>
+                                    <th class="text-left px-5 py-3 text-xs text-slate-400 font-medium">MRR</th>
+                                    <th class="text-left px-5 py-3 text-xs text-slate-400 font-medium">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clientsTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ===== ANALYTICS VIEW ===== -->
+                <div id="view-analytics" class="hidden space-y-6">
+                    <h2 class="text-lg font-bold">Analytics & Insights</h2>
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" id="analyticsStats"></div>
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="font-semibold text-sm mb-4">Performance Over Time</h3>
+                        <div class="h-48 flex items-end gap-1" id="analyticsChart"></div>
+                    </div>
+                </div>
+
+                <!-- ===== INTEGRATIONS VIEW ===== -->
+                <div id="view-integrations" class="hidden space-y-6">
+                    <h2 class="text-lg font-bold">Integrations Hub</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="integrationsGrid"></div>
+                </div>
+
+                <!-- ===== TEMPLATES VIEW ===== -->
+                <div id="view-templates" class="hidden space-y-6">
+                    <h2 class="text-lg font-bold">Workflow Templates</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="templatesGrid"></div>
+                </div>
+
+                <!-- ===== API HUB VIEW ===== -->
+                <div id="view-api-hub" class="hidden space-y-6">
+                    <h2 class="text-lg font-bold">API Hub</h2>
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="font-semibold text-sm mb-3">Your API Key</h3>
+                        <div class="flex gap-2">
+                            <code class="flex-1 px-4 py-3 bg-slate-800 rounded-xl text-xs font-mono text-slate-300">ak_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxx</code>
+                            <button class="px-4 py-3 rounded-xl bg-indigo-500/10 text-indigo-400 text-xs font-semibold">Copy</button>
+                        </div>
+                    </div>
+                    <div class="glass-card rounded-2xl p-6" id="apiDocs">
+                        <h3 class="font-semibold text-sm mb-4">API Endpoints</h3>
+                        <div class="space-y-3" id="apiEndpoints"></div>
+                    </div>
+                </div>
+
+                <!-- ===== SETTINGS VIEW ===== -->
+                <div id="view-settings" class="hidden space-y-6">
+                    <h2 class="text-lg font-bold">Settings</h2>
+                    <div class="glass-card rounded-2xl p-6 space-y-4" id="settingsContent"></div>
+                </div>
+
+                <!-- ===== BILLING VIEW ===== -->
+                <div id="view-billing" class="hidden space-y-6">
+                    <h2 class="text-lg font-bold">Billing & Plans</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="billingPlans"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== AI ASSISTANT PANEL ===== -->
+    <div id="aiPanel" class="fixed right-0 top-0 h-full w-96 glass border-l border-white/5 z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="p-4 border-b border-white/5 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+                <span class="font-semibold text-sm">AI Assistant</span>
+            </div>
+            <button onclick="toggleAI()" class="text-slate-400 hover:text-white text-xl">&times;</button>
+        </div>
+
+        <div id="aiChat" class="flex-1 overflow-y-auto p-4 space-y-3">
+            <div class="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/15 text-xs leading-relaxed">
+                <strong class="text-indigo-400 block mb-1">AI Assistant</strong>
+                Hi! I can help you build workflows, analyze data, configure agents, and automate tasks. What would you like to do?
+            </div>
+        </div>
+
+        <div class="p-4 border-t border-white/5">
+            <div class="flex gap-2">
+                <input type="text" id="aiInput" class="flex-1 px-3 py-2 rounded-xl bg-slate-800/50 border border-slate-700/50 text-xs outline-none focus:border-indigo-500" placeholder="Ask AI anything..." onkeydown="if(event.key==='Enter') sendAI()" />
+                <button onclick="sendAI()" class="px-4 py-2 accent-gradient rounded-xl text-xs font-semibold">Send</button>
+            </div>
+            <div class="flex gap-1 mt-2 flex-wrap">
+                <button onclick="aiQuick('Create a lead nurture workflow')" class="text-[10px] px-2 py-1 rounded bg-slate-800 text-slate-400 hover:text-white transition">Lead Workflow</button>
+                <button onclick="aiQuick('Show me automation ideas for HR')" class="text-[10px] px-2 py-1 rounded bg-slate-800 text-slate-400 hover:text-white transition">HR Ideas</button>
+                <button onclick="aiQuick('Analyze my workflow performance')" class="text-[10px] px-2 py-1 rounded bg-slate-800 text-slate-400 hover:text-white transition">Performance</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== JAVASCRIPT ENGINE ===== -->
+    <script>
+    // ==========================================
+    // DATA STORE
+    // ==========================================
+    let appData = {
+        user: null,
+        currentView: 'dashboard',
+        workflows: [],
+        agents: [],
+        pipelines: [],
+        clients: [],
+        inbox: [],
+        sidebarOpen: true
+    };
+
+    // ==========================================
+    // SAMPLE DATA GENERATOR
+    // ==========================================
+    function generateSampleData() {
+        appData.workflows = [
+            { id: 1, name: 'Lead Qualification Pipeline', status: 'active', runs: 1284, successRate: 97.2, trigger: 'New Form Submission', lastRun: '2 min ago', icon: '🎯', nodes: 8 },
+            { id: 2, name: 'Client Onboarding', status: 'active', runs: 456, successRate: 99.1, trigger: 'New Client Added', lastRun: '15 min ago', icon: '🚀', nodes: 12 },
+            { id: 3, name: 'Invoice Processing', status: 'active', runs: 2341, successRate: 95.8, trigger: 'Email Received', lastRun: '5 min ago', icon: '📄', nodes: 6 },
+            { id: 4, name: 'Social Media Scheduler', status: 'paused', runs: 789, successRate: 98.5, trigger: 'Scheduled (Daily)', lastRun: '1 hour ago', icon: '📱', nodes: 5 },
+            { id: 5, name: 'Customer Feedback Analyzer', status: 'active', runs: 567, successRate: 94.3, trigger: 'New Review', lastRun: '8 min ago', icon: '⭐', nodes: 7 },
+            { id: 6, name: 'HR Document Generator', status: 'active', runs: 234, successRate: 99.5, trigger: 'Manual / API', lastRun: '30 min ago', icon: '📋', nodes: 4 },
+            { id: 7, name: 'Slack Alert System', status: 'error', runs: 1023, successRate: 88.9, trigger: 'System Event', lastRun: '1 min ago', icon: '🔔', nodes: 3 },
+            { id: 8, name: 'Data Sync - Salesforce', status: 'active', runs: 3456, successRate: 96.7, trigger: 'Every 15 min', lastRun: 'Just now', icon: '🔄', nodes: 5 },
+        ];
+
+        appData.agents = [
+            { id: 1, name: 'Email Responder', type: 'Communication', status: 'active', tasks: 456, accuracy: 94, model: 'LLaMA 3.1', icon: '📧', description: 'Auto-responds to client emails with context-aware replies' },
+            { id: 2, name: 'Document Classifier', type: 'Processing', status: 'active', tasks: 1289, accuracy: 97, model: 'Whisper + LLaMA', icon: '📂', description: 'Classifies and routes documents to correct departments' },
+            { id: 3, name: 'Meeting Summarizer', type: 'Intelligence', status: 'active', tasks: 234, accuracy: 91, model: 'LLaMA 3.1 70B', icon: '📝', description: 'Records, transcribes, and summarizes meetings with action items' },
+            { id: 4, name: 'Lead Scorer', type: 'Sales', status: 'active', tasks: 567, accuracy: 89, model: 'Custom ML', icon: '🎯', description: 'Scores and prioritizes leads based on engagement signals' },
+            { id: 5, name: 'Code Reviewer', type: 'Engineering', status: 'paused', tasks: 123, accuracy: 92, model: 'CodeLlama', icon: '💻', description: 'Reviews PRs and suggests improvements automatically' },
+            { id: 6, name: 'Content Generator', type: 'Marketing', status: 'active', tasks: 345, accuracy: 88, model: 'LLaMA 3.1', icon: '✍️', description: 'Creates blog posts, social media content, and newsletters' },
+        ];
+
+        appData.pipelines = [
+            { id: 1, name: 'CRM → Analytics Sync', source: 'Salesforce', dest: 'BigQuery', status: 'active', records: '14.2K/day', lastSync: '2 min ago', icon: '📊' },
+            { id: 2, name: 'Email → Lead Database', source: 'Gmail', dest: 'PostgreSQL', status: 'active', records: '342/day', lastSync: '5 min ago', icon: '📬' },
+            { id: 3, name: 'Stripe → Accounting', source: 'Stripe', dest: 'QuickBooks', status: 'active', records: '89/day', lastSync: '1 hour ago', icon: '💳' },
+            { id: 4, name: 'Website → CRM', source: 'Website Forms', dest: 'HubSpot', status: 'paused', records: '567/day', lastSync: '3 hours ago', icon: '🌐' },
+        ];
+
+        appData.clients = [
+            { id: 1, name: 'TechFlow Inc', contact: 'Sarah Chen', email: 'sarah@techflow.com', workflows: 8, status: 'active', mrr: 2400, logo: '🏢' },
+            { id: 2, name: 'GrowthLabs', contact: 'Mike Rodriguez', email: 'mike@growthlabs.co', workflows: 5, status: 'active', mrr: 1800, logo: '🚀' },
+            { id: 3, name: 'DataVerse Corp', contact: 'Lisa Wang', email: 'lisa@dataverse.io', workflows: 12, status: 'active', mrr: 4200, logo: '📊' },
+            { id: 4, name: 'CloudNine Solutions', contact: 'James Park', email: 'james@cloudnine.com', workflows: 3, status: 'paused', mrr: 900, logo: '☁️' },
+            { id: 5, name: 'FinanceHub', contact: 'Amy Foster', email: 'amy@financehub.com', workflows: 6, status: 'active', mrr: 3100, logo: '💰' },
+        ];
+
+        appData.inbox = [
+            { id: 1, from: 'AI Agent: Email Responder', subject: 'Flagged: Urgent client request from TechFlow', time: '2 min ago', priority: 'high', read: false, body: 'TechFlow Inc sent an urgent request regarding their API integration failing. The error appears to be a rate limit issue on their Salesforce connector.' },
+            { id: 2, from: 'Workflow Monitor', subject: 'Slack Alert System failed 3 times', time: '15 min ago', priority: 'high', read: false, body: 'The Slack Alert workflow has failed 3 times in the last hour. Error: API token expired. Recommended action: Refresh the Slack OAuth token.' },
+            { id: 3, from: 'AI Agent: Lead Scorer', subject: 'Hot lead detected: Enterprise prospect', time: '1 hour ago', priority: 'medium', read: false, body: 'A new enterprise prospect (Annual revenue: $50M+) has been engaging with pricing pages. Lead score: 92/100. Recommend immediate outreach.' },
+            { id: 4, from: 'System', subject: 'Weekly automation report ready', time: '3 hours ago', priority: 'low', read: true, body: 'Your weekly automation report is ready. 47 workflows ran 8,432 tasks this week with 96.8% success rate.' },
+            { id: 5, from: 'AI Agent: Document Classifier', subject: 'New contract needs review', time: '5 hours ago', priority: 'medium', read: true, body: 'A new contract from GrowthLabs has been classified and requires manual review before processing.' },
+        ];
+    }
+
+    // ==========================================
+    // LOGIN
+    // ==========================================
+    function login() {
+        const email = document.getElementById('loginEmail').value;
+        const pass = document.getElementById('loginPass').value;
+
+        if (!email) { alert('Please enter email'); return; }
+        if (pass !== 'admin') { alert('Demo password: admin'); return; }
+
+        appData.user = {
+            name: email.split('@')[0] || 'User',
+            email: email,
+            plan: 'Pro'
+        };
+
+        document.getElementById('loginGate').classList.add('hidden');
+        document.getElementById('mainApp').classList.remove('hidden');
+
+        const name = appData.user.name.charAt(0).toUpperCase() + appData.user.name.slice(1);
+        document.getElementById('userName').textContent = name;
+        document.getElementById('userAvatar').textContent = name.substring(0, 2).toUpperCase();
+        document.getElementById('greetName').textContent = name;
+
+        const hour = new Date().getHours();
+        document.getElementById('greeting').textContent = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
+
+        generateSampleData();
+        renderDashboard();
+        saveData();
+    }
+
+    // ==========================================
+    // NAVIGATION
+    // ==========================================
+    function navigate(view) {
+        appData.currentView = view;
+
+        // Hide all views
+        document.querySelectorAll('[id^="view-"]').forEach(v => v.classList.add('hidden'));
+        const target = document.getElementById(`view-${view}`);
+        if (target) target.classList.remove('hidden');
+
+        // Update nav
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        event?.target?.closest?.('.nav-item')?.classList.add('active');
+
+        // Title
+        const titles = {
+            dashboard: '📊 Dashboard', workflows: '⚡ Workflows', 'ai-agents': '🤖 AI Agents',
+            pipelines: '🔄 Data Pipelines', inbox: '📬 Smart Inbox', clients: '🏢 Clients',
+            analytics: '📈 Analytics', integrations: '🔌 Integrations', templates: '📋 Templates',
+            'api-hub': '🌐 API Hub', settings: '⚙️ Settings', billing: '💳 Billing'
+        };
+        document.getElementById('pageTitle').textContent = titles[view] || view;
+
+        // Render
+        const renderers = {
+            dashboard: renderDashboard, workflows: renderWorkflows, 'ai-agents': renderAgents,
+            pipelines: renderPipelines, inbox: renderInbox, clients: renderClients,
+            analytics: renderAnalytics, integrations: renderIntegrations, templates: renderTemplates,
+            'api-hub': renderApiHub, settings: renderSettings, billing: renderBilling
+        };
+        if (renderers[view]) renderers[view]();
+    }
+
+    // ==========================================
+    // SIDEBAR
+    // ==========================================
+    function toggleSidebar() {
+        const sb = document.getElementById('sidebar');
+        appData.sidebarOpen = !appData.sidebarOpen;
+        if (appData.sidebarOpen) {
+            sb.classList.remove('sidebar-collapsed');
+            sb.classList.add('sidebar-expanded');
+            sb.querySelectorAll('.sidebar-text').forEach(el => el.style.display = '');
+        } else {
+            sb.classList.remove('sidebar-expanded');
+            sb.classList.add('sidebar-collapsed');
+            sb.querySelectorAll('.sidebar-text').forEach(el => el.style.display = 'none');
+        }
+    }
+
+    // ==========================================
+    // RENDER: DASHBOARD
+    // ==========================================
+    function renderDashboard() {
+        // Activity Chart
+        const chartData = [65, 78, 92, 45, 88, 34, 72];
+        const chartData2 = [120, 145, 180, 90, 160, 65, 130];
+        const maxVal = Math.max(...chartData2);
+        const chart = document.getElementById('activityChart');
+        chart.innerHTML = chartData.map((v, i) => `
+            <div class="flex-1 flex flex-col gap-1 items-center">
+                <div class="w-full rounded-t bg-indigo-500/30 chart-bar" style="height:${(v / maxVal) * 100}%">
+                    <div class="w-full h-full rounded-t accent-gradient opacity-70"></div>
+                </div>
+                <div class="w-full rounded-t bg-emerald-500/30 chart-bar" style="height:${(chartData2[i] / maxVal) * 70}%">
+                    <div class="w-full h-full rounded-t green-gradient opacity-70"></div>
+                </div>
+            </div>
+        `).join('');
+
+        // Recent Workflows
+        const wfDiv = document.getElementById('recentWorkflows');
+        wfDiv.innerHTML = appData.workflows.slice(0, 5).map(w => `
+            <div class="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition">
+                <div class="flex items-center gap-3">
+                    <span class="text-xl">${w.icon}</span>
+                    <div>
+                        <div class="text-xs font-semibold">${w.name}</div>
+                        <div class="text-[10px] text-slate-500">${w.runs} runs · ${w.lastRun}</div>
+                    </div>
+                </div>
+                <span class="text-[10px] px-2 py-0.5 rounded-full status-${w.status}">${w.status}</span>
+            </div>
+        `).join('');
+
+        // Live Feed
+        const feedData = [
+            { icon: '✅', text: 'Lead Qualification completed for 12 new leads', time: '1 min ago', color: 'emerald' },
+            { icon: '📧', text: 'AI responded to 3 client emails', time: '3 min ago', color: 'indigo' },
+            { icon: '🔄', text: 'CRM sync completed: 142 records updated', time: '5 min ago', color: 'blue' },
+            { icon: '⚠️', text: 'Slack Alert workflow needs attention', time: '8 min ago', color: 'amber' },
+            { icon: '🎯', text: 'New hot lead scored 92/100', time: '12 min ago', color: 'purple' },
+            { icon: '📄', text: 'Invoice #1234 processed and sent', time: '15 min ago', color: 'emerald' },
+            { icon: '🤖', text: 'Meeting summary generated for TechFlow call', time: '20 min ago', color: 'indigo' },
+        ];
+        document.getElementById('liveFeed').innerHTML = feedData.map(f => `
+            <div class="flex items-start gap-3 p-2 rounded-lg hover:bg-white/5 transition">
+                <span class="text-sm mt-0.5">${f.icon}</span>
+                <div class="flex-1">
+                    <div class="text-xs text-slate-300">${f.text}</div>
+                    <div class="text-[10px] text-slate-600 mt-0.5">${f.time}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ==========================================
+    // RENDER: WORKFLOWS
+    // ==========================================
+    function renderWorkflows() {
+        document.getElementById('workflowGrid').innerHTML = appData.workflows.map(w => `
+            <div class="glass-card rounded-2xl p-5 hover:border-indigo-500/30 transition cursor-pointer" onclick="editWorkflow(${w.id})">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-2xl">${w.icon}</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full status-${w.status}">${w.status}</span>
+                </div>
+                <h3 class="font-semibold text-sm mb-1">${w.name}</h3>
+                <p class="text-[10px] text-slate-500 mb-4">Trigger: ${w.trigger}</p>
+                <div class="flex items-center justify-between text-[10px]">
+                    <span class="text-slate-400">${w.runs} runs</span>
+                    <span class="text-emerald-400">${w.successRate}% success</span>
+                </div>
+                <div class="flex items-center justify-between mt-3 pt-3 border-t border-white/5 text-[10px]">
+                    <span class="text-slate-500">${w.nodes} nodes</span>
+                    <span class="text-slate-500">Last: ${w.lastRun}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ==========================================
+    // RENDER: AI AGENTS
+    // ==========================================
+    function renderAgents() {
+        document.getElementById('agentsGrid').innerHTML = appData.agents.map(a => `
+            <div class="glass-card rounded-2xl p-5 hover:border-indigo-500/30 transition">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-2xl">${a.icon}</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full status-${a.status}">${a.status}</span>
+                </div>
+                <h3 class="font-semibold text-sm mb-1">${a.name}</h3>
+                <p class="text-[10px] text-slate-500 mb-3">${a.description}</p>
+                <div class="flex gap-2 mb-3">
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">${a.type}</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400">${a.model}</span>
+                </div>
+                <div class="flex items-center justify-between text-[10px] pt-3 border-t border-white/5">
+                    <span class="text-slate-400">${a.tasks} tasks</span>
+                    <span class="text-emerald-400">${a.accuracy}% accuracy</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ==========================================
+    // RENDER: PIPELINES
+    // ==========================================
+    function renderPipelines() {
+        document.getElementById('pipelinesGrid').innerHTML = appData.pipelines.map(p => `
+            <div class="glass-card rounded-2xl p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-2xl">${p.icon}</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full status-${p.status}">${p.status}</span>
+                </div>
+                <h3 class="font-semibold text-sm mb-2">${p.name}</h3>
+                <div class="flex items-center gap-2 text-[10px] text-slate-400 mb-3">
+                    <span class="px-2 py-0.5 rounded bg-slate-800">${p.source}</span>
+                    <span>→</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-800">${p.dest}</span>
+                </div>
+                <div class="flex items-center justify-between text-[10px] pt-3 border-t border-white/5">
+                    <span class="text-slate-400">${p.records}</span>
+                    <span class="text-slate-500">Synced: ${p.lastSync}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ==========================================
+    // RENDER: INBOX
+    // ==========================================
+    function renderInbox() {
+        document.getElementById('inboxList').innerHTML = appData.inbox.map(m => `
+            <div class="p-3 rounded-xl ${m.read ? '' : 'bg-indigo-500/5 border border-indigo-500/10'} hover:bg-white/5 transition cursor-pointer" onclick="openMail(${m.id})">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-[10px] font-semibold ${m.priority === 'high' ? 'text-red-400' : m.priority === 'medium' ? 'text-amber-400' : 'text-slate-500'}">${m.priority.toUpperCase()}</span>
+                    <span class="text-[10px] text-slate-600">${m.time}</span>
+                </div>
+                <div class="text-xs font-semibold mb-1 ${m.read ? 'text-slate-400' : 'text-white'}">${m.subject}</div>
+                <div class="text-[10px] text-slate-500">${m.from}</div>
+            </div>
+        `).join('');
+    }
+
+    function openMail(id) {
+        const m = appData.inbox.find(x => x.id === id);
+        if (!m) return;
+        m.read = true;
+        renderInbox();
+
+        document.getElementById('inboxDetail').innerHTML = `
+            <div class="mb-4">
+                <h3 class="font-semibold text-base mb-2">${m.subject}</h3>
+                <div class="flex items-center gap-3 text-xs text-slate-400">
+                    <span>From: ${m.from}</span>
+                    <span>·</span>
+                    <span>${m.time}</span>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] ${m.priority === 'high' ? 'status-error' : m.priority === 'medium' ? 'status-paused' : 'status-draft'}">${m.priority}</span>
+                </div>
+            </div>
+            <div class="text-sm text-slate-300 leading-relaxed mb-6">${m.body}</div>
+            <div class="flex gap-2">
+                <button class="px-4 py-2 accent-gradient rounded-xl text-xs font-semibold">Reply with AI</button>
+                <button class="px-4 py-2 bg-slate-800 rounded-xl text-xs font-semibold">Create Task</button>
+                <button class="px-4 py-2 bg-slate-800 rounded-xl text-xs font-semibold">Archive</button>
+            </div>
+        `;
+    }
+
+    // ==========================================
+    // RENDER: CLIENTS
+    // ==========================================
+    function renderClients() {
+        document.getElementById('clientsTable').innerHTML = appData.clients.map(c => `
+            <tr class="data-row border-b border-white/5">
+                <td class="px-5 py-4"><div class="flex items-center gap-3"><span class="text-xl">${c.logo}</span><div><div class="text-sm font-semibold">${c.name}</div><div class="text-[10px] text-slate-500">${c.email}</div></div></div></td>
+                <td class="px-5 py-4 text-sm">${c.contact}</td>
+                <td class="px-5 py-4 text-sm">${c.workflows}</td>
+                <td class="px-5 py-4"><span class="text-[10px] px-2 py-0.5 rounded-full status-${c.status}">${c.status}</span></td>
+                <td class="px-5 py-4 text-sm font-semibold text-emerald-400">$${c.mrr.toLocaleString()}</td>
+                <td class="px-5 py-4"><button class="text-[10px] px-3 py-1 rounded bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 transition">Manage</button></td>
+            </tr>
+        `).join('');
+    }
+
+    // ==========================================
+    // RENDER: ANALYTICS
+    // ==========================================
+    function renderAnalytics() {
+        const stats = [
+            { label: 'Total Automations', value: '8,432', change: '+12%', icon: '⚡' },
+            { label: 'Success Rate', value: '96.8%', change: '+2.1%', icon: '✅' },
+            { label: 'Avg Response Time', value: '1.2s', change: '-18%', icon: '⏱️' },
+            { label: 'Cost Saved', value: '$142K', change: '+35%', icon: '💰' },
+        ];
+        document.getElementById('analyticsStats').innerHTML = stats.map(s => `
+            <div class="glass-card rounded-2xl p-5">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs text-slate-400">${s.label}</span>
+                    <span class="text-lg">${s.icon}</span>
+                </div>
+                <div class="text-2xl font-bold">${s.value}</div>
+                <div class="text-xs text-emerald-400 mt-1">${s.change}</div>
+            </div>
+        `).join('');
+
+        // Chart
+        const data = Array.from({length: 30}, () => Math.random() * 80 + 20);
+        document.getElementById('analyticsChart').innerHTML = data.map(v => `
+            <div class="flex-1 rounded-t accent-gradient opacity-70 chart-bar" style="height:${v}%"></div>
+        `).join('');
+    }
+
+    // ==========================================
+    // RENDER: INTEGRATIONS
+    // ==========================================
+    function renderIntegrations() {
+        const integrations = [
+            { name: 'Salesforce', icon: '☁️', status: 'connected', category: 'CRM' },
+            { name: 'Slack', icon: '💬', status: 'connected', category: 'Communication' },
+            { name: 'Gmail', icon: '📧', status: 'connected', category: 'Email' },
+            { name: 'HubSpot', icon: '🧲', status: 'available', category: 'Marketing' },
+            { name: 'Stripe', icon: '💳', status: 'connected', category: 'Payment' },
+            { name: 'GitHub', icon: '🐙', status: 'available', category: 'Dev' },
+            { name: 'Google Sheets', icon: '📊', status: 'connected', category: 'Data' },
+            { name: 'Notion', icon: '📝', status: 'available', category: 'Productivity' },
+            { name: 'Zapier', icon: '⚡', status: 'available', category: 'Automation' },
+            { name: 'Airtable', icon: '📋', status: 'connected', category: 'Database' },
+            { name: 'Twilio', icon: '📱', status: 'available', category: 'SMS' },
+            { name: 'AWS S3', icon: '🪣', status: 'connected', category: 'Storage' },
+        ];
+
+        document.getElementById('integrationsGrid').innerHTML = integrations.map(i => `
+            <div class="glass-card rounded-2xl p-5 text-center hover:border-indigo-500/30 transition cursor-pointer">
+                <span class="text-3xl block mb-2">${i.icon}</span>
+                <div class="font-semibold text-sm mb-1">${i.name}</div>
+                <div class="text-[10px] text-slate-500 mb-3">${i.category}</div>
+                <span class="text-[10px] px-3 py-1 rounded-full ${i.status === 'connected' ? 'status-active' : 'bg-slate-800 text-slate-400'}">${i.status === 'connected' ? '✓ Connected' : 'Connect'}</span>
+            </div>
+        `).join('');
+    }
+
+    // ==========================================
+    // RENDER: TEMPLATES
+    // ==========================================
+    function renderTemplates() {
+        const templates = [
+            { name: 'Lead Nurture Sequence', desc: 'Auto-email leads based on behavior', category: 'Sales', uses: 1234, icon: '🎯' },
+            { name: 'Employee Onboarding', desc: 'Complete HR onboarding workflow', category: 'HR', uses: 567, icon: '🏢' },
+            { name: 'Invoice to Payment', desc: 'End-to-end invoice processing', category: 'Finance', uses: 890, icon: '💰' },
+            { name: 'Social Media Auto-Post', desc: 'Schedule and post across platforms', category: 'Marketing', uses: 2341, icon: '📱' },
+            { name: 'Customer Support Triage', desc: 'Route and respond to tickets', category: 'Support', uses: 1567, icon: '🎫' },
+            { name: 'Data Backup & Sync', desc: 'Automated data protection pipeline', category: 'IT', uses: 456, icon: '💾' },
+        ];
+
+        document.getElementById('templatesGrid').innerHTML = templates.map(t => `
+            <div class="glass-card rounded-2xl p-5 hover:border-indigo-500/30 transition cursor-pointer">
+                <span class="text-2xl block mb-3">${t.icon}</span>
+                <h3 class="font-semibold text-sm mb-1">${t.name}</h3>
+                <p class="text-[10px] text-slate-500 mb-3">${t.desc}</p>
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">${t.category}</span>
+                    <span class="text-[10px] text-slate-500">${t.uses} uses</span>
+                </div>
+                <button class="w-full mt-4 py-2 rounded-xl bg-indigo-500/10 text-indigo-400 text-xs font-semibold hover:bg-indigo-500/20 transition">Use Template</button>
+            </div>
+        `).join('');
+    }
+
+    // ==========================================
+    // RENDER: API HUB
+    // ==========================================
+    function renderApiHub() {
+        const endpoints = [
+            { method: 'POST', path: '/api/v1/workflows/trigger', desc: 'Trigger a workflow by ID' },
+            { method: 'GET', path: '/api/v1/workflows', desc: 'List all workflows' },
+            { method: 'POST', path: '/api/v1/agents/run', desc: 'Run an AI agent task' },
+            { method: 'GET', path: '/api/v1/pipelines/status', desc: 'Get pipeline sync status' },
+            { method: 'POST', path: '/api/v1/data/push', desc: 'Push data to a pipeline' },
+            { method: 'GET', path: '/api/v1/analytics', desc: 'Get analytics data' },
+        ];
+
+        document.getElementById('apiEndpoints').innerHTML = endpoints.map(e => `
+            <div class="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition">
+                <span class="text-[10px] px-2 py-1 rounded font-mono font-bold ${e.method === 'GET' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-amber-500/15 text-amber-400'}">${e.method}</span>
+                <code class="text-xs text-slate-300 font-mono">${e.path}</code>
+                <span class="text-[10px] text-slate-500 ml-auto">${e.desc}</span>
+            </div>
+        `).join('');
+    }
+
+    // ==========================================
+    // RENDER: SETTINGS
+    // ==========================================
+    function renderSettings() {
+        document.getElementById('settingsContent').innerHTML = `
+            <div class="space-y-4">
+                <h3 class="font-semibold text-sm">General</h3>
+                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/50">
+                    <div><div class="text-xs font-semibold">Company Name</div><div class="text-[10px] text-slate-500">Your organization name</div></div>
+                    <input type="text" class="px-3 py-1.5 rounded-lg bg-slate-700/50 border border-slate-600/50 text-xs outline-none" value="${appData.user?.name || 'My Company'}" />
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/50">
+                    <div><div class="text-xs font-semibold">Email Notifications</div><div class="text-[10px] text-slate-500">Receive workflow alerts</div></div>
+                    <div class="toggle-active w-10 h-5 rounded-full cursor-pointer" onclick="this.classList.toggle('toggle-active')"><div class="toggle-track w-full h-full rounded-full bg-indigo-500 relative"><div class="toggle-thumb w-4 h-4 rounded-full bg-white absolute top-0.5 left-0.5"></div></div></div>
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/50">
+                    <div><div class="text-xs font-semibold">AI Auto-Respond</div><div class="text-[10px] text-slate-500">Let AI handle routine queries</div></div>
+                    <div class="toggle-active w-10 h-5 rounded-full cursor-pointer" onclick="this.classList.toggle('toggle-active')"><div class="toggle-track w-full h-full rounded-full bg-indigo-500 relative"><div class="toggle-thumb w-4 h-4 rounded-full bg-white absolute top-0.5 left-0.5"></div></div></div>
+                </div>
+            </div>
+        `;
+    }
+
+    // ==========================================
+    // RENDER: BILLING
+    // ==========================================
+    function renderBilling() {
+        const plans = [
+            { name: 'Starter', price: 49, workflows: 10, agents: 2, features: ['Basic workflows', '2 AI agents', '1,000 tasks/mo', 'Email support'] },
+            { name: 'Pro', price: 199, workflows: 50, agents: 10, features: ['Advanced workflows', '10 AI agents', '25,000 tasks/mo', 'Priority support', 'API access', 'Custom integrations'], popular: true },
+            { name: 'Enterprise', price: 499, workflows: 'Unlimited', agents: 'Unlimited', features: ['Everything in Pro', 'Unlimited everything', 'Dedicated support', 'Custom AI models', 'SLA guarantee', 'White-label option'] },
+        ];
+
+        document.getElementById('billingPlans').innerHTML = plans.map(p => `
+            <div class="glass-card rounded-2xl p-6 ${p.popular ? 'border-indigo-500/50 relative' : ''}">
+                ${p.popular ? '<span class="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] px-3 py-1 accent-gradient rounded-full font-semibold">Most Popular</span>' : ''}
+                <h3 class="font-bold text-lg mb-1">${p.name}</h3>
+                <div class="mb-4"><span class="text-3xl font-bold">$${p.price}</span><span class="text-slate-500 text-sm">/mo</span></div>
+                <ul class="space-y-2 mb-6">
+                    ${p.features.map(f => `<li class="text-xs text-slate-400 flex items-center gap-2"><span class="text-emerald-400">✓</span>${f}</li>`).join('')}
+                </ul>
+                <button class="w-full py-2.5 rounded-xl text-xs font-semibold ${p.popular ? 'accent-gradient' : 'bg-slate-800 hover:bg-slate-700'} transition">${p.popular ? 'Current Plan' : 'Upgrade'}</button>
+            </div>
+        `).join('');
+    }
+
+    // ==========================================
+    // AI ASSISTANT
+    // ==========================================
+    function toggleAI() {
+        const panel = document.getElementById('aiPanel');
+        panel.classList.toggle('translate-x-full');
+    }
+
+    function sendAI() {
+        const input = document.getElementById('aiInput');
+        const msg = input.value.trim();
+        if (!msg) return;
+        input.value = '';
+
+        addAIMessage('You', msg, 'user');
+
+        // Simulate AI response
+        setTimeout(() => {
+            const responses = [
+                `I'll help you with that! Based on your request about "${msg.substring(0, 30)}...", here are my recommendations:\n\n1. Create a new workflow with trigger conditions\n2. Set up an AI agent to handle this automatically\n3. Connect it to your existing pipelines\n\nWould you like me to create this workflow for you?`,
+                `Great question! I've analyzed your current setup and here's what I suggest:\n\n• Your ${appData.workflows.length} active workflows are performing well\n• Consider adding error handling to the Slack Alert workflow\n• The Lead Qualification pipeline could benefit from AI scoring\n\nShall I implement any of these improvements?`,
+                `I can automate that for you! Here's a quick plan:\n\n1. 🎯 Set up the trigger condition\n2. 🤖 Configure AI processing step\n3. 📧 Add notification actions\n4. ✅ Deploy and monitor\n\nEstimated time savings: ~12 hours/week. Ready to proceed?`
+            ];
+            const response = responses[Math.floor(Math.random() * responses.length)];
+            addAIMessage('AI Assistant', response, 'ai');
+        }, 1000);
+    }
+
+    function aiQuick(msg) {
+        document.getElementById('aiInput').value = msg;
+        sendAI();
+    }
+
+    function addAIMessage(sender, text, type) {
+        const chat = document.getElementById('aiChat');
+        const div = document.createElement('div');
+        div.className = `p-3 rounded-xl text-xs leading-relaxed slide-up ${
+            type === 'user' ? 'bg-slate-800 ml-8' : 'bg-indigo-500/10 border border-indigo-500/15 mr-4'
+        }`;
+        div.innerHTML = `<strong class="${type === 'user' ? 'text-slate-400' : 'text-indigo-400'} block mb-1">${sender}</strong>${text.replace(/\n/g, '<br>')}`;
+        chat.appendChild(div);
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    // ==========================================
+    // HELPERS
+    // ==========================================
+    function showWorkflowBuilder() { alert('Workflow Builder - Coming in next update!'); }
+    function editWorkflow(id) { alert('Edit Workflow #' + id); }
+    function createAgent() { alert('Create Agent - Coming in next update!'); }
+    function addClient() { alert('Add Client - Coming in next update!'); }
+    function handleSearch(e) { if (e.key === 'Enter') { alert('Search: ' + e.target.value); } }
+
+    function saveData() { localStorage.setItem('automateAI', JSON.stringify(appData)); }
+    function loadData() {
+        const saved = localStorage.getItem('automateAI');
+        if (saved) { appData = JSON.parse(saved); return true; }
+        return false;
+    }
+
+    // ==========================================
+    // INIT
+    // ==========================================
+    if (loadData() && appData.user) {
+        document.getElementById('loginGate').classList.add('hidden');
+        document.getElementById('mainApp').classList.remove('hidden');
+        document.getElementById('userName').textContent = appData.user.name;
+        document.getElementById('userAvatar').textContent = appData.user.name.substring(0, 2).toUpperCase();
+        document.getElementById('greetName').textContent = appData.user.name;
+        generateSampleData();
+        renderDashboard();
+    }
+    </script>
+</body>
+</html>
