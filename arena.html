@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Evaluation Arena</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #0a0a1a;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        /* ========== LOCK SCREEN ========== */
+        #lockScreen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(10, 10, 26, 0.97);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(10px);
+        }
+
+        .lock-container {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 1px solid #0f3460;
+            border-radius: 20px;
+            padding: 50px 40px;
+            text-align: center;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .lock-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .lock-container h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #e94560;
+        }
+
+        .lock-container p {
+            color: #888;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .lock-input {
+            width: 100%;
+            padding: 14px 20px;
+            border: 2px solid #0f3460;
+            border-radius: 12px;
+            background: #0a0a1a;
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .lock-input:focus {
+            border-color: #e94560;
+        }
+
+        .unlock-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #e94560, #c23152);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .unlock-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(233, 69, 96, 0.4);
+        }
+
+        .lock-error {
+            color: #e94560;
+            font-size: 13px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* ========== MAIN ARENA ========== */
+        #arenaApp {
+            display: none;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-bottom: 2px solid #0f3460;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            background: linear-gradient(135deg, #e94560, #0f3460);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .lock-btn {
+            padding: 8px 16px;
+            background: #e94560;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .lock-btn:hover {
+            background: #c23152;
+        }
+
+        .badge {
+            background: #0f3460;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #4fc3f7;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* ========== PROMPT INPUT ========== */
+        .prompt-section {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 1px solid #0f3460;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .prompt-section h3 {
+            margin-bottom: 15px;
+            color: #4fc3f7;
+        }
+
+        .prompt-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            background: #0a0a1a;
+            border: 2px solid #0f3460;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 15px;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .prompt-input:focus {
+            border-color: #e94560;
+        }
+
+        .prompt-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #e94560, #c23152);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(233, 69, 96, 0.4);
+        }
+
+        .btn-secondary {
+            background: #0f3460;
+            color: #4fc3f7;
+        }
+
+        .btn-secondary:hover {
+            background: #1a4a8a;
+        }
+
+        /* ========== MODEL SELECTOR ========== */
+        .model-selector {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .model-chip {
+            padding: 8px 16px;
+            background: #0a0a1a;
+            border: 2px solid #0f3460;
+            border-radius: 25px;
+            color: #888;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .model-chip.active {
+            border-color: #e94560;
+            color: #e94560;
+            background: rgba(233, 69, 96, 0.1);
+        }
+
+        .model-chip:hover {
+            border-color: #4fc3f7;
+            color: #4fc3f7;
+        }
+
+        /* ========== BATTLE ARENA ========== */
+        .arena-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .arena-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .model-card {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 2px solid #0f3460;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+
+        .model-card:hover {
+            border-color: #4fc3f7;
+        }
+
+        .model-card.winner {
+            border-color: #4caf50;
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.2);
+        }
+
+        .card-header {
+            background: rgba(15, 52, 96, 0.5);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h3 {
+            font-size: 16px;
+            color: #4fc3f7;
+        }
+
+        .model-badge {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .badge-a { background: rgba(233, 69, 96, 0.2); color: #e94560; }
+        .badge-b { background: rgba(79, 195, 247, 0.2); color: #4fc3f7; }
+
+        .card-body {
+            padding: 20px;
+            min-height: 200px;
+        }
+
+        .response-text {
+            line-height: 1.7;
+            font-size: 14px;
+            color: #ccc;
+            white-space: pre-wrap;
+        }
+
+        .placeholder-text {
+            color: #555;
+            font-style: italic;
+            text-align: center;
+            padding-top: 60px;
+        }
+
+        .card-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #0f3460;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .metrics {
+            display: flex;
+            gap: 15px;
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #4fc3f7;
+        }
+
+        .metric-label {
+            font-size: 10px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .vote-btn {
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #4caf50, #388e3c);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .vote-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .vote-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ========== LEADERBOARD ========== */
+        .leaderboard {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 1px solid #0f3460;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .leaderboard h3 {
+            margin-bottom: 20px;
+            color: #4fc3f7;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .leaderboard-table th {
+            text-align: left;
+            padding: 12px 15px;
+            background: rgba(15, 52, 96, 0.3);
+            color: #4fc3f7;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .leaderboard-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(15, 52, 96, 0.3);
+            font-size: 14px;
+        }
+
+        .leaderboard-table tr:hover td {
+            background: rgba(15, 52, 96, 0.2);
+        }
+
+        .rank-1 { color: #ffd700; }
+        .rank-2 { color: #c0c0c0; }
+        .rank-3 { color: #cd7f32; }
+
+        .elo-score {
+            font-weight: 700;
+            color: #4fc3f7;
+        }
+
+        .win-rate {
+            color: #4caf50;
+        }
+
+        /* ========== EVALUATION CRITERIA ========== */
+        .criteria-section {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 1px solid #0f3460;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .criteria-section h3 {
+            color: #4fc3f7;
+            margin-bottom: 15px;
+        }
+
+        .criteria-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .criteria-card {
+            background: #0a0a1a;
+            border: 1px solid #0f3460;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .criteria-card h4 {
+            font-size: 14px;
+            color: #e94560;
+            margin-bottom: 8px;
+        }
+
+        .criteria-score {
+            font-size: 28px;
+            font-weight: 700;
+            color: #4fc3f7;
+        }
+
+        .score-bar {
+            width: 100%;
+            height: 6px;
+            background: #0f3460;
+            border-radius: 3px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .score-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 1s ease;
+        }
+
+        .fill-high { background: #4caf50; }
+        .fill-mid { background: #ff9800; }
+        .fill-low { background: #e94560; }
+
+        /* ========== HISTORY ========== */
+        .history-section {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 1px solid #0f3460;
+            border-radius: 16px;
+            padding: 25px;
+        }
+
+        .history-section h3 {
+            color: #4fc3f7;
+            margin-bottom: 15px;
+        }
+
+        .history-item {
+            background: #0a0a1a;
+            border: 1px solid #0f3460;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-models {
+            font-size: 14px;
+        }
+
+        .vs {
+            color: #e94560;
+            font-weight: 700;
+            margin: 0 8px;
+        }
+
+        .history-winner {
+            color: #4caf50;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .history-date {
+            color: #555;
+            font-size: 12px;
+        }
+
+        /* ========== LOADING ========== */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 40px;
+            color: #4fc3f7;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid #0f3460;
+            border-top: 3px solid #4fc3f7;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ========== TABS ========== */
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 25px;
+            background: #1a1a2e;
+            padding: 5px;
+            border-radius: 12px;
+            border: 1px solid #0f3460;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #e94560;
+            color: #fff;
+        }
+
+        .tab:hover:not(.active) {
+            color: #4fc3f7;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* ========== TIE BUTTON ========== */
+        .tie-section {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .tie-btn {
+            padding: 10px 30px;
+            background: #0f3460;
+            border: 2px solid #4fc3f7;
+            border-radius: 10px;
+            color: #4fc3f7;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tie-btn:hover {
+            background: rgba(79, 195, 247, 0.1);
+        }
+
+        .tie-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== LOCK SCREEN ========== -->
+    <div id="lockScreen">
+        <div class="lock-container">
+            <div class="lock-icon">🔒</div>
+            <h2>Arena Locked</h2>
+            <p>Enter your access key to unlock the Model Evaluation Arena</p>
+            <input
+                type="password"
+                id="accessKey"
+                class="lock-input"
+                placeholder="Enter access key..."
+                onkeydown="if(event.key==='Enter') unlockArena()"
+            />
+            <button class="unlock-btn" onclick="unlockArena()">
+                🔓 Unlock Arena
+            </button>
+            <p class="lock-error" id="lockError">❌ Invalid access key. Try again.</p>
+            <p style="color:#555; font-size:12px; margin-top:15px;">
+                Demo key: <code style="color:#4fc3f7;">arena2024</code>
+            </p>
+        </div>
+    </div>
+
+    <!-- ========== MAIN ARENA APP ========== -->
+    <div id="arenaApp">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>⚔️ Model Evaluation Arena</h1>
+            <div class="header-actions">
+                <span class="badge">🏆 Battles: <span id="totalBattles">0</span></span>
+                <button class="lock-btn" onclick="lockArena()">🔒 Lock</button>
+            </div>
+        </div>
+
+        <div class="main-container">
+            <!-- TABS -->
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('battle')">⚔️ Battle</div>
+                <div class="tab" onclick="switchTab('leaderboard')">🏆 Leaderboard</div>
+                <div class="tab" onclick="switchTab('history')">📜 History</div>
+            </div>
+
+            <!-- ========== BATTLE TAB ========== -->
+            <div id="tab-battle" class="tab-content active">
+                <!-- PROMPT SECTION -->
+                <div class="prompt-section">
+                    <h3>📝 Enter Your Prompt</h3>
+                    <textarea
+                        class="prompt-input"
+                        id="promptInput"
+                        placeholder="Type your prompt here... (e.g., 'Explain quantum computing in simple terms')"
+                    ></textarea>
+
+                    <div class="model-selector">
+                        <span style="color:#888; font-size:13px; padding:8px 0;">Models:</span>
+                        <div class="model-chip active" data-model="gpt4" onclick="toggleModel(this)">GPT-4</div>
+                        <div class="model-chip active" data-model="claude" onclick="toggleModel(this)">Claude 3</div>
+                        <div class="model-chip" data-model="gemini" onclick="toggleModel(this)">Gemini Pro</div>
+                        <div class="model-chip" data-model="llama" onclick="toggleModel(this)">LLaMA 3</div>
+                        <div class="model-chip" data-model="mistral" onclick="toggleModel(this)">Mistral</div>
+                        <div class="model-chip" data-model="cohere" onclick="toggleModel(this)">Cohere</div>
+                    </div>
+
+                    <div class="prompt-actions">
+                        <button class="btn btn-primary" onclick="startBattle()">⚔️ Start Battle</button>
+                        <button class="btn btn-secondary" onclick="randomPrompt()">🎲 Random Prompt</button>
+                        <button class="btn btn-secondary" onclick="clearArena()">🗑️ Clear</button>
+                    </div>
+                </div>
+
+                <!-- ARENA GRID -->
+                <div class="arena-grid">
+                    <!-- MODEL A -->
+                    <div class="model-card" id="modelCardA">
+                        <div class="card-header">
+                            <h3 id="modelNameA">Model A</h3>
+                            <span class="model-badge badge-a">A</span>
+                        </div>
+                        <div class="card-body">
+                            <div id="responseA" class="response-text">
+                                <p class="placeholder-text">⚔️ Waiting for battle...</p>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="metrics" id="metricsA">
+                                <div class="metric">
+                                    <div class="metric-value" id="timeA">-</div>
+                                    <div class="metric-label">Time (s)</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value" id="tokensA">-</div>
+                                    <div class="metric-label">Tokens</div>
+                                </div>
+                            </div>
+                            <button class="vote-btn" id="voteA" onclick="vote('A')" disabled>
+                                👑 Vote A
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- MODEL B -->
+                    <div class="model-card" id="modelCardB">
+                        <div class="card-header">
+                            <h3 id="modelNameB">Model B</h3>
+                            <span class="model-badge badge-b">B</span>
+                        </div>
+                        <div class="card-body">
+                            <div id="responseB" class="response-text">
+                                <p class="placeholder-text">⚔️ Waiting for battle...</p>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="metrics" id="metricsB">
+                                <div class="metric">
+                                    <div class="metric-value" id="timeB">-</div>
+                                    <div class="metric-label">Time (s)</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value" id="tokensB">-</div>
+                                    <div class="metric-label">Tokens</div>
+                                </div>
+                            </div>
+                            <button class="vote-btn" id="voteB" onclick="vote('B')" disabled>
+                                👑 Vote B
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TIE -->
+                <div class="tie-section">
+                    <button class="tie-btn" id="tieBtn" onclick="vote('tie')" disabled>
+                        🤝 It's a Tie
+                    </button>
+                </div>
+
+                <!-- EVALUATION CRITERIA -->
+                <div class="criteria-section" id="criteriaSection" style="display:none;">
+                    <h3>📊 Evaluation Breakdown</h3>
+                    <div class="criteria-grid" id="criteriaGrid"></div>
+                </div>
+            </div>
+
+            <!-- ========== LEADERBOARD TAB ========== -->
+            <div id="tab-leaderboard" class="tab-content">
+                <div class="leaderboard">
+                    <h3>🏆 Model Leaderboard (ELO Ratings)</h3>
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Model</th>
+                                <th>ELO</th>
+                                <th>Wins</th>
+                                <th>Losses</th>
+                                <th>Win Rate</th>
+                                <th>Battles</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboardBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ========== HISTORY TAB ========== -->
+            <div id="tab-history" class="tab-content">
+                <div class="history-section">
+                    <h3>📜 Battle History</h3>
+                    <div id="historyList">
+                        <p style="color:#555; text-align:center; padding:30px;">
+                            No battles yet. Start your first battle!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== CONFIG ==========
+        const ACCESS_KEY = "arena2024"; // Change this to your key
+        let isLocked = true;
+
+        // ========== MODEL DATA ==========
+        const models = {
+            gpt4: {
+                name: "GPT-4",
+                elo: 1200,
+                wins: 0,
+                losses: 0,
+                ties: 0
+            },
+            claude: {
+                name: "Claude 3",
+                elo: 1200,
+                wins: 0,
+                losses: 0,
+                ties: 0
+            },
+            gemini: {
+                name: "Gemini Pro",
+                elo: 1200,
+                wins: 0,
+                losses: 0,
+                ties: 0
+            },
+            llama: {
+                name: "LLaMA 3",
+                elo: 1200,
+                wins: 0,
+                losses: 0,
+                ties: 0
+            },
+            mistral: {
+                name: "Mistral",
+                elo: 1200,
+                wins: 0,
+                losses: 0,
+                ties: 0
+            },
+            cohere: {
+                name: "Cohere",
+                elo: 1200,
+                wins: 0,
+                losses: 0,
+                ties: 0
+            }
+        };
+
+        let battleHistory = [];
+        let totalBattles = 0;
+        let currentBattle = null;
+
+        // Load saved data
+        function loadData() {
+            const saved = localStorage.getItem('arenaData');
+            if (saved) {
+                const data = JSON.parse(saved);
+                Object.assign(models, data.models || {});
+                battleHistory = data.history || [];
+                totalBattles = data.totalBattles || 0;
+                document.getElementById('totalBattles').textContent = totalBattles;
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('arenaData', JSON.stringify({
+                models,
+                history: battleHistory,
+                totalBattles
+            }));
+        }
+
+        // ========== LOCK / UNLOCK ==========
+        function unlockArena() {
+            const key = document.getElementById('accessKey').value;
+            if (key === ACCESS_KEY) {
+                document.getElementById('lockScreen').style.display = 'none';
+                document.getElementById('arenaApp').style.display = 'block';
+                isLocked = false;
+                loadData();
+                updateLeaderboard();
+                renderHistory();
+            } else {
+                document.getElementById('lockError').style.display = 'block';
+                document.getElementById('accessKey').style.borderColor = '#e94560';
+                setTimeout(() => {
+                    document.getElementById('lockError').style.display = 'none';
+                    document.getElementById('accessKey').style.borderColor = '#0f3460';
+                }, 2000);
+            }
+        }
+
+        function lockArena() {
+            document.getElementById('lockScreen').style.display = 'flex';
+            document.getElementById('arenaApp').style.display = 'none';
+            document.getElementById('accessKey').value = '';
+            isLocked = true;
+        }
+
+        // ========== TABS ==========
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+
+            if (tabName === 'leaderboard') updateLeaderboard();
+            if (tabName === 'history') renderHistory();
+        }
+
+        // ========== MODEL SELECTOR ==========
+        function toggleModel(chip) {
+            chip.classList.toggle('active');
+        }
+
+        function getSelectedModels() {
+            const chips = document.querySelectorAll('.model-chip.active');
+            return Array.from(chips).map(c => c.dataset.model);
+        }
+
+        // ========== RANDOM PROMPTS ==========
+        const samplePrompts = [
+            "Explain quantum computing to a 10-year-old.",
+            "Write a Python function to find the longest palindromic substring.",
+            "Compare REST and GraphQL APIs with pros and cons.",
+            "Explain the theory of relativity in 3 sentences.",
+            "Write a creative short story about an AI that discovers emotions.",
+            "What are the key differences between SQL and NoSQL databases?",
+            "Explain machine learning to someone with no tech background.",
+            "Write a poem about the beauty of mathematics.",
+            "Design a database schema for an e-commerce platform.",
+            "What are the ethical implications of artificial general intelligence?",
+            "Explain the blockchain technology and its real-world applications.",
+            "Write a bash script that monitors disk usage and sends alerts.",
+            "Compare and contrast functional and object-oriented programming."
+        ];
+
+        function randomPrompt() {
+            const prompt = samplePrompts[Math.floor(Math.random() * samplePrompts.length)];
+            document.getElementById('promptInput').value = prompt;
+        }
+
+        // ========== SIMULATED RESPONSES ==========
+        function simulateResponse(modelKey, prompt) {
+            const responses = {
+                gpt4: `[GPT-4 Response]\n\n${prompt}\n\nGPT-4 provides a comprehensive and well-structured answer. It breaks down complex concepts into digestible parts while maintaining technical accuracy. The response demonstrates strong reasoning capabilities and broad knowledge coverage.\n\nKey points:\n• Clear explanation with examples\n• Well-organized structure\n• Technical depth with accessibility\n• Practical applications mentioned`,
+
+                claude: `[Claude 3 Response]\n\n${prompt}\n\nClaude 3 approaches this thoughtfully with a balanced perspective. It excels at nuanced reasoning and provides context-aware responses. The answer is detailed yet concise, with careful attention to accuracy.\n\nHighlights:\n• Nuanced and balanced view\n• Strong analytical reasoning\n• Context-aware explanations\n• Ethical considerations included`,
+
+                gemini: `[Gemini Pro Response]\n\n${prompt}\n\nGemini Pro delivers a multi-modal aware response with strong factual grounding. It leverages broad training data to provide up-to-date and relevant information.\n\nNotable aspects:\n• Multi-perspective approach\n• Current information\n• Clear formatting\n• Good use of examples`,
+
+                llama: `[LLaMA 3 Response]\n\n${prompt}\n\nLLaMA 3 provides an open-source model's perspective with surprisingly competitive quality. The response shows strong comprehension and generation capabilities.\n\nStrengths:\n• Competitive quality\n• Efficient response\n• Good comprehension\n• Practical focus`,
+
+                mistral: `[Mistral Response]\n\n${prompt}\n\nMistral delivers an efficient and focused response. Known for its excellent performance relative to its size, it provides clear and concise answers.\n\nKey features:\n• Concise yet complete\n• Strong performance\n• Efficient processing\n• Clear communication`,
+
+                cohere: `[Cohere Response]\n\n${prompt}\n\nCohere provides an enterprise-focused response with strong attention to practical applications. The answer is well-structured and business-oriented.\n\nAttributes:\n• Enterprise-ready insights\n• Practical applications\n• Well-structured format\n• Business context awareness`
+            };
+
+            return responses[modelKey] || "Response not available.";
+        }
+
+        // ========== START BATTLE ==========
+        function startBattle() {
+            const prompt = document.getElementById('promptInput').value.trim();
+            if (!prompt) {
+                alert('Please enter a prompt!');
+                return;
+            }
+
+            const selected = getSelectedModels();
+            if (selected.length < 2) {
+                alert('Please select at least 2 models!');
+                return;
+            }
+
+            // Randomly pick 2 models
+            const shuffled = selected.sort(() => 0.5 - Math.random());
+            const modelA = shuffled[0];
+            const modelB = shuffled[1];
+
+            currentBattle = { modelA, modelB, prompt };
+
+            // Show loading
+            document.getElementById('modelNameA').textContent = "Model A (Hidden)";
+            document.getElementById('modelNameB').textContent = "Model B (Hidden)";
+            document.getElementById('responseA').innerHTML = '<div class="loading"><div class="spinner"></div>Generating...</div>';
+            document.getElementById('responseB').innerHTML = '<div class="loading"><div class="spinner"></div>Generating...</div>';
+
+            // Disable votes
+            document.getElementById('voteA').disabled = true;
+            document.getElementById('voteB').disabled = true;
+            document.getElementById('tieBtn').disabled = true;
+
+            // Reset winner styles
+            document.getElementById('modelCardA').classList.remove('winner');
+            document.getElementById('modelCardB').classList.remove('winner');
+            document.getElementById('criteriaSection').style.display = 'none';
+
+            // Simulate API calls with delays
+            const timeA = (Math.random() * 3 + 1).toFixed(2);
+            const timeB = (Math.random() * 3 + 1).toFixed(2);
+            const tokensA = Math.floor(Math.random() * 300 + 100);
+            const tokensB = Math.floor(Math.random() * 300 + 100);
+
+            setTimeout(() => {
+                document.getElementById('responseA').innerHTML =
+                    `<div class="response-text">${simulateResponse(modelA, prompt)}</div>`;
+                document.getElementById('timeA').textContent = timeA;
+                document.getElementById('tokensA').textContent = tokensA;
+            }, timeA * 500);
+
+            setTimeout(() => {
+                document.getElementById('responseB').innerHTML =
+                    `<div class="response-text">${simulateResponse(modelB, prompt)}</div>`;
+                document.getElementById('timeB').textContent = timeB;
+                document.getElementById('tokensB').textContent = tokensB;
+
+                // Enable voting
+                document.getElementById('voteA').disabled = false;
+                document.getElementById('voteB').disabled = false;
+                document.getElementById('tieBtn').disabled = false;
+            }, Math.max(timeA, timeB) * 500 + 500);
+        }
+
+        // ========== VOTING ==========
+        function vote(choice) {
+            if (!currentBattle) return;
+
+            const { modelA, modelB, prompt } = currentBattle;
+
+            // Reveal models
+            document.getElementById('modelNameA').textContent = models[modelA].name;
+            document.getElementById('modelNameB').textContent = models[modelB].name;
+
+            // Disable voting
+            document.getElementById('voteA').disabled = true;
+            document.getElementById('voteB').disabled = true;
+            document.getElementById('tieBtn').disabled = true;
+
+            let winner, loser;
+
+            if (choice === 'A') {
+                winner = modelA;
+                loser = modelB;
+                models[modelA].wins++;
+                models[modelB].losses++;
+                document.getElementById('modelCardA').classList.add('winner');
+            } else if (choice === 'B') {
+                winner = modelB;
+                loser = modelA;
+                models[modelB].wins++;
+                models[modelA].losses++;
+                document.getElementById('modelCardB').classList.add('winner');
+            } else {
+                models[modelA].ties++;
+                models[modelB].ties++;
+                winner = 'tie';
+            }
+
+            // Update ELO
+            updateELO(modelA, modelB, choice);
+
+            // Update counters
+            totalBattles++;
+            document.getElementById('totalBattles').textContent = totalBattles;
+
+            // Add to history
+            battleHistory.unshift({
+                modelA: models[modelA].name,
+                modelB: models[modelB].name,
+                winner: choice === 'tie' ? 'Tie' : (choice === 'A' ? models[modelA].name : models[modelB].name),
+                prompt: prompt.substring(0, 60) + '...',
+                date: new Date().toLocaleString()
+            });
+
+            // Show criteria
+            showCriteria(modelA, modelB);
+
+            // Save
+            saveData();
+            currentBattle = null;
+        }
+
+        // ========== ELO RATING ==========
+        function updateELO(modelA, modelB, result) {
+            const K = 32;
+            const eloA = models[modelA].elo;
+            const eloB = models[modelB].elo;
+
+            const expectedA = 1 / (1 + Math.pow(10, (eloB - eloA) / 400));
+            const expectedB = 1 / (1 + Math.pow(10, (eloA - eloB) / 400));
+
+            let scoreA, scoreB;
+            if (result === 'A') {
+                scoreA = 1; scoreB = 0;
+            } else if (result === 'B') {
+                scoreA = 0; scoreB = 1;
+            } else {
+                scoreA = 0.5; scoreB = 0.5;
+            }
+
+            models[modelA].elo = Math.round(eloA + K * (scoreA - expectedA));
+            models[modelB].elo = Math.round(eloB + K * (scoreB - expectedB));
+        }
+
+        // ========== EVALUATION CRITERIA ==========
+        function showCriteria(modelA, modelB) {
+            const criteria = [
+                { name: "Accuracy", scoreA: rand(60, 98), scoreB: rand(60, 98) },
+                { name: "Coherence", scoreA: rand(65, 99), scoreB: rand(65, 99) },
+                { name: "Creativity", scoreA: rand(50, 95), scoreB: rand(50, 95) },
+                { name: "Relevance", scoreA: rand(70, 99), scoreB: rand(70, 99) },
+                { name: "Conciseness", scoreA: rand(55, 95), scoreB: rand(55, 95) },
+                { name: "Helpfulness", scoreA: rand(60, 98), scoreB: rand(60, 98) }
+            ];
+
+            const grid = document.getElementById('criteriaGrid');
+            grid.innerHTML = criteria.map(c => `
+                <div class="criteria-card">
+                    <h4>${c.name}</h4>
+                    <div style="display:flex; justify-content:space-around; margin-top:8px;">
+                        <div>
+                            <div class="criteria-score" style="font-size:20px; color:#e94560;">${c.scoreA}%</div>
+                            <div style="font-size:10px; color:#888;">${models[modelA].name}</div>
+                            <div class="score-bar">
+                                <div class="score-fill ${c.scoreA > 80 ? 'fill-high' : c.scoreA > 60 ? 'fill-mid' : 'fill-low'}"
+                                     style="width:${c.scoreA}%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="criteria-score" style="font-size:20px; color:#4fc3f7;">${c.scoreB}%</div>
+                            <div style="font-size:10px; color:#888;">${models[modelB].name}</div>
+                            <div class="score-bar">
+                                <div class="score-fill ${c.scoreB > 80 ? 'fill-high' : c.scoreB > 60 ? 'fill-mid' : 'fill-low'}"
+                                     style="width:${c.scoreB}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('criteriaSection').style.display = 'block';
+        }
+
+        function rand(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // ========== LEADERBOARD ==========
+        function updateLeaderboard() {
+            const sorted = Object.entries(models).sort((a, b) => b[1].elo - a[1].elo);
+            const tbody = document.getElementById('leaderboardBody');
+
+            tbody.innerHTML = sorted.map(([key, model], index) => {
+                const total = model.wins + model.losses + model.ties;
+                const winRate = total > 0 ? ((model.wins / total) * 100).toFixed(1) : '0.0';
+                const rankClass = index < 3 ? `rank-${index + 1}` : '';
+                const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`;
+
+                return `
+                    <tr>
+                        <td class="${rankClass}" style="font-weight:700;">${medal}</td>
+                        <td>${model.name}</td>
+                        <td class="elo-score">${model.elo}</td>
+                        <td style="color:#4caf50;">${model.wins}</td>
+                        <td style="color:#e94560;">${model.losses}</td>
+                        <td class="win-rate">${winRate}%</td>
+                        <td>${total}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // ========== HISTORY ==========
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+
+            if (battleHistory.length === 0) {
+                list.innerHTML = '<p style="color:#555; text-align:center; padding:30px;">No battles yet. Start your first battle!</p>';
+                return;
+            }
+
+            list.innerHTML = battleHistory.slice(0, 20).map(h => `
+                <div class="history-item">
+                    <div>
+                        <div class="history-models">
+                            <strong>${h.modelA}</strong>
+                            <span class="vs">VS</span>
+                            <strong>${h.modelB}</strong>
+                        </div>
+                        <div style="color:#666; font-size:12px; margin-top:4px;">${h.prompt}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div class="history-winner">👑 ${h.winner}</div>
+                        <div class="history-date">${h.date}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ========== CLEAR ==========
+        function clearArena() {
+            document.getElementById('promptInput').value = '';
+            document.getElementById('responseA').innerHTML = '<p class="placeholder-text">⚔️ Waiting for battle...</p>';
+            document.getElementById('responseB').innerHTML = '<p class="placeholder-text">⚔️ Waiting for battle...</p>';
+            document.getElementById('modelNameA').textContent = 'Model A';
+            document.getElementById('modelNameB').textContent = 'Model B';
+            document.getElementById('timeA').textContent = '-';
+            document.getElementById('timeB').textContent = '-';
+            document.getElementById('tokensA').textContent = '-';
+            document.getElementById('tokensB').textContent = '-';
+            document.getElementById('voteA').disabled = true;
+            document.getElementById('voteB').disabled = true;
+            document.getElementById('tieBtn').disabled = true;
+            document.getElementById('modelCardA').classList.remove('winner');
+            document.getElementById('modelCardB').classList.remove('winner');
+            document.getElementById('criteriaSection').style.display = 'none';
+            currentBattle = null;
+        }
+
+        // ========== INIT ==========
+        loadData();
+        updateLeaderboard();
+        renderHistory();
+    </script>
+</body>
+</html>
