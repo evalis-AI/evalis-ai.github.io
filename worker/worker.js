@@ -58,21 +58,51 @@ async function supabaseSelect(table, query, env) {
 
 // Simple in-memory rate limiter (resets on worker restart)
 const rateLimits = new Map();
-function checkRateLimit(ip, limit = 5, windowMs = 60000) {
+function checkRateLimit(key, limit = 5, windowMs = 60000) {
   const now = Date.now();
-  const entry = rateLimits.get(ip) || { count: 0, resetAt: now + windowMs };
+  const entry = rateLimits.get(key) || { count: 0, resetAt: now + windowMs };
   if (now > entry.resetAt) {
     entry.count = 0;
     entry.resetAt = now + windowMs;
   }
   entry.count++;
-  rateLimits.set(ip, entry);
+  rateLimits.set(key, entry);
   return entry.count <= limit;
+}
+
+// Per-client rate limiter (agent_id based, higher limits for paying clients)
+function checkClientRateLimit(agentId, ip) {
+  const clientKey = `client:${agentId || 'default'}:${ip}`;
+  return checkRateLimit(clientKey, agentId ? 30 : 10, 60000);
 }
 
 function validateEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
+
+// ── API Key validation for multi-tenant clients ──
+async function validateApiKey(request, env) {
+  const apiKey = request.headers.get('X-API-Key') || new URL(request.url).searchParams.get('api_key');
+  if (!apiKey) return null;
+
+  try {
+    const results = await supabaseSelect('api_keys',
+      `key=eq.${encodeURIComponent(apiKey)}&is_active=eq.true&limit=1`, env);
+    if (results.length > 0) {
+      // Track usage (non-blocking)
+      try {
+        await supabaseInsert('usage_logs', {
+          agent_id: results[0].agent_id,
+          endpoint: new URL(request.url).pathname,
+          tokens_used: 1,
+        }, env);
+      } catch(e) { /* silent */ }
+      return results[0]; // { agent_id, plan, monthly_limit, ... }
+    }
+  } catch(e) { /* silent */ }
+  return null;
+}
+
 
 // ─── AI System Prompt (Updated with all 13 services) ───
 const SYSTEM_PROMPT = `You are Eva, the friendly AI assistant for Evalis AI — a cutting-edge AI software company based in Perinthalmanna, Kerala, India.
@@ -147,13 +177,19 @@ export default {
     }
 
     try {
+      // ── Validate API key for B2B clients (optional — enhances limits) ──
+      const apiClient = await validateApiKey(request, env);
+
       // ─── POST /api/ai/chat ───
       if (url.pathname === '/api/ai/chat' && request.method === 'POST') {
-        if (!checkRateLimit(ip, 10, 60000)) {
+        const body = await request.json();
+        const agentId = body.agent_id || apiClient?.agent_id;
+
+        if (!checkClientRateLimit(agentId, ip)) {
           return json({ error: 'Too many requests. Please wait a moment.' }, 429, origin, env);
         }
 
-        const body = await request.json();
+
         const userMessage = body.message?.trim();
         if (!userMessage) {
           return json({ error: 'Message is required.' }, 400, origin, env);
