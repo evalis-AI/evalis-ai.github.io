@@ -7,7 +7,7 @@
 (function() {
   'use strict';
 
-  const API = 'https://evalis-api.simpaticohrconsultancy.workers.dev';
+  const API = 'https://evalis-api.evalisglobal.workers.dev';
   const SESSION_KEY = 'evalis_session';
   const VISITOR_KEY = 'evalis_vid';
 

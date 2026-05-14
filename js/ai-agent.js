@@ -7,7 +7,7 @@
 (function() {
   'use strict';
 
-  const API_BASE = 'https://evalis-api.simpaticohrconsultancy.workers.dev';
+  const API_BASE = 'https://evalis-api.evalisglobal.workers.dev';
   const AGENT_NAME = 'Eva';
 
   // ── Inject Styles ──

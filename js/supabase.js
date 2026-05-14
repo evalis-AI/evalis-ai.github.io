@@ -5,7 +5,7 @@
 // Configuration
 const SUPABASE_URL = 'https://mdbgdlawjuoyuvqxthar.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kYmdkbGF3anVveXV2cXh0aGFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1NDA1NDcsImV4cCI6MjA5NDExNjU0N30.IvVXnMXDiNIZHOrCrjsi84YT0IK11TikgPOxieyGUNE';
-const WORKER_API = 'https://evalis-api.simpaticohrconsultancy.workers.dev';
+const WORKER_API = 'https://evalis-api.evalisglobal.workers.dev';
 
 // Lightweight Supabase REST client (no SDK needed)
 const supabase = {
