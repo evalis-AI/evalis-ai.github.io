@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Evalis AI | AI-Powered Software, Web & SaaS Development Company</title>
+    <meta name="description" content="Evalis AI — Next-gen AI data services, web & app development, SaaS platform building, and intelligent automation. Based in Kerala, serving globally.">
+    <meta name="keywords" content="AI services, web development, app development, SaaS platform, AI integration, data labeling, LLM testing, Kerala software company, Perinthalmanna">
+    <link rel="canonical" href="https://evalis-ai.github.io/">
+
+    <meta name="google-site-verification" content="googlecfa2dfd06c44f49f" />
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://evalis-ai.github.io/">
+    <meta property="og:title" content="Evalis AI | AI-Powered Software & SaaS Development">
+    <meta property="og:description" content="Next-gen AI data services, web development, app development, and SaaS solutions. Human-led intelligence powering your digital future.">
+    <meta property="og:image" content="cover.png">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="robots" content="index, follow">
+
+    <link rel="icon" type="image/png" href="favicon-96x96.png">
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        /* Hero special styles */
+        .hero-glow {
+            position: absolute;
+            width: 600px; height: 600px;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        .hero-glow-1 { background: #6366f1; top: -200px; left: -100px; }
+        .hero-glow-2 { background: #a855f7; bottom: -200px; right: -100px; }
+        .hero-glow-3 { background: #06b6d4; top: 50%; left: 50%; transform: translate(-50%,-50%); opacity: 0.08; }
+
+        .type-cursor::after {
+            content: '|';
+            animation: blink 1s infinite;
+            color: var(--primary-light);
+        }
+        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+        .trust-badges {
+            display: flex; gap: 2rem; justify-content: center; align-items: center;
+            flex-wrap: wrap; padding: 1rem 0; opacity: 0.6;
+        }
+        .trust-badges span {
+            font-size: 0.8rem; color: var(--text-muted); font-weight: 500;
+            display: flex; align-items: center; gap: 6px;
+        }
+
+        .feature-highlight {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+            padding: 80px 0;
+        }
+        .feature-highlight.reverse { direction: rtl; }
+        .feature-highlight.reverse > * { direction: ltr; }
+        .feature-visual {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius-xl); padding: 2rem;
+            position: relative; overflow: hidden;
+        }
+        .feature-visual img { width: 100%; border-radius: var(--radius-md); }
+        .feature-content h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem; font-weight: 700; margin-bottom: 1rem;
+        }
+        .feature-content p { color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.8; }
+        .feature-list { list-style: none; }
+        .feature-list li {
+            display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px;
+            color: var(--text-secondary); font-size: 0.95rem;
+        }
+        .feature-list li .check {
+            flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+            background: rgba(16,185,129,0.15); color: #10b981;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; margin-top: 2px;
+        }
+
+        .process-timeline {
+            display: flex; gap: 0; justify-content: center; flex-wrap: wrap;
+            position: relative;
+        }
+        .process-step {
+            flex: 1; min-width: 200px; max-width: 280px; text-align: center;
+            padding: 2rem 1.5rem; position: relative;
+        }
+        .process-step::after {
+            content: '→'; position: absolute; right: -12px; top: 50%;
+            transform: translateY(-50%); color: var(--primary); font-size: 1.5rem;
+        }
+        .process-step:last-child::after { display: none; }
+        .step-num {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; margin: 0 auto 1rem; font-size: 1.1rem;
+        }
+
+        .cta-section {
+            text-align: center; padding: 80px 6%;
+            background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(168,85,247,0.05));
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border);
+            margin: 0 6% 60px;
+            position: relative; overflow: hidden;
+        }
+        .cta-section::before {
+            content: ''; position: absolute; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 50%);
+            animation: gradient-shift 8s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @media (max-width: 768px) {
+            .feature-highlight, .feature-highlight.reverse { grid-template-columns: 1fr; gap: 2rem; }
+            .process-step::after { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="mesh-bg"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <a href="index.html" class="logo-container">
+            <img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'">
+            <span class="logo-text">Evalis <span class="ai-badge">AI</span></span>
+        </a>
+        <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">☰</button>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html" class="active">Home</a>
+            <a href="services.html">Services</a>
+            <a href="projects.html">Projects</a>
+            <a href="marketplace.html">Marketplace</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="careers.html" class="btn-nav">Join Us →</a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="hero" id="home">
+        <div class="hero-glow hero-glow-1"></div>
+        <div class="hero-glow hero-glow-2"></div>
+        <div class="hero-glow hero-glow-3"></div>
+
+        <div class="section-label reveal">🚀 AI-Powered Innovation</div>
+        <h1 class="reveal">Build the Future with<br><span class="gradient-text type-cursor" id="heroTyping"></span></h1>
+        <p class="hero-subtitle reveal">We deliver cutting-edge AI data services, full-stack web & app development, and scalable SaaS platforms — powered by human intelligence and next-gen technology.</p>
+
+        <div class="hero-cta reveal">
+            <a href="contact.html" class="btn btn-primary">Start Your Project →</a>
+            <a href="services.html" class="btn btn-outline">Explore Services</a>
+        </div>
+
+        <div class="trust-badges reveal">
+            <span>🔒 Secure & Confidential</span>
+            <span>⚡ Fast Delivery</span>
+            <span>🌍 Global Clients</span>
+            <span>🏆 Expert Team</span>
+        </div>
+
+        <div class="hero-banner reveal">
+            <img src="cover.png" alt="Evalis AI — AI Software Development Platform" loading="lazy">
+        </div>
+    </header>
+
+    <!-- STATS BAR -->
+    <div class="marquee-container">
+        <div class="marquee-track">
+            <span class="marquee-item">🤖 AI Data Evaluation</span>
+            <span class="marquee-item">🌐 Web Development</span>
+            <span class="marquee-item">📱 App Development</span>
+            <span class="marquee-item">☁️ SaaS Platforms</span>
+            <span class="marquee-item">🔍 Search Relevance</span>
+            <span class="marquee-item">🛡️ LLM Safety Testing</span>
+            <span class="marquee-item">📊 Data Annotation</span>
+            <span class="marquee-item">⚡ AI Integration</span>
+            <span class="marquee-item">🤖 AI Data Evaluation</span>
+            <span class="marquee-item">🌐 Web Development</span>
+            <span class="marquee-item">📱 App Development</span>
+            <span class="marquee-item">☁️ SaaS Platforms</span>
+            <span class="marquee-item">🔍 Search Relevance</span>
+            <span class="marquee-item">🛡️ LLM Safety Testing</span>
+            <span class="marquee-item">📊 Data Annotation</span>
+            <span class="marquee-item">⚡ AI Integration</span>
+        </div>
+    </div>
+
+    <!-- STATS SECTION -->
+    <section>
+        <div class="stats-bar reveal">
+            <div class="stat-item">
+                <div class="stat-number" data-count="150" data-suffix="+">0</div>
+                <div class="stat-label">Projects Delivered</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-count="50" data-suffix="+">0</div>
+                <div class="stat-label">Global Clients</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-count="99" data-suffix="%">0</div>
+                <div class="stat-label">Client Satisfaction</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-count="24" data-suffix="/7">0</div>
+                <div class="stat-label">Support Available</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICES OVERVIEW -->
+    <section id="services">
+        <div class="section-header reveal">
+            <div class="section-label">💡 What We Do</div>
+            <h2>Our <span class="gradient-text">Core Services</span></h2>
+            <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">End-to-end technology solutions from AI intelligence to full-scale product development.</p>
+        </div>
+
+        <div class="grid-3">
+            <div class="card reveal">
+                <div class="card-icon">🤖</div>
+                <h3>AI Data Services</h3>
+                <p>Expert human evaluation, data labeling, LLM safety testing, and search relevance optimization for AI systems.</p>
+            </div>
+            <div class="card reveal">
+                <div class="card-icon">🌐</div>
+                <h3>Web Development</h3>
+                <p>Stunning, high-performance websites and web applications built with modern frameworks — React, Next.js, and more.</p>
+            </div>
+            <div class="card reveal">
+                <div class="card-icon">📱</div>
+                <h3>App Development</h3>
+                <p>Cross-platform mobile and desktop applications with native performance and beautiful, intuitive interfaces.</p>
+            </div>
+            <div class="card reveal">
+                <div class="card-icon">☁️</div>
+                <h3>SaaS Platform Development</h3>
+                <p>Architect and build scalable, multi-tenant SaaS solutions from MVP to enterprise — with billing, auth, and analytics.</p>
+            </div>
+            <div class="card reveal">
+                <div class="card-icon">⚡</div>
+                <h3>AI Integration</h3>
+                <p>Embed intelligence into your products: custom chatbots, workflow automation, AI agents, and predictive analytics.</p>
+            </div>
+            <div class="card reveal">
+                <div class="card-icon">🔍</div>
+                <h3>Search & Content Evaluation</h3>
+                <p>Human-powered search quality auditing, content moderation, and multilingual linguistic QA services.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHY EVALIS AI -->
+    <section id="why-us">
+        <div class="section-header reveal">
+            <div class="section-label">🏆 Why Choose Us</div>
+            <h2>Why <span class="gradient-text">Evalis AI</span>?</h2>
+        </div>
+
+        <div class="grid-4">
+            <div class="card reveal" style="text-align:center;">
+                <div style="font-size:2.5rem;margin-bottom:1rem;">🧠</div>
+                <h3>Human-Led Intelligence</h3>
+                <p>Expert judgment, not automated shortcuts. Real humans powering real AI quality.</p>
+            </div>
+            <div class="card reveal" style="text-align:center;">
+                <div style="font-size:2.5rem;margin-bottom:1rem;">🔒</div>
+                <h3>Secure & Confidential</h3>
+                <p>Enterprise-grade security. NDA-protected. All work performed by internal specialists.</p>
+            </div>
+            <div class="card reveal" style="text-align:center;">
+                <div style="font-size:2.5rem;margin-bottom:1rem;">🚀</div>
+                <h3>Rapid Delivery</h3>
+                <p>Agile development with fast turnarounds. From concept to production in weeks.</p>
+            </div>
+            <div class="card reveal" style="text-align:center;">
+                <div style="font-size:2.5rem;margin-bottom:1rem;">💰</div>
+                <h3>Cost Effective</h3>
+                <p>Premium quality at competitive pricing. Maximize ROI on every project.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section>
+        <div class="section-header reveal">
+            <div class="section-label">⚙️ Process</div>
+            <h2>How We <span class="gradient-text">Work</span></h2>
+        </div>
+        <div class="process-timeline">
+            <div class="process-step reveal">
+                <div class="step-num">1</div>
+                <h3 style="font-size:1.1rem;margin-bottom:0.5rem;">Discovery</h3>
+                <p style="color:var(--text-secondary);font-size:0.9rem;">We analyze your needs and define the perfect strategy.</p>
+            </div>
+            <div class="process-step reveal">
+                <div class="step-num">2</div>
+                <h3 style="font-size:1.1rem;margin-bottom:0.5rem;">Design & Plan</h3>
+                <p style="color:var(--text-secondary);font-size:0.9rem;">UI/UX design, architecture, and detailed roadmap creation.</p>
+            </div>
+            <div class="process-step reveal">
+                <div class="step-num">3</div>
+                <h3 style="font-size:1.1rem;margin-bottom:0.5rem;">Build & Iterate</h3>
+                <p style="color:var(--text-secondary);font-size:0.9rem;">Agile development with regular demos and feedback loops.</p>
+            </div>
+            <div class="process-step reveal">
+                <div class="step-num">4</div>
+                <h3 style="font-size:1.1rem;margin-bottom:0.5rem;">Launch & Scale</h3>
+                <p style="color:var(--text-secondary);font-size:0.9rem;">Deploy, monitor, optimize, and grow your product.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT PREVIEW -->
+    <section id="about" style="max-width:900px;text-align:center;">
+        <div class="section-header reveal">
+            <div class="section-label">🏢 About Us</div>
+            <h2>About <span class="gradient-text">Evalis AI</span></h2>
+        </div>
+        <p class="reveal" style="color:var(--text-secondary);font-size:1.1rem;line-height:1.9;">
+            Evalis AI is a Perinthalmanna-based AI and software company delivering global AI evaluation services,
+            full-stack web & app development, and SaaS platform engineering. We bridge human intelligence with
+            cutting-edge technology to build products that matter — for startups, enterprises, and everyone in between.
+        </p>
+        <div style="margin-top:2rem;" class="reveal">
+            <a href="about.html" class="btn btn-outline">Learn More About Us →</a>
+        </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <div class="cta-section reveal">
+        <h2 style="position:relative;z-index:1;">Ready to Build Something <span class="gradient-text">Amazing</span>?</h2>
+        <p style="color:var(--text-secondary);max-width:600px;margin:1rem auto 2rem;position:relative;z-index:1;">
+            Let's turn your vision into reality. Whether it's an AI product, a stunning website, or a scalable SaaS platform — we've got you covered.
+        </p>
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;position:relative;z-index:1;">
+            <a href="contact.html" class="btn btn-primary">Start Your Project →</a>
+            <a href="https://wa.me/919544842260" class="btn btn-outline" target="_blank">💬 WhatsApp Us</a>
+        </div>
+    </div>
+
+    <!-- SEO CONTENT (hidden visually for structure) -->
+    <section style="max-width:900px;">
+        <h2 class="reveal" style="font-size:1.5rem;">AI & Software Development Company in Perinthalmanna, Kerala</h2>
+        <p class="reveal" style="color:var(--text-secondary);">
+            Evalis AI is a Perinthalmanna-based software and AI services company delivering
+            global AI evaluation services, search engine evaluation, LLM safety testing,
+            web application development, mobile app development, and SaaS platform engineering
+            across Kerala and worldwide.
+        </p>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="logo-container" style="margin-bottom:0.5rem;">
+                    <img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'">
+                    <span class="logo-text">Evalis <span class="ai-badge">AI</span></span>
+                </a>
+                <p>AI-powered software company delivering global AI data services, web & app development, and SaaS solutions from Kerala.</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/share/14arF3zkgWU/" target="_blank" aria-label="Facebook">📘</a>
+                    <a href="https://www.linkedin.com/company/evalis-ai/" target="_blank" aria-label="LinkedIn">💼</a>
+                    <a href="https://wa.me/919544842260" target="_blank" aria-label="WhatsApp">💬</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Services</h4>
+                <a href="services.html">AI Data Services</a>
+                <a href="services.html">Web Development</a>
+                <a href="services.html">App Development</a>
+                <a href="services.html">SaaS Platforms</a>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <a href="about.html">About Us</a>
+                <a href="careers.html">Careers</a>
+                <a href="contact.html">Contact</a>
+                <a href="arena.html">Model Arena</a>
+            </div>
+            <div class="footer-col">
+                <h4>Resources</h4>
+                <a href="marketplace.html">Marketplace</a>
+                <a href="assessment.html">Assessment</a>
+                <a href="trustscore.html">TrustScore</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 Evalis AI — AI-Powered Software & Data Services | Perinthalmanna, Kerala, India
+        </div>
+    </footer>
+
+    <!-- AI CHATBOT WIDGET -->
+    <div class="ai-chat-widget">
+        <div class="chat-panel">
+            <div class="chat-header">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="width:8px;height:8px;border-radius:50%;background:#10b981;"></span>
+                    <strong style="font-size:0.9rem;">Evalis AI Assistant</strong>
+                </div>
+                <button onclick="this.closest('.chat-panel').classList.remove('open')" style="background:none;border:none;color:var(--text-muted);font-size:1.2rem;cursor:pointer;">&times;</button>
+            </div>
+            <div class="chat-messages">
+                <div style="padding:10px 14px;border-radius:12px;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);font-size:0.85rem;color:var(--text-secondary);line-height:1.6;">
+                    👋 Hi! I'm the Evalis AI assistant. Ask me about our <strong style="color:var(--primary-light);">services</strong>, <strong style="color:var(--primary-light);">pricing</strong>, or <strong style="color:var(--primary-light);">web development</strong>!
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" placeholder="Ask me anything..." />
+                <button>Send</button>
+            </div>
+        </div>
+        <button class="ai-chat-btn" aria-label="Open AI Chat">
+            <span class="pulse-ring"></span>
+            💬
+        </button>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/supabase.js"></script>
+    <script>
+        // Hero typing effect
+        document.addEventListener('DOMContentLoaded', () => {
+            typeWriter(document.getElementById('heroTyping'), [
+                'Intelligent AI',
+                'Stunning Websites',
+                'Powerful Apps',
+                'SaaS Platforms',
+                'Human Intelligence'
+            ], 90, 2000);
+        });
+    </script>
+</body>
+</html>

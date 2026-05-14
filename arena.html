@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Evaluation & Analysis Service</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #0a0a1a;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        /* ===== LOCK SCREEN ===== */
+        #lockScreen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(10,10,26,0.97);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(10px);
+        }
+
+        .lock-box {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 1px solid #0f3460;
+            border-radius: 20px;
+            padding: 50px 40px;
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .lock-box .icon { font-size: 50px; margin-bottom: 15px; }
+        .lock-box h2 { color: #e94560; margin-bottom: 8px; }
+        .lock-box p { color: #666; font-size: 13px; margin-bottom: 25px; }
+
+        .lock-input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #0f3460;
+            border-radius: 12px;
+            background: #0a0a1a;
+            color: #fff;
+            font-size: 15px;
+            margin-bottom: 12px;
+            outline: none;
+        }
+
+        .lock-input:focus { border-color: #e94560; }
+
+        .lock-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #e94560, #c23152);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .lock-btn:hover { box-shadow: 0 8px 25px rgba(233,69,96,0.4); }
+
+        .lock-error {
+            color: #e94560;
+            font-size: 13px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* ===== MAIN APP ===== */
+        #mainApp { display: none; }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-bottom: 2px solid #0f3460;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            background: linear-gradient(135deg, #e94560, #4fc3f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+
+        .btn-lock {
+            padding: 8px 16px;
+            background: #e94560;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .stats-badge {
+            background: #0f3460;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #4fc3f7;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 25px 20px;
+        }
+
+        /* ===== TABS ===== */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 25px;
+            background: #1a1a2e;
+            padding: 5px;
+            border-radius: 12px;
+            border: 1px solid #0f3460;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 120px;
+            padding: 11px 8px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            transition: 0.3s;
+        }
+
+        .tab.active { background: #e94560; color: #fff; }
+        .tab:hover:not(.active) { color: #4fc3f7; }
+
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 1px solid #0f3460;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            color: #4fc3f7;
+            margin-bottom: 18px;
+            font-size: 17px;
+        }
+
+        /* ===== FORM ELEMENTS ===== */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0a0a1a;
+            border: 2px solid #0f3460;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: #e94560;
+        }
+
+        .form-textarea { min-height: 80px; resize: vertical; }
+
+        .form-select option { background: #0a0a1a; }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media(max-width:768px) {
+            .form-row, .form-row-3 { grid-template-columns: 1fr; }
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            padding: 11px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #e94560, #c23152);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 20px rgba(233,69,96,0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4caf50, #388e3c);
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: #0f3460;
+            color: #4fc3f7;
+        }
+
+        .btn-danger {
+            background: rgba(233,69,96,0.15);
+            color: #e94560;
+            border: 1px solid #e94560;
+        }
+
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+
+        /* ===== EVALUATION SCORES ===== */
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .score-card {
+            background: #0a0a1a;
+            border: 1px solid #0f3460;
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .score-card h4 {
+            color: #e94560;
+            font-size: 13px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .score-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #4fc3f7;
+        }
+
+        .score-max {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .score-bar-track {
+            width: 100%;
+            height: 6px;
+            background: #0f3460;
+            border-radius: 3px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .score-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 1.5s ease;
+        }
+
+        .fill-green { background: linear-gradient(90deg, #4caf50, #81c784); }
+        .fill-yellow { background: linear-gradient(90deg, #ff9800, #ffb74d); }
+        .fill-red { background: linear-gradient(90deg, #e94560, #f48fb1); }
+
+        /* ===== OVERALL GRADE ===== */
+        .overall-grade {
+            text-align: center;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .grade-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 6px solid #4fc3f7;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 15px;
+        }
+
+        .grade-letter {
+            font-size: 48px;
+            font-weight: 700;
+            color: #4fc3f7;
+        }
+
+        .grade-text {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .grade-a { border-color: #4caf50; }
+        .grade-a .grade-letter { color: #4caf50; }
+        .grade-b { border-color: #4fc3f7; }
+        .grade-c { border-color: #ff9800; }
+        .grade-c .grade-letter { color: #ff9800; }
+        .grade-d { border-color: #e94560; }
+        .grade-d .grade-letter { color: #e94560; }
+
+        /* ===== CLIENT TABLE ===== */
+        .client-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .client-table th {
+            text-align: left;
+            padding: 12px 14px;
+            background: rgba(15,52,96,0.3);
+            color: #4fc3f7;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .client-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(15,52,96,0.3);
+            font-size: 13px;
+        }
+
+        .client-table tr:hover td { background: rgba(15,52,96,0.15); }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-pending { background: rgba(255,152,0,0.15); color: #ff9800; }
+        .status-progress { background: rgba(79,195,247,0.15); color: #4fc3f7; }
+        .status-done { background: rgba(76,175,80,0.15); color: #4caf50; }
+        .status-delivered { background: rgba(156,39,176,0.15); color: #ce93d8; }
+
+        /* ===== TEST CASES ===== */
+        .test-item {
+            background: #0a0a1a;
+            border: 1px solid #0f3460;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .test-name { font-weight: 600; font-size: 14px; }
+
+        .test-result {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .result-pass { background: rgba(76,175,80,0.15); color: #4caf50; }
+        .result-fail { background: rgba(233,69,96,0.15); color: #e94560; }
+        .result-warn { background: rgba(255,152,0,0.15); color: #ff9800; }
+
+        .test-detail { font-size: 13px; color: #888; }
+
+        /* ===== REPORT ===== */
+        .report-section {
+            border-left: 3px solid #4fc3f7;
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .report-section h4 {
+            color: #4fc3f7;
+            margin-bottom: 8px;
+        }
+
+        .report-section p {
+            color: #aaa;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .report-section ul {
+            color: #aaa;
+            font-size: 14px;
+            padding-left: 20px;
+            line-height: 1.8;
+        }
+
+        /* ===== COMPARE ===== */
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media(max-width:768px) {
+            .compare-grid { grid-template-columns: 1fr; }
+        }
+
+        .compare-card {
+            background: #0a0a1a;
+            border: 2px solid #0f3460;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .compare-card.better { border-color: #4caf50; }
+
+        .compare-card h4 {
+            color: #4fc3f7;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .compare-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(15,52,96,0.2);
+            font-size: 13px;
+        }
+
+        .compare-label { color: #888; }
+        .compare-value { color: #4fc3f7; font-weight: 600; }
+
+        /* ===== NOTES ===== */
+        .notes-area {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            background: #0a0a1a;
+            border: 2px solid #0f3460;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            resize: vertical;
+            outline: none;
+        }
+
+        .notes-area:focus { border-color: #e94560; }
+
+        /* ===== SLIDER ===== */
+        .slider-group {
+            margin-bottom: 15px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .slider-label { color: #888; font-size: 13px; }
+        .slider-value { color: #4fc3f7; font-weight: 700; font-size: 15px; }
+
+        .slider {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 6px;
+            background: #0f3460;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #e94560;
+            cursor: pointer;
+        }
+
+        /* ===== PRINT ===== */
+        @media print {
+            #lockScreen { display: none !important; }
+            .header { background: #fff !important; }
+            .tabs, .btn-lock, .btn-group { display: none !important; }
+            body { background: #fff !important; color: #000 !important; }
+            .card { border: 1px solid #ccc !important; background: #fff !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== LOCK SCREEN ===== -->
+    <div id="lockScreen">
+        <div class="lock-box">
+            <div class="icon">🔐</div>
+            <h2>Evaluation Portal</h2>
+            <p>Enter your admin key to access the evaluation dashboard</p>
+            <input type="password" id="accessKey" class="lock-input"
+                   placeholder="Enter access key..."
+                   onkeydown="if(event.key==='Enter') unlock()" />
+            <button class="lock-btn" onclick="unlock()">🔓 Unlock Dashboard</button>
+            <p class="lock-error" id="lockError">❌ Wrong key</p>
+            <p style="color:#444; font-size:11px; margin-top:15px;">
+                Demo: <code style="color:#4fc3f7;">eval2024</code>
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== MAIN APP ===== -->
+    <div id="mainApp">
+        <div class="header">
+            <h1>📊 Model Evaluation & Analysis</h1>
+            <div class="header-actions">
+                <span class="stats-badge">📋 Projects: <span id="projectCount">0</span></span>
+                <button class="btn-lock" onclick="lock()">🔒 Lock</button>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- TABS -->
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('intake')">📥 Client Intake</div>
+                <div class="tab" onclick="switchTab('evaluate')">🧪 Evaluate</div>
+                <div class="tab" onclick="switchTab('compare')">⚔️ Compare</div>
+                <div class="tab" onclick="switchTab('report')">📄 Report</div>
+                <div class="tab" onclick="switchTab('clients')">👥 Clients</div>
+            </div>
+
+            <!-- ===== TAB 1: CLIENT INTAKE ===== -->
+            <div id="tab-intake" class="tab-panel active">
+                <div class="card">
+                    <h3>📥 New Client Model Submission</h3>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Client Name</label>
+                            <input type="text" class="form-input" id="clientName" placeholder="e.g. Acme Corp" />
+                        </div>
+                        <div class="form-group">
+                            <label>Client Email</label>
+                            <input type="email" class="form-input" id="clientEmail" placeholder="client@email.com" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Model Name</label>
+                            <input type="text" class="form-input" id="modelName" placeholder="e.g. AcmeGPT v2.1" />
+                        </div>
+                        <div class="form-group">
+                            <label>Model Type</label>
+                            <select class="form-select" id="modelType">
+                                <option value="">Select type...</option>
+                                <option value="llm">Large Language Model (LLM)</option>
+                                <option value="classification">Classification Model</option>
+                                <option value="regression">Regression Model</option>
+                                <option value="cv">Computer Vision</option>
+                                <option value="nlp">NLP / Text Model</option>
+                                <option value="recommendation">Recommendation System</option>
+                                <option value="timeseries">Time Series</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row-3">
+                        <div class="form-group">
+                            <label>Model Size</label>
+                            <input type="text" class="form-input" id="modelSize" placeholder="e.g. 7B params" />
+                        </div>
+                        <div class="form-group">
+                            <label>Framework</label>
+                            <select class="form-select" id="framework">
+                                <option value="">Select...</option>
+                                <option value="pytorch">PyTorch</option>
+                                <option value="tensorflow">TensorFlow</option>
+                                <option value="jax">JAX</option>
+                                <option value="huggingface">HuggingFace</option>
+                                <option value="sklearn">Scikit-learn</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>API Endpoint / File</label>
+                            <input type="text" class="form-input" id="modelEndpoint"
+                                   placeholder="https://api... or file path" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Model Description & Use Case</label>
+                        <textarea class="form-textarea" id="modelDesc"
+                                  placeholder="Describe what the model does, its intended use case, training data summary..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Evaluation Requirements</label>
+                        <textarea class="form-textarea" id="evalRequirements"
+                                  placeholder="What should we evaluate? (accuracy, speed, bias, safety, etc.)"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Priority</label>
+                            <select class="form-select" id="priority">
+                                <option value="normal">Normal</option>
+                                <option value="high">High Priority</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Deadline</label>
+                            <input type="date" class="form-input" id="deadline" />
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="submitIntake()">📥 Submit Project</button>
+                        <button class="btn btn-secondary" onclick="clearIntake()">🗑️ Clear Form</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== TAB 2: EVALUATE ===== -->
+            <div id="tab-evaluate" class="tab-panel">
+                <div class="card">
+                    <h3>🧪 Select Project to Evaluate</h3>
+                    <div class="form-group">
+                        <select class="form-select" id="evalProject" onchange="loadProject()">
+                            <option value="">Select a project...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="evaluationArea" style="display:none;">
+                    <!-- Project Info -->
+                    <div class="card">
+                        <h3>📋 Project: <span id="evalModelName"></span></h3>
+                        <div class="form-row">
+                            <div>
+                                <span style="color:#888;">Client:</span>
+                                <span id="evalClient"></span>
+                            </div>
+                            <div>
+                                <span style="color:#888;">Type:</span>
+                                <span id="evalType"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scoring Sliders -->
+                    <div class="card">
+                        <h3>📊 Evaluation Scores</h3>
+
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">Accuracy / Correctness</span>
+                                <span class="slider-value" id="val-accuracy">50</span>
+                            </div>
+                            <input type="range" class="slider" id="score-accuracy" min="0" max="100" value="50"
+                                   oninput="updateSlider('accuracy')">
+                        </div>
+
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">Response Quality</span>
+                                <span class="slider-value" id="val-quality">50</span>
+                            </div>
+                            <input type="range" class="slider" id="score-quality" min="0" max="100" value="50"
+                                   oninput="updateSlider('quality')">
+                        </div>
+
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">Speed / Latency</span>
+                                <span class="slider-value" id="val-speed">50</span>
+                            </div>
+                            <input type="range" class="slider" id="score-speed" min="0" max="100" value="50"
+                                   oninput="updateSlider('speed')">
+                        </div>
+
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">Safety / Bias</span>
+                                <span class="slider-value" id="val-safety">50</span>
+                            </div>
+                            <input type="range" class="slider" id="score-safety" min="0" max="100" value="50"
+                                   oninput="updateSlider('safety')">
+                        </div>
+
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">Consistency</span>
+                                <span class="slider-value" id="val-consistency">50</span>
+                            </div>
+                            <input type="range" class="slider" id="score-consistency" min="0" max="100" value="50"
+                                   oninput="updateSlider('consistency')">
+                        </div>
+
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">Cost Efficiency</span>
+                                <span class="slider-value" id="val-cost">50</span>
+                            </div>
+                            <input type="range" class="slider" id="score-cost" min="0" max="100" value="50"
+                                   oninput="updateSlider('cost')">
+                        </div>
+
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">Scalability</span>
+                                <span class="slider-value" id="val-scalability">50</span>
+                            </div>
+                            <input type="range" class="slider" id="score-scalability" min="0" max="100" value="50"
+                                   oninput="updateSlider('scalability')">
+                        </div>
+
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">Documentation / Usability</span>
+                                <span class="slider-value" id="val-docs">50</span>
+                            </div>
+                            <input type="range" class="slider" id="score-docs" min="0" max="100" value="50"
+                                   oninput="updateSlider('docs')">
+                        </div>
+                    </div>
+
+                    <!-- Test Cases -->
+                    <div class="card">
+                        <h3>🧪 Test Cases</h3>
+                        <div id="testCasesList"></div>
+                        <div class="btn-group">
+                            <button class="btn btn-secondary" onclick="addTestCase()">+ Add Test Case</button>
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="card">
+                        <h3>📝 Evaluation Notes</h3>
+                        <textarea class="notes-area" id="evalNotes"
+                                  placeholder="Write detailed findings, strengths, weaknesses, recommendations..."></textarea>
+                    </div>
+
+                    <!-- Strengths / Weaknesses -->
+                    <div class="card">
+                        <h3>💪 Strengths & ⚠️ Weaknesses</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Strengths (one per line)</label>
+                                <textarea class="form-textarea" id="strengths"
+                                          placeholder="Fast response time&#10;Good accuracy on benchmarks&#10;Low cost"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Weaknesses (one per line)</label>
+                                <textarea class="form-textarea" id="weaknesses"
+                                          placeholder="Hallucinates sometimes&#10;Slow on long prompts&#10;Bias in certain topics"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="saveEvaluation()">💾 Save Evaluation</button>
+                        <button class="btn btn-success" onclick="markComplete()">✅ Mark Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== TAB 3: COMPARE ===== -->
+            <div id="tab-compare" class="tab-panel">
+                <div class="card">
+                    <h3>⚔️ Compare Models Side by Side</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Model A</label>
+                            <select class="form-select" id="compareA">
+                                <option value="">Select...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Model B</label>
+                            <select class="form-select" id="compareB">
+                                <option value="">Select...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="runComparison()">⚔️ Compare</button>
+                </div>
+
+                <div id="comparisonResult" style="display:none;">
+                    <div class="card">
+                        <h3>📊 Comparison Results</h3>
+                        <div class="compare-grid" id="compareGrid"></div>
+                    </div>
+
+                    <div class="card">
+                        <h3>📈 Score Comparison</h3>
+                        <div class="score-grid" id="compareScores"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== TAB 4: REPORT ===== -->
+            <div id="tab-report" class="tab-panel">
+                <div class="card">
+                    <h3>📄 Generate Client Report</h3>
+                    <div class="form-group">
+                        <label>Select Project</label>
+                        <select class="form-select" id="reportProject" onchange="loadReport()">
+                            <option value="">Select...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="reportArea" style="display:none;">
+                    <!-- Overall Grade -->
+                    <div class="card">
+                        <div class="overall-grade" id="overallGrade">
+                            <div class="grade-circle grade-b">
+                                <span class="grade-letter" id="gradeLetter">B</span>
+                                <span class="grade-text">OVERALL</span>
+                            </div>
+                            <h3 id="gradeLabel">Good Performance</h3>
+                            <p style="color:#888; font-size:14px;" id="gradeDesc">
+                                The model performs well across most evaluation criteria.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Score Cards -->
+                    <div class="card">
+                        <h3>📊 Detailed Scores</h3>
+                        <div class="score-grid" id="reportScores"></div>
+                    </div>
+
+                    <!-- Test Results -->
+                    <div class="card">
+                        <h3>🧪 Test Results</h3>
+                        <div id="reportTests"></div>
+                    </div>
+
+                    <!-- Analysis -->
+                    <div class="card">
+                        <h3>📝 Analysis & Recommendations</h3>
+                        <div id="reportAnalysis"></div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="printReport()">🖨️ Print Report</button>
+                        <button class="btn btn-success" onclick="exportJSON()">📦 Export JSON</button>
+                        <button class="btn btn-secondary" onclick="copyReport()">📋 Copy Summary</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== TAB 5: CLIENTS ===== -->
+            <div id="tab-clients" class="tab-panel">
+                <div class="card">
+                    <h3>👥 All Client Projects</h3>
+                    <table class="client-table">
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Model</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Priority</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientsTableBody">
+                            <tr>
+                                <td colspan="7" style="text-align:center; color:#555; padding:30px;">
+                                    No projects yet
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== CONFIG =====
+        const ADMIN_KEY = "eval2024";
+        let projects = [];
+        let testCaseCount = 0;
+
+        // Load from localStorage
+        function loadData() {
+            const saved = localStorage.getItem('evalProjects');
+            if (saved) projects = JSON.parse(saved);
+            updateProjectCount();
+            populateDropdowns();
+            renderClients();
+        }
+
+        function saveData() {
+            localStorage.setItem('evalProjects', JSON.stringify(projects));
+            updateProjectCount();
+        }
+
+        function updateProjectCount() {
+            document.getElementById('projectCount').textContent = projects.length;
+        }
+
+        // ===== LOCK / UNLOCK =====
+        function unlock() {
+            if (document.getElementById('accessKey').value === ADMIN_KEY) {
+                document.getElementById('lockScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                loadData();
+            } else {
+                document.getElementById('lockError').style.display = 'block';
+                setTimeout(() => document.getElementById('lockError').style.display = 'none', 2000);
+            }
+        }
+
+        function lock() {
+            document.getElementById('lockScreen').style.display = 'flex';
+            document.getElementById('mainApp').style.display = 'none';
+            document.getElementById('accessKey').value = '';
+        }
+
+        // ===== TABS =====
+        function switchTab(name) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(`tab-${name}`).classList.add('active');
+
+            if (name === 'evaluate' || name === 'compare' || name === 'report') populateDropdowns();
+            if (name === 'clients') renderClients();
+        }
+
+        // ===== POPULATE DROPDOWNS =====
+        function populateDropdowns() {
+            ['evalProject', 'compareA', 'compareB', 'reportProject'].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const current = el.value;
+                el.innerHTML = '<option value="">Select...</option>';
+                projects.forEach((p, i) => {
+                    el.innerHTML += `<option value="${i}">${p.modelName} (${p.clientName})</option>`;
+                });
+                el.value = current;
+            });
+        }
+
+        // ===== CLIENT INTAKE =====
+        function submitIntake() {
+            const clientName = document.getElementById('clientName').value.trim();
+            const modelName = document.getElementById('modelName').value.trim();
+
+            if (!clientName || !modelName) {
+                alert('Please fill in Client Name and Model Name!');
+                return;
+            }
+
+            const project = {
+                clientName,
+                clientEmail: document.getElementById('clientEmail').value.trim(),
+                modelName,
+                modelType: document.getElementById('modelType').value,
+                modelSize: document.getElementById('modelSize').value.trim(),
+                framework: document.getElementById('framework').value,
+                endpoint: document.getElementById('modelEndpoint').value.trim(),
+                description: document.getElementById('modelDesc').value.trim(),
+                requirements: document.getElementById('evalRequirements').value.trim(),
+                priority: document.getElementById('priority').value,
+                deadline: document.getElementById('deadline').value,
+                status: 'pending',
+                scores: {},
+                tests: [],
+                notes: '',
+                strengths: '',
+                weaknesses: '',
+                dateCreated: new Date().toLocaleDateString()
+            };
+
+            projects.push(project);
+            saveData();
+            clearIntake();
+            alert(`✅ Project "${modelName}" for ${clientName} has been submitted!`);
+        }
+
+        function clearIntake() {
+            ['clientName','clientEmail','modelName','modelSize','modelEndpoint','modelDesc','evalRequirements']
+                .forEach(id => document.getElementById(id).value = '');
+            document.getElementById('modelType').value = '';
+            document.getElementById('framework').value = '';
+            document.getElementById('priority').value = 'normal';
+            document.getElementById('deadline').value = '';
+        }
+
+        // ===== EVALUATION =====
+        function loadProject() {
+            const idx = document.getElementById('evalProject').value;
+            if (idx === '') {
+                document.getElementById('evaluationArea').style.display = 'none';
+                return;
+            }
+
+            const p = projects[idx];
+            document.getElementById('evaluationArea').style.display = 'block';
+            document.getElementById('evalModelName').textContent = p.modelName;
+            document.getElementById('evalClient').textContent = p.clientName;
+            document.getElementById('evalType').textContent = p.modelType || 'N/A';
+
+            // Load scores
+            const scoreKeys = ['accuracy','quality','speed','safety','consistency','cost','scalability','docs'];
+            scoreKeys.forEach(key => {
+                const val = p.scores[key] || 50;
+                document.getElementById(`score-${key}`).value = val;
+                document.getElementById(`val-${key}`).textContent = val;
+            });
+
+            // Load notes
+            document.getElementById('evalNotes').value = p.notes || '';
+            document.getElementById('strengths').value = p.strengths || '';
+            document.getElementById('weaknesses').value = p.weaknesses || '';
+
+            // Load test cases
+            renderTestCases(p.tests || []);
+
+            // Update status
+            if (p.status === 'pending') {
+                p.status = 'in-progress';
+                saveData();
+            }
+        }
+
+        function updateSlider(name) {
+            const val = document.getElementById(`score-${name}`).value;
+            document.getElementById(`val-${name}`).textContent = val;
+        }
+
+        function saveEvaluation() {
+            const idx = document.getElementById('evalProject').value;
+            if (idx === '') return;
+
+            const scoreKeys = ['accuracy','quality','speed','safety','consistency','cost','scalability','docs'];
+            scoreKeys.forEach(key => {
+                projects[idx].scores[key] = parseInt(document.getElementById(`score-${key}`).value);
+            });
+
+            projects[idx].notes = document.getElementById('evalNotes').value;
+            projects[idx].strengths = document.getElementById('strengths').value;
+            projects[idx].weaknesses = document.getElementById('weaknesses').value;
+            projects[idx].tests = collectTestCases();
+
+            saveData();
+            alert('💾 Evaluation saved!');
+        }
+
+        function markComplete() {
+            const idx = document.getElementById('evalProject').value;
+            if (idx === '') return;
+            saveEvaluation();
+            projects[idx].status = 'completed';
+            saveData();
+            alert('✅ Project marked as complete!');
+        }
+
+        // ===== TEST CASES =====
+        function addTestCase() {
+            testCaseCount++;
+            const container = document.getElementById('testCasesList');
+            const div = document.createElement('div');
+            div.className = 'test-item';
+            div.id = `test-${testCaseCount}`;
+            div.innerHTML = `
+                <div class="form-group">
+                    <label>Test Name</label>
+                    <input type="text" class="form-input test-name" placeholder="e.g. Factual accuracy test" />
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Input / Prompt</label>
+                        <textarea class="form-textarea test-input" placeholder="Test input..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Expected Output</label>
+                        <textarea class="form-textarea test-expected" placeholder="Expected result..."></textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Actual Output</label>
+                        <textarea class="form-textarea test-actual" placeholder="What the model returned..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Result</label>
+                        <select class="form-select test-result">
+                            <option value="pass">✅ Pass</option>
+                            <option value="fail">❌ Fail</option>
+                            <option value="warning">⚠️ Warning</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        function renderTestCases(tests) {
+            const container = document.getElementById('testCasesList');
+            container.innerHTML = '';
+            testCaseCount = 0;
+
+            if (tests.length === 0) {
+                addTestCase();
+                return;
+            }
+
+            tests.forEach(t => {
+                testCaseCount++;
+                const div = document.createElement('div');
+                div.className = 'test-item';
+                div.innerHTML = `
+                    <div class="form-group">
+                        <label>Test Name</label>
+                        <input type="text" class="form-input test-name" value="${t.name || ''}" />
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Input</label>
+                            <textarea class="form-textarea test-input">${t.input || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Expected</label>
+                            <textarea class="form-textarea test-expected">${t.expected || ''}</textarea>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Actual</label>
+                            <textarea class="form-textarea test-actual">${t.actual || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Result</label>
+                            <select class="form-select test-result">
+                                <option value="pass" ${t.result === 'pass' ? 'selected' : ''}>✅ Pass</option>
+                                <option value="fail" ${t.result === 'fail' ? 'selected' : ''}>❌ Fail</option>
+                                <option value="warning" ${t.result === 'warning' ? 'selected' : ''}>⚠️ Warning</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function collectTestCases() {
+            const items = document.querySelectorAll('#testCasesList .test-item');
+            return Array.from(items).map(item => ({
+                name: item.querySelector('.test-name').value,
+                input: item.querySelector('.test-input').value,
+                expected: item.querySelector('.test-expected').value,
+                actual: item.querySelector('.test-actual').value,
+                result: item.querySelector('.test-result').value
+            }));
+        }
+
+        // ===== COMPARISON =====
+        function runComparison() {
+            const idxA = document.getElementById('compareA').value;
+            const idxB = document.getElementById('compareB').value;
+
+            if (idxA === '' || idxB === '' || idxA === idxB) {
+                alert('Please select two different models!');
+                return;
+            }
+
+            const a = projects[idxA];
+            const b = projects[idxB];
+
+            document.getElementById('comparisonResult').style.display = 'block';
+
+            // Overall comparison
+            const avgA = getAvgScore(a.scores);
+            const avgB = getAvgScore(b.scores);
+
+            const grid = document.getElementById('compareGrid');
+            grid.innerHTML = `
+                <div class="compare-card ${avgA >= avgB ? 'better' : ''}">
+                    <h4>${a.modelName} ${avgA >= avgB ? '👑' : ''}</h4>
+                    <div class="compare-row"><span class="compare-label">Client</span><span class="compare-value">${a.clientName}</span></div>
+                    <div class="compare-row"><span class="compare-label">Type</span><span class="compare-value">${a.modelType || 'N/A'}</span></div>
+                    <div class="compare-row"><span class="compare-label">Size</span><span class="compare-value">${a.modelSize || 'N/A'}</span></div>
+                    <div class="compare-row"><span class="compare-label">Framework</span><span class="compare-value">${a.framework || 'N/A'}</span></div>
+                    <div class="compare-row"><span class="compare-label">Avg Score</span><span class="compare-value">${avgA}/100</span></div>
+                    <div class="compare-row"><span class="compare-label">Grade</span><span class="compare-value">${getGrade(avgA)}</span></div>
+                </div>
+                <div class="compare-card ${avgB > avgA ? 'better' : ''}">
+                    <h4>${b.modelName} ${avgB > avgA ? '👑' : ''}</h4>
+                    <div class="compare-row"><span class="compare-label">Client</span><span class="compare-value">${b.clientName}</span></div>
+                    <div class="compare-row"><span class="compare-label">Type</span><span class="compare-value">${b.modelType || 'N/A'}</span></div>
+                    <div class="compare-row"><span class="compare-label">Size</span><span class="compare-value">${b.modelSize || 'N/A'}</span></div>
+                    <div class="compare-row"><span class="compare-label">Framework</span><span class="compare-value">${b.framework || 'N/A'}</span></div>
+                    <div class="compare-row"><span class="compare-label">Avg Score</span><span class="compare-value">${avgB}/100</span></div>
+                    <div class="compare-row"><span class="compare-label">Grade</span><span class="compare-value">${getGrade(avgB)}</span></div>
+                </div>
+            `;
+
+            // Score by score comparison
+            const scoreKeys = ['accuracy','quality','speed','safety','consistency','cost','scalability','docs'];
+            const labels = ['Accuracy','Quality','Speed','Safety','Consistency','Cost','Scalability','Docs'];
+
+            document.getElementById('compareScores').innerHTML = scoreKeys.map((key, i) => {
+                const sA = a.scores[key] || 0;
+                const sB = b.scores[key] || 0;
+                const winner = sA > sB ? a.modelName : sB > sA ? b.modelName : 'Tie';
+                return `
+                    <div class="score-card">
+                        <h4>${labels[i]}</h4>
+                        <div style="display:flex; justify-content:space-around;">
+                            <div>
+                                <div class="score-value" style="font-size:22px; ${sA >= sB ? 'color:#4caf50' : 'color:#e94560'}">${sA}</div>
+                                <div style="font-size:10px; color:#888;">${a.modelName}</div>
+                            </div>
+                            <div style="color:#555; padding-top:5px;">vs</div>
+                            <div>
+                                <div class="score-value" style="font-size:22px; ${sB >= sA ? 'color:#4caf50' : 'color:#e94560'}">${sB}</div>
+                                <div style="font-size:10px; color:#888;">${b.modelName}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ===== REPORT =====
+        function loadReport() {
+            const idx = document.getElementById('reportProject').value;
+            if (idx === '') {
+                document.getElementById('reportArea').style.display = 'none';
+                return;
+            }
+
+            const p = projects[idx];
+            document.getElementById('reportArea').style.display = 'block';
+
+            // Overall grade
+            const avg = getAvgScore(p.scores);
+            const grade = getGrade(avg);
+            const gradeInfo = getGradeInfo(grade);
+
+            const circle = document.querySelector('.grade-circle');
+            circle.className = `grade-circle grade-${grade.toLowerCase()}`;
+            document.getElementById('gradeLetter').textContent = grade;
+            document.getElementById('gradeLabel').textContent = gradeInfo.label;
+            document.getElementById('gradeDesc').textContent = gradeInfo.desc;
+
+            // Score cards
+            const scoreKeys = ['accuracy','quality','speed','safety','consistency','cost','scalability','docs'];
+            const labels = ['Accuracy','Quality','Speed','Safety','Consistency','Cost Efficiency','Scalability','Documentation'];
+
+            document.getElementById('reportScores').innerHTML = scoreKeys.map((key, i) => {
+                const val = p.scores[key] || 0;
+                const fillClass = val >= 75 ? 'fill-green' : val >= 50 ? 'fill-yellow' : 'fill-red';
+                return `
+                    <div class="score-card">
+                        <h4>${labels[i]}</h4>
+                        <div class="score-value">${val}<span class="score-max">/100</span></div>
+                        <div class="score-bar-track">
+                            <div class="score-bar-fill ${fillClass}" style="width:${val}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Test results
+            const tests = p.tests || [];
+            if (tests.length > 0 && tests[0].name) {
+                document.getElementById('reportTests').innerHTML = tests.map(t => `
+                    <div class="test-item">
+                        <div class="test-header">
+                            <span class="test-name">${t.name || 'Unnamed Test'}</span>
+                            <span class="test-result result-${t.result}">${t.result === 'pass' ? '✅ PASS' : t.result === 'fail' ? '❌ FAIL' : '⚠️ WARNING'}</span>
+                        </div>
+                        <div class="test-detail">${t.input ? 'Input: ' + t.input.substring(0, 100) : ''}</div>
+                    </div>
+                `).join('');
+            } else {
+                document.getElementById('reportTests').innerHTML = '<p style="color:#555;">No test cases recorded.</p>';
+            }
+
+            // Analysis
+            const strengthsList = (p.strengths || '').split('\n').filter(s => s.trim());
+            const weaknessesList = (p.weaknesses || '').split('\n').filter(s => s.trim());
+
+            document.getElementById('reportAnalysis').innerHTML = `
+                <div class="report-section">
+                    <h4>💪 Strengths</h4>
+                    ${strengthsList.length > 0
+                        ? '<ul>' + strengthsList.map(s => `<li>${s}</li>`).join('') + '</ul>'
+                        : '<p>No strengths recorded.</p>'}
+                </div>
+                <div class="report-section">
+                    <h4>⚠️ Weaknesses</h4>
+                    ${weaknessesList.length > 0
+                        ? '<ul>' + weaknessesList.map(s => `<li>${s}</li>`).join('') + '</ul>'
+                        : '<p>No weaknesses recorded.</p>'}
+                </div>
+                <div class="report-section">
+                    <h4>📝 Detailed Notes</h4>
+                    <p>${p.notes || 'No notes recorded.'}</p>
+                </div>
+                <div class="report-section">
+                    <h4>🎯 Recommendation</h4>
+                    <p>${generateRecommendation(avg, grade)}</p>
+                </div>
+            `;
+        }
+
+        // ===== HELPERS =====
+        function getAvgScore(scores) {
+            const vals = Object.values(scores || {});
+            if (vals.length === 0) return 0;
+            return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+        }
+
+        function getGrade(avg) {
+            if (avg >= 90) return 'A';
+            if (avg >= 75) return 'B';
+            if (avg >= 60) return 'C';
+            return 'D';
+        }
+
+        function getGradeInfo(grade) {
+            const info = {
+                'A': { label: 'Excellent Performance', desc: 'This model exceeds expectations across all key evaluation criteria. Ready for production deployment.' },
+                'B': { label: 'Good Performance', desc: 'The model performs well with minor areas for improvement. Suitable for most production use cases.' },
+                'C': { label: 'Average Performance', desc: 'The model shows moderate performance. Significant improvements recommended before production use.' },
+                'D': { label: 'Needs Improvement', desc: 'The model underperforms in critical areas. Major revisions required before deployment.' }
+            };
+            return info[grade] || info['D'];
+        }
+
+        function generateRecommendation(avg, grade) {
+            if (grade === 'A') return 'This model is production-ready. We recommend proceeding with deployment while implementing standard monitoring practices.';
+            if (grade === 'B') return 'This model is suitable for production with minor optimizations. Focus on improving the lowest-scoring areas before full-scale deployment.';
+            if (grade === 'C') return 'We recommend additional fine-tuning and optimization before production deployment. The identified weaknesses should be addressed first.';
+            return 'This model requires significant improvements. We recommend revisiting the training data, architecture, and/or fine-tuning approach before re-evaluation.';
+        }
+
+        // ===== CLIENTS TABLE =====
+        function renderClients() {
+            const tbody = document.getElementById('clientsTableBody');
+            if (projects.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#555; padding:30px;">No projects yet</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = projects.map((p, i) => {
+                const statusClass = p.status === 'pending' ? 'status-pending' :
+                                   p.status === 'in-progress' ? 'status-progress' :
+                                   p.status === 'completed' ? 'status-done' : 'status-delivered';
+                return `
+                    <tr>
+                        <td>${p.clientName}</td>
+                        <td>${p.modelName}</td>
+                        <td>${p.modelType || '-'}</td>
+                        <td><span class="status-badge ${statusClass}">${p.status}</span></td>
+                        <td>${p.priority || 'normal'}</td>
+                        <td>${p.dateCreated}</td>
+                        <td>
+                            <button class="btn btn-secondary" style="padding:5px 10px; font-size:11px;"
+                                    onclick="deleteProject(${i})">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function deleteProject(idx) {
+            if (confirm(`Delete "${projects[idx].modelName}"?`)) {
+                projects.splice(idx, 1);
+                saveData();
+                renderClients();
+                populateDropdowns();
+            }
+        }
+
+        // ===== EXPORT =====
+        function printReport() { window.print(); }
+
+        function exportJSON() {
+            const idx = document.getElementById('reportProject').value;
+            if (idx === '') return;
+            const data = JSON.stringify(projects[idx], null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${projects[idx].modelName}_evaluation.json`;
+            a.click();
+        }
+
+        function copyReport() {
+            const idx = document.getElementById('reportProject').value;
+            if (idx === '') return;
+            const p = projects[idx];
+            const avg = getAvgScore(p.scores);
+            const text = `
+MODEL EVALUATION REPORT
+========================
+Model: ${p.modelName}
+Client: ${p.clientName}
+Grade: ${getGrade(avg)} (${avg}/100)
+Status: ${p.status}
+
+SCORES:
+- Accuracy: ${p.scores.accuracy || 0}/100
+- Quality: ${p.scores.quality || 0}/100
+- Speed: ${p.scores.speed || 0}/100
+- Safety: ${p.scores.safety || 0}/100
+- Consistency: ${p.scores.consistency || 0}/100
+- Cost: ${p.scores.cost || 0}/100
+- Scalability: ${p.scores.scalability || 0}/100
+- Documentation: ${p.scores.docs || 0}/100
+
+STRENGTHS:
+${p.strengths || 'N/A'}
+
+WEAKNESSES:
+${p.weaknesses || 'N/A'}
+
+NOTES:
+${p.notes || 'N/A'}
+
+RECOMMENDATION:
+${generateRecommendation(avg, getGrade(avg))}
+            `.trim();
+
+            navigator.clipboard.writeText(text).then(() => alert('📋 Report copied!'));
+        }
+
+        // ===== INIT =====
+        loadData();
+    </script>
+</body>
+</html>

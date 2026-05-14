@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Careers & Contributors | Evalis AI</title>
+    <meta name="description" content="Join Evalis AI as an independent contributor. Work on AI data evaluation, web development, and SaaS projects. Flexible, remote, skill-based.">
+    <meta name="robots" content="index, follow">
+    <link rel="icon" type="image/png" href="favicon-96x96.png">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .perks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
+        .perk-card {
+            background: var(--bg-card); backdrop-filter: blur(20px);
+            border: 1px solid var(--border); border-radius: var(--radius-lg);
+            padding: 2rem; text-align: center; transition: var(--transition);
+        }
+        .perk-card:hover { transform: translateY(-6px); border-color: var(--border-hover); }
+        .perk-icon { font-size: 2rem; margin-bottom: 1rem; }
+        .form-box {
+            background: var(--bg-card); backdrop-filter: blur(20px);
+            border: 1px solid var(--border); border-radius: var(--radius-lg);
+            padding: 2.5rem; max-width: 800px; margin: 0 auto;
+        }
+        .form-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .form-row > * { flex: 1; min-width: 200px; }
+        .disclaimer {
+            font-size: 0.8rem; color: var(--text-muted); text-align: center;
+            margin-top: 1rem; line-height: 1.6;
+        }
+        .btn-submit {
+            width: 100%; padding: 16px; background: var(--gradient-primary);
+            color: white; border: none; border-radius: var(--radius-md);
+            font-weight: 700; font-size: 1rem; cursor: pointer; transition: var(--transition);
+        }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(99,102,241,0.4); }
+    </style>
+</head>
+<body>
+    <div class="mesh-bg"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <nav>
+        <a href="index.html" class="logo-container">
+            <img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'">
+            <span class="logo-text">Evalis <span class="ai-badge">AI</span></span>
+        </a>
+        <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">☰</button>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="services.html">Services</a>
+            <a href="projects.html">Projects</a>
+            <a href="marketplace.html">Marketplace</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="careers.html" class="active btn-nav">Join Us →</a>
+        </div>
+    </nav>
+
+    <header class="hero" style="padding-bottom:20px;">
+        <div class="section-label reveal">👥 Join Us</div>
+        <h1 class="reveal">Join Evalis AI as a <span class="gradient-text">Contributor</span></h1>
+        <p class="hero-subtitle reveal">Work independently on AI data evaluation, web development, and SaaS engineering projects. Flexible, remote, and skill-based.</p>
+    </header>
+
+    <!-- Info Cards -->
+    <section style="padding-top:0;">
+        <div class="grid-3">
+            <div class="card reveal" style="text-align:center;">
+                <div style="font-size:2rem;margin-bottom:1rem;">🎯</div>
+                <h3>Who Can Apply</h3>
+                <p>AI evaluators, data labelers, web developers, mobile developers, SaaS engineers, search quality raters, and content reviewers.</p>
+            </div>
+            <div class="card reveal" style="text-align:center;">
+                <div style="font-size:2rem;margin-bottom:1rem;">⚙️</div>
+                <h3>How It Works</h3>
+                <p>Register once → Qualification review → Project matching → Work remotely → Get paid per project.</p>
+            </div>
+            <div class="card reveal" style="text-align:center;">
+                <div style="font-size:2rem;margin-bottom:1rem;">🌍</div>
+                <h3>Work Model</h3>
+                <p>Remote, independent, non-exclusive, and task-based. Work from anywhere on your own schedule.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Perks -->
+    <section>
+        <div class="section-header reveal">
+            <div class="section-label">✨ Benefits</div>
+            <h2>Why <span class="gradient-text">Work With Us</span></h2>
+        </div>
+        <div class="perks-grid">
+            <div class="perk-card reveal">
+                <div class="perk-icon">🏠</div>
+                <h3 style="font-size:1rem;margin-bottom:0.5rem;">Fully Remote</h3>
+                <p style="color:var(--text-secondary);font-size:0.85rem;">Work from anywhere in the world</p>
+            </div>
+            <div class="perk-card reveal">
+                <div class="perk-icon">💰</div>
+                <h3 style="font-size:1rem;margin-bottom:0.5rem;">Competitive Pay</h3>
+                <p style="color:var(--text-secondary);font-size:0.85rem;">Fair, project-based compensation</p>
+            </div>
+            <div class="perk-card reveal">
+                <div class="perk-icon">📈</div>
+                <h3 style="font-size:1rem;margin-bottom:0.5rem;">Skill Growth</h3>
+                <p style="color:var(--text-secondary);font-size:0.85rem;">Work with cutting-edge AI & tech</p>
+            </div>
+            <div class="perk-card reveal">
+                <div class="perk-icon">⏰</div>
+                <h3 style="font-size:1rem;margin-bottom:0.5rem;">Flexible Hours</h3>
+                <p style="color:var(--text-secondary);font-size:0.85rem;">Set your own schedule</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Form -->
+    <section>
+        <div class="form-box reveal">
+            <h2 style="text-align:center;font-size:1.6rem;margin-bottom:0.5rem;">Contributor Registration</h2>
+            <p style="text-align:center;color:var(--text-muted);font-size:0.9rem;margin-bottom:2rem;">Submit your details once. We'll contact you when suitable projects are available.</p>
+
+            <form action="https://formspree.io/f/xvxaepze" method="POST" enctype="multipart/form-data">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" name="name" placeholder="Your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address *</label>
+                        <input type="email" name="email" placeholder="you@email.com" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Primary Skill Area *</label>
+                        <select name="primary_skill" required>
+                            <option value="">Select your skill</option>
+                            <option>AI Data Evaluation</option>
+                            <option>Data Labeling / Annotation</option>
+                            <option>Search Engine Evaluation</option>
+                            <option>Web Development</option>
+                            <option>Mobile App Development</option>
+                            <option>SaaS / Backend Engineering</option>
+                            <option>Language & Content Review</option>
+                            <option>Speech / Audio Evaluation</option>
+                            <option>UI/UX Design</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Experience Level *</label>
+                        <select name="experience" required>
+                            <option value="">Select level</option>
+                            <option>Beginner</option>
+                            <option>Intermediate</option>
+                            <option>Advanced</option>
+                            <option>Expert</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Languages Known</label>
+                    <input type="text" name="languages" placeholder="e.g. English, Hindi, Malayalam, Arabic">
+                </div>
+                <div class="form-group">
+                    <label>Upload CV (PDF / DOC / DOCX)</label>
+                    <input type="file" name="cv" accept=".pdf,.doc,.docx" required style="padding:12px;">
+                </div>
+                <div class="form-group">
+                    <label>About Your Experience *</label>
+                    <textarea name="about" placeholder="Briefly describe your skills, relevant experience, and what type of projects interest you..." required></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Submit Registration →</button>
+                <p class="disclaimer">
+                    By submitting this form, you acknowledge that this is independent, project-based contributor work and not an employment offer.
+                </p>
+                <input type="hidden" name="_redirect" value="thank-you.html">
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="logo-container" style="margin-bottom:0.5rem;">
+                    <img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'">
+                    <span class="logo-text">Evalis <span class="ai-badge">AI</span></span>
+                </a>
+                <p>AI-powered software company from Kerala.</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/share/14arF3zkgWU/" target="_blank">📘</a>
+                    <a href="https://www.linkedin.com/company/evalis-ai/" target="_blank">💼</a>
+                </div>
+            </div>
+            <div class="footer-col"><h4>Services</h4><a href="services.html">AI Data Services</a><a href="services.html">Web Development</a><a href="services.html">SaaS Platforms</a></div>
+            <div class="footer-col"><h4>Company</h4><a href="about.html">About</a><a href="careers.html">Careers</a><a href="contact.html">Contact</a></div>
+            <div class="footer-col"><h4>Resources</h4><a href="marketplace.html">Marketplace</a><a href="assessment.html">Assessment</a></div>
+        </div>
+        <div class="footer-bottom">&copy; 2026 Evalis AI — Human-Led AI Data Services | Perinthalmanna, Kerala</div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/supabase.js"></script>
+</body>
+</html>

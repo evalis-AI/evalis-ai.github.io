@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Readiness Assessment | Evalis AI</title>
+    <meta name="description" content="Evaluate your AI readiness with Evalis AI's interactive assessment tool.">
+    <link rel="icon" type="image/png" href="favicon-96x96.png">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .quiz-container{max-width:600px;margin:0 auto}
+        .q-box{display:none}.q-box.active{display:block;animation:fadeSlide .5s ease}
+        @keyframes fadeSlide{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+        .quiz-card{background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:var(--radius-xl);padding:2.5rem;text-align:center}
+        .quiz-card h2{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;margin-bottom:1.5rem;color:#fff}
+        .option{display:block;width:100%;padding:16px 20px;margin:10px 0;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-secondary);cursor:pointer;transition:var(--transition);text-align:left;font-size:.95rem;font-weight:500}
+        .option:hover{border-color:var(--primary);color:var(--primary-light);background:var(--glow-primary);transform:translateX(6px)}
+        .progress-bar{width:100%;height:6px;background:rgba(255,255,255,.05);border-radius:100px;margin-bottom:2rem;overflow:hidden}
+        .progress-fill{height:100%;background:var(--gradient-primary);border-radius:100px;transition:width .5s ease}
+        .score-num{font-family:'Space Grotesk',sans-serif;font-size:4rem;font-weight:800;margin:1rem 0}
+        .sc-low{background:linear-gradient(135deg,#ef4444,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .sc-mid{background:linear-gradient(135deg,#f59e0b,#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .sc-hi{background:linear-gradient(135deg,#10b981,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .res-card{background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:var(--radius-lg);padding:1.5rem;margin:1rem 0;text-align:left}
+        .res-card h4{color:var(--primary-light);margin-bottom:.5rem}.res-card p{color:var(--text-secondary);font-size:.9rem;line-height:1.7}
+    </style>
+</head>
+<body>
+    <div class="mesh-bg"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <nav>
+        <a href="index.html" class="logo-container">
+            <img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'">
+            <span class="logo-text">Evalis <span class="ai-badge">AI</span></span>
+        </a>
+        <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">☰</button>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="services.html">Services</a>
+            <a href="projects.html">Projects</a>
+            <a href="marketplace.html">Marketplace</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="careers.html" class="btn-nav">Join Us →</a>
+        </div>
+    </nav>
+
+    <header class="hero" style="padding-bottom:20px;">
+        <div class="section-label reveal">🧠 Assessment</div>
+        <h1 class="reveal">AI Readiness <span class="gradient-text">Assessment</span></h1>
+        <p class="hero-subtitle reveal">Evaluate how prepared your organization is for production-grade AI.</p>
+    </header>
+
+    <section>
+        <div class="quiz-container">
+            <div class="quiz-card">
+                <div class="progress-bar"><div class="progress-fill" id="pFill" style="width:0%"></div></div>
+                <div id="q1" class="q-box active">
+                    <h2>📊 How clean is your data?</h2>
+                    <div class="option" onclick="mv(1,20)">Siloed / Unorganized</div>
+                    <div class="option" onclick="mv(1,60)">Partially Labeled</div>
+                    <div class="option" onclick="mv(1,100)">Fully Ready for Training</div>
+                </div>
+                <div id="q2" class="q-box">
+                    <h2>👥 Do humans audit your AI?</h2>
+                    <div class="option" onclick="mv(2,0)">No, fully automated</div>
+                    <div class="option" onclick="mv(2,50)">Occasionally</div>
+                    <div class="option" onclick="mv(2,100)">Yes, systematic review</div>
+                </div>
+                <div id="q3" class="q-box">
+                    <h2>🛡️ Do you test for bias & safety?</h2>
+                    <div class="option" onclick="mv(3,0)">No testing</div>
+                    <div class="option" onclick="mv(3,40)">Basic automated checks</div>
+                    <div class="option" onclick="mv(3,100)">Red-teaming & audits</div>
+                </div>
+                <div id="q4" class="q-box">
+                    <h2>📈 How do you measure AI quality?</h2>
+                    <div class="option" onclick="mv(4,20)">No formal metrics</div>
+                    <div class="option" onclick="mv(4,60)">Basic accuracy metrics</div>
+                    <div class="option" onclick="mv(4,100)">Multi-dimensional scoring</div>
+                </div>
+                <div id="res" class="q-box">
+                    <div style="font-size:3rem">📋</div>
+                    <h2>Your AI Readiness Score</h2>
+                    <div class="score-num" id="sDisp">0%</div>
+                    <div id="rCards"></div>
+                    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem">
+                        <a href="contact.html" class="btn btn-primary">Get Expert Help →</a>
+                        <button onclick="reset()" class="btn btn-outline" style="cursor:pointer">Retake</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="logo-container" style="margin-bottom:.5rem"><img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'"><span class="logo-text">Evalis <span class="ai-badge">AI</span></span></a>
+                <p>AI-powered software company from Kerala.</p>
+            </div>
+            <div class="footer-col"><h4>Services</h4><a href="services.html">AI Data Services</a><a href="services.html">Web Development</a></div>
+            <div class="footer-col"><h4>Company</h4><a href="about.html">About</a><a href="careers.html">Careers</a><a href="contact.html">Contact</a></div>
+            <div class="footer-col"><h4>Resources</h4><a href="marketplace.html">Marketplace</a><a href="projects.html">Projects</a></div>
+        </div>
+        <div class="footer-bottom">&copy; 2026 Evalis AI — Perinthalmanna, Kerala</div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/supabase.js"></script>
+    <script>
+        let sc=0;const TQ=4;
+        function mv(c,p){sc+=p;document.getElementById('q'+c).classList.remove('active');document.getElementById('pFill').style.width=((c/TQ)*100)+'%';let n=document.getElementById('q'+(c+1));if(n)n.classList.add('active');else showR()}
+        function showR(){document.getElementById('pFill').style.width='100%';document.getElementById('res').classList.add('active');let a=Math.round(sc/TQ),d=document.getElementById('sDisp');d.textContent=a+'%';d.className='score-num '+(a<40?'sc-low':a<70?'sc-mid':'sc-hi');let h='';if(a<40)h='<div class="res-card"><h4>⚠️ Critical Gaps</h4><p>Your AI infrastructure has significant risks. Start with a data quality audit and human-in-the-loop evaluation.</p></div>';else if(a<70)h='<div class="res-card"><h4>📈 Good Foundation</h4><p>You have started the right processes but need structured red-teaming and consistent human review cycles.</p></div>';else h='<div class="res-card"><h4>🏆 Excellent Readiness</h4><p>Strong data practices and systematic oversight. Consider advanced optimization with custom evaluation frameworks.</p></div>';document.getElementById('rCards').innerHTML=h}
+        function reset(){sc=0;document.getElementById('pFill').style.width='0%';document.getElementById('res').classList.remove('active');document.querySelectorAll('.q-box').forEach(q=>q.classList.remove('active'));document.getElementById('q1').classList.add('active')}
+    </script>
+</body>
+</html>

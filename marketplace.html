@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace | Evalis AI — Ready-Made Solutions & Templates</title>
+    <meta name="description" content="Browse Evalis AI marketplace for ready-made AI solutions, website templates, SaaS starters, and automation packages. Get started in minutes.">
+    <link rel="icon" type="image/png" href="favicon-96x96.png">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .marketplace-filters {
+            display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+            margin-bottom: 3rem;
+        }
+        .filter-btn {
+            padding: 8px 20px; border-radius: 100px; font-size: 0.85rem; font-weight: 500;
+            background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+            color: var(--text-muted); cursor: pointer; transition: var(--transition);
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--glow-primary); border-color: var(--primary);
+            color: var(--primary-light);
+        }
+        .product-card {
+            background: var(--bg-card); backdrop-filter: blur(20px);
+            border: 1px solid var(--border); border-radius: var(--radius-lg);
+            overflow: hidden; transition: var(--transition);
+        }
+        .product-card:hover {
+            transform: translateY(-8px); border-color: var(--border-hover);
+            box-shadow: var(--shadow-glow);
+        }
+        .product-img {
+            height: 200px; background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.1));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 4rem; position: relative; overflow: hidden;
+        }
+        .product-img::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+            height: 60px; background: linear-gradient(transparent, rgba(3,7,18,0.8));
+        }
+        .product-body { padding: 1.5rem; }
+        .product-body h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #fff;
+        }
+        .product-body p { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem; line-height: 1.6; }
+        .product-meta {
+            display: flex; align-items: center; justify-content: space-between;
+            padding-top: 1rem; border-top: 1px solid var(--border);
+        }
+        .product-price {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700; font-size: 1.2rem; color: var(--success);
+        }
+        .product-price span { font-size: 0.75rem; color: var(--text-muted); font-weight: 400; }
+        .product-badge {
+            padding: 4px 10px; border-radius: 100px; font-size: 0.7rem; font-weight: 600;
+        }
+        .badge-popular { background: rgba(99,102,241,0.15); color: var(--primary-light); }
+        .badge-new { background: rgba(16,185,129,0.15); color: #10b981; }
+        .badge-free { background: rgba(245,158,11,0.15); color: #f59e0b; }
+        .product-btn {
+            display: block; width: 100%; padding: 12px; text-align: center;
+            background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2);
+            border-radius: var(--radius-md); color: var(--primary-light);
+            font-weight: 600; font-size: 0.85rem; text-decoration: none;
+            margin-top: 1rem; transition: var(--transition);
+        }
+        .product-btn:hover { background: rgba(99,102,241,0.2); }
+    </style>
+</head>
+<body>
+    <div class="mesh-bg"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <nav>
+        <a href="index.html" class="logo-container">
+            <img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'">
+            <span class="logo-text">Evalis <span class="ai-badge">AI</span></span>
+        </a>
+        <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">☰</button>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="services.html">Services</a>
+            <a href="projects.html">Projects</a>
+            <a href="marketplace.html" class="active">Marketplace</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="careers.html" class="btn-nav">Join Us →</a>
+        </div>
+    </nav>
+
+    <header class="hero" style="padding-bottom:20px;">
+        <div class="section-label reveal">🛒 Marketplace</div>
+        <h1 class="reveal">Solution <span class="gradient-text">Marketplace</span></h1>
+        <p class="hero-subtitle reveal">Ready-made AI tools, website templates, SaaS starters, and automation packages. Launch faster with our pre-built solutions.</p>
+    </header>
+
+    <section style="padding-top:0;">
+        <div class="marketplace-filters reveal">
+            <button class="filter-btn active" onclick="filterProducts('all', this)">All</button>
+            <button class="filter-btn" onclick="filterProducts('ai', this)">AI Solutions</button>
+            <button class="filter-btn" onclick="filterProducts('web', this)">Web Templates</button>
+            <button class="filter-btn" onclick="filterProducts('saas', this)">SaaS Starters</button>
+            <button class="filter-btn" onclick="filterProducts('auto', this)">Automation</button>
+            <button class="filter-btn" onclick="filterProducts('free', this)">Free</button>
+        </div>
+
+        <div class="grid-3" id="productsGrid">
+            <!-- AI Solutions -->
+            <div class="product-card reveal" data-category="ai">
+                <div class="product-img" style="background:linear-gradient(135deg,rgba(99,102,241,0.3),rgba(168,85,247,0.2));">🤖</div>
+                <div class="product-body">
+                    <div style="display:flex;gap:6px;margin-bottom:8px;"><span class="product-badge badge-popular">Popular</span></div>
+                    <h3>AI Chatbot Widget</h3>
+                    <p>Drop-in AI chatbot for any website. Powered by free LLM APIs with customizable personality and branding.</p>
+                    <div class="product-meta">
+                        <div class="product-price">$49 <span>one-time</span></div>
+                    </div>
+                    <a href="contact.html" class="product-btn">Get This Solution →</a>
+                </div>
+            </div>
+
+            <div class="product-card reveal" data-category="ai free">
+                <div class="product-img" style="background:linear-gradient(135deg,rgba(16,185,129,0.3),rgba(6,182,212,0.2));">🔍</div>
+                <div class="product-body">
+                    <div style="display:flex;gap:6px;margin-bottom:8px;"><span class="product-badge badge-free">Free</span></div>
+                    <h3>AI TrustScore Evaluator</h3>
+                    <p>Free tool to evaluate AI-generated answers for accuracy, hallucination risk, and trustworthiness.</p>
+                    <div class="product-meta">
+                        <div class="product-price" style="color:var(--warning);">Free</div>
+                    </div>
+                    <a href="trustscore.html" class="product-btn">Try Free →</a>
+                </div>
+            </div>
+
+            <div class="product-card reveal" data-category="ai">
+                <div class="product-img" style="background:linear-gradient(135deg,rgba(244,63,94,0.3),rgba(245,158,11,0.2));">📊</div>
+                <div class="product-body">
+                    <div style="display:flex;gap:6px;margin-bottom:8px;"><span class="product-badge badge-new">New</span></div>
+                    <h3>Model Evaluation Suite</h3>
+                    <p>Complete toolkit for evaluating AI models — scoring, comparison, report generation, and client management.</p>
+                    <div class="product-meta">
+                        <div class="product-price">$99 <span>one-time</span></div>
+                    </div>
+                    <a href="arena.html" class="product-btn">Explore →</a>
+                </div>
+            </div>
+
+            <!-- Web Templates -->
+            <div class="product-card reveal" data-category="web">
+                <div class="product-img" style="background:linear-gradient(135deg,rgba(6,182,212,0.3),rgba(99,102,241,0.2));">🎨</div>
+                <div class="product-body">
+                    <div style="display:flex;gap:6px;margin-bottom:8px;"><span class="product-badge badge-popular">Popular</span></div>
+                    <h3>Startup Landing Page</h3>
+                    <p>Premium dark-theme landing page template with animations, SEO optimization, and conversion-focused design.</p>
+                    <div class="product-meta">
+                        <div class="product-price">$79 <span>one-time</span></div>
+                    </div>
+                    <a href="contact.html" class="product-btn">Get Template →</a>
+                </div>
+            </div>
+
+            <div class="product-card reveal" data-category="web">
+                <div class="product-img" style="background:linear-gradient(135deg,rgba(168,85,247,0.3),rgba(244,63,94,0.2));">💼</div>
+                <div class="product-body">
+                    <h3>Agency Portfolio Site</h3>
+                    <p>Complete agency website with case studies, team section, testimonials, and contact forms. Fully responsive.</p>
+                    <div class="product-meta">
+                        <div class="product-price">$129 <span>one-time</span></div>
+                    </div>
+                    <a href="contact.html" class="product-btn">Get Template →</a>
+                </div>
+            </div>
+
+            <div class="product-card reveal" data-category="web free">
+                <div class="product-img" style="background:linear-gradient(135deg,rgba(245,158,11,0.3),rgba(16,185,129,0.2));">📝</div>
+                <div class="product-body">
+                    <div style="display:flex;gap:6px;margin-bottom:8px;"><span class="product-badge badge-free">Free</span></div>
+                    <h3>Personal Blog Starter</h3>
+                    <p>Clean, minimalist blog template with dark mode, reading time estimates, and social sharing built in.</p>
+                    <div class="product-meta">
+                        <div class="product-price" style="color:var(--warning);">Free</div>
+                    </div>
+                    <a href="contact.html" class="product-btn">Download Free →</a>
+                </div>
+            </div>
+
+            <!-- SaaS Starters -->
+            <div class="product-card reveal" data-category="saas">
+                <div class="product-img" style="background:linear-gradient(135deg,rgba(99,102,241,0.3),rgba(6,182,212,0.2));">☁️</div>
+                <div class="product-body">
+                    <div style="display:flex;gap:6px;margin-bottom:8px;"><span class="product-badge badge-popular">Popular</span></div>
+                    <h3>SaaS Boilerplate Kit</h3>
+                    <p>Full-stack SaaS starter: Next.js + Supabase + Stripe. Auth, billing, dashboard, and admin panel included.</p>
+                    <div class="product-meta">
+                        <div class="product-price">$199 <span>one-time</span></div>
+                    </div>
+                    <a href="contact.html" class="product-btn">Get Starter Kit →</a>
+                </div>
+            </div>
+
+            <div class="product-card reveal" data-category="saas">
+                <div class="product-img" style="background:linear-gradient(135deg,rgba(16,185,129,0.3),rgba(99,102,241,0.2));">🏗️</div>
+                <div class="product-body">
+                    <div style="display:flex;gap:6px;margin-bottom:8px;"><span class="product-badge badge-new">New</span></div>
+                    <h3>Multi-Tenant Platform</h3>
+                    <p>Enterprise SaaS architecture with team management, RBAC, usage-based billing, and white-label support.</p>
+                    <div class="product-meta">
+                        <div class="product-price">$349 <span>one-time</span></div>
+                    </div>
+                    <a href="contact.html" class="product-btn">Get Platform →</a>
+                </div>
+            </div>
+
+            <!-- Automation -->
+            <div class="product-card reveal" data-category="auto">
+                <div class="product-img" style="background:linear-gradient(135deg,rgba(244,63,94,0.3),rgba(168,85,247,0.2));">⚡</div>
+                <div class="product-body">
+                    <h3>Workflow Automation Suite</h3>
+                    <p>Pre-built automation workflows for lead nurturing, email processing, CRM sync, and social media management.</p>
+                    <div class="product-meta">
+                        <div class="product-price">$149 <span>one-time</span></div>
+                    </div>
+                    <a href="automate.html" class="product-btn">Explore Suite →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Custom Solutions CTA -->
+    <section style="text-align:center;max-width:800px;">
+        <div class="reveal" style="background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(168,85,247,0.05));border:1px solid var(--border);border-radius:var(--radius-xl);padding:3rem;">
+            <h2>Need a Custom Solution?</h2>
+            <p style="color:var(--text-secondary);margin:1rem 0 2rem;">Can't find what you're looking for? We'll build it for you — tailored to your exact requirements.</p>
+            <a href="contact.html" class="btn btn-primary">Request Custom Build →</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="logo-container" style="margin-bottom:0.5rem;">
+                    <img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'">
+                    <span class="logo-text">Evalis <span class="ai-badge">AI</span></span>
+                </a>
+                <p>AI-powered software company from Kerala delivering global solutions.</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/share/14arF3zkgWU/" target="_blank">📘</a>
+                    <a href="https://www.linkedin.com/company/evalis-ai/" target="_blank">💼</a>
+                    <a href="https://wa.me/919544842260" target="_blank">💬</a>
+                </div>
+            </div>
+            <div class="footer-col"><h4>Services</h4><a href="services.html">AI Data Services</a><a href="services.html">Web Development</a><a href="services.html">SaaS Platforms</a></div>
+            <div class="footer-col"><h4>Company</h4><a href="about.html">About</a><a href="careers.html">Careers</a><a href="contact.html">Contact</a></div>
+            <div class="footer-col"><h4>Resources</h4><a href="marketplace.html">Marketplace</a><a href="assessment.html">Assessment</a><a href="trustscore.html">TrustScore</a></div>
+        </div>
+        <div class="footer-bottom">&copy; 2026 Evalis AI — Perinthalmanna, Kerala</div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/supabase.js"></script>
+    <script>
+        function filterProducts(cat, btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.product-card').forEach(card => {
+                const cats = card.getAttribute('data-category') || '';
+                card.style.display = (cat === 'all' || cats.includes(cat)) ? '' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>

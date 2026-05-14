@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Sitemap: https://evalis-ai.github.io/sitemap.xml
+
+# Evalis AI — AI-Powered Software & Data Services

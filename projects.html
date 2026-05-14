@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Projects | Evalis AI — AI Dubbing, Lip Sync, Data Labeling</title>
+    <meta name="description" content="Explore Evalis AI projects: AI dubbing, voice cloning, video lip syncing, AI model evaluation, image annotation, and data labeling. Join as a contributor.">
+    <link rel="icon" type="image/png" href="favicon-96x96.png">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .project-card{background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:var(--transition);position:relative}
+        .project-card:hover{transform:translateY(-8px);border-color:var(--border-hover);box-shadow:var(--shadow-glow)}
+        .project-banner{height:220px;display:flex;align-items:center;justify-content:center;font-size:5rem;position:relative;overflow:hidden}
+        .project-banner::after{content:'';position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(transparent,rgba(3,7,18,0.9))}
+        .pb-1{background:linear-gradient(135deg,rgba(99,102,241,0.25),rgba(168,85,247,0.15))}
+        .pb-2{background:linear-gradient(135deg,rgba(6,182,212,0.25),rgba(99,102,241,0.15))}
+        .pb-3{background:linear-gradient(135deg,rgba(244,63,94,0.25),rgba(245,158,11,0.15))}
+        .pb-4{background:linear-gradient(135deg,rgba(16,185,129,0.25),rgba(6,182,212,0.15))}
+        .pb-5{background:linear-gradient(135deg,rgba(168,85,247,0.25),rgba(244,63,94,0.15))}
+        .pb-6{background:linear-gradient(135deg,rgba(245,158,11,0.25),rgba(16,185,129,0.15))}
+        .pb-7{background:linear-gradient(135deg,rgba(59,130,246,0.25),rgba(168,85,247,0.15))}
+        .pb-8{background:linear-gradient(135deg,rgba(239,68,68,0.25),rgba(168,85,247,0.15))}
+        .project-body{padding:1.5rem 1.8rem 1.8rem}
+        .project-body h3{font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:.6rem;color:#fff}
+        .project-body p{color:var(--text-secondary);font-size:.9rem;line-height:1.7;margin-bottom:1.2rem}
+        .project-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.2rem}
+        .ptag{padding:4px 10px;border-radius:100px;font-size:.72rem;font-weight:600;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text-muted)}
+        .project-footer{display:flex;align-items:center;justify-content:space-between;padding-top:1rem;border-top:1px solid var(--border)}
+        .project-status{display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:600}
+        .status-dot{width:8px;height:8px;border-radius:50%}
+        .dot-active{background:#10b981;box-shadow:0 0 8px rgba(16,185,129,.5)}
+        .dot-upcoming{background:#f59e0b;box-shadow:0 0 8px rgba(245,158,11,.5)}
+        .dot-completed{background:#6366f1}
+        .join-btn{padding:8px 18px;border-radius:var(--radius-sm);background:var(--gradient-primary);color:#fff;font-weight:600;font-size:.8rem;text-decoration:none;transition:var(--transition);border:none;cursor:pointer}
+        .join-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(99,102,241,.4)}
+        .join-btn.outline{background:transparent;border:1px solid rgba(99,102,241,.3);color:var(--primary-light)}
+        .invite-banner{background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(168,85,247,.06));border:1px solid var(--border);border-radius:var(--radius-xl);padding:3rem;text-align:center;position:relative;overflow:hidden}
+        .invite-banner::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(99,102,241,.08) 0%,transparent 50%);animation:gradient-shift 8s ease infinite;background-size:200% 200%}
+        .skill-chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:1.5rem 0}
+        .skill-chip{padding:8px 16px;border-radius:100px;font-size:.85rem;font-weight:500;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text-secondary);transition:var(--transition)}
+        .skill-chip:hover{border-color:var(--primary);color:var(--primary-light);background:var(--glow-primary)}
+    </style>
+</head>
+<body>
+    <div class="mesh-bg"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <nav>
+        <a href="index.html" class="logo-container">
+            <img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'">
+            <span class="logo-text">Evalis <span class="ai-badge">AI</span></span>
+        </a>
+        <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">☰</button>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="services.html">Services</a>
+            <a href="projects.html" class="active">Projects</a>
+            <a href="marketplace.html">Marketplace</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="careers.html" class="btn-nav">Join Us →</a>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="hero" style="padding-bottom:20px;">
+        <div class="section-label reveal">🚀 Active Projects</div>
+        <h1 class="reveal">AI <span class="gradient-text">Project Hub</span></h1>
+        <p class="hero-subtitle reveal">Explore our cutting-edge AI projects in dubbing, lip syncing, model evaluation, and data annotation. Join as a contributor and work on next-gen AI.</p>
+        <div class="hero-cta reveal">
+            <a href="#projects" class="btn btn-primary">Browse Projects</a>
+            <a href="careers.html" class="btn btn-outline">Apply as Contributor</a>
+        </div>
+    </header>
+
+    <!-- PROJECTS GRID -->
+    <section id="projects">
+        <div class="section-header reveal">
+            <div class="section-label">🤖 Live & Upcoming</div>
+            <h2>Featured <span class="gradient-text">AI Projects</span></h2>
+        </div>
+
+        <div class="grid-3" style="gap:1.5rem;">
+            <!-- AI Dubbing -->
+            <div class="project-card reveal">
+                <div class="project-banner pb-1">🎙️</div>
+                <div class="project-body">
+                    <h3>AI Voice Dubbing</h3>
+                    <p>Multilingual voice dubbing using AI voice synthesis. Evaluate dubbed audio for naturalness, emotion accuracy, and lip-sync quality across 20+ languages.</p>
+                    <div class="project-tags">
+                        <span class="ptag">Voice AI</span><span class="ptag">Dubbing</span><span class="ptag">Multilingual</span><span class="ptag">Audio QA</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-status"><span class="status-dot dot-active"></span><span style="color:#10b981;">Actively Hiring</span></div>
+                        <a href="careers.html" class="join-btn">Apply →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video Lip Sync -->
+            <div class="project-card reveal">
+                <div class="project-banner pb-2">🎬</div>
+                <div class="project-body">
+                    <h3>Video Lip Syncing AI</h3>
+                    <p>Evaluate and annotate AI-generated lip sync videos. Rate sync accuracy, facial naturalness, and visual artifacts in AI-modified video content.</p>
+                    <div class="project-tags">
+                        <span class="ptag">Lip Sync</span><span class="ptag">Video AI</span><span class="ptag">Deepfake QA</span><span class="ptag">Annotation</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-status"><span class="status-dot dot-active"></span><span style="color:#10b981;">Actively Hiring</span></div>
+                        <a href="careers.html" class="join-btn">Apply →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voice Cloning -->
+            <div class="project-card reveal">
+                <div class="project-banner pb-3">🗣️</div>
+                <div class="project-body">
+                    <h3>AI Voice Cloning Evaluation</h3>
+                    <p>Evaluate AI-cloned voices for speaker similarity, emotional range, pronunciation accuracy, and safety compliance across multiple voice profiles.</p>
+                    <div class="project-tags">
+                        <span class="ptag">Voice Clone</span><span class="ptag">TTS</span><span class="ptag">Safety</span><span class="ptag">Evaluation</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-status"><span class="status-dot dot-active"></span><span style="color:#10b981;">Actively Hiring</span></div>
+                        <a href="careers.html" class="join-btn">Apply →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Annotation -->
+            <div class="project-card reveal">
+                <div class="project-banner pb-4">🖼️</div>
+                <div class="project-body">
+                    <h3>Image Annotation & Labeling</h3>
+                    <p>Precision labeling for computer vision models — object detection, semantic segmentation, bounding boxes, keypoints, and image classification tasks.</p>
+                    <div class="project-tags">
+                        <span class="ptag">Image AI</span><span class="ptag">Object Detection</span><span class="ptag">Segmentation</span><span class="ptag">Labeling</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-status"><span class="status-dot dot-active"></span><span style="color:#10b981;">Open</span></div>
+                        <a href="careers.html" class="join-btn">Apply →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LLM Evaluation -->
+            <div class="project-card reveal">
+                <div class="project-banner pb-5">🧠</div>
+                <div class="project-body">
+                    <h3>LLM Safety & Red Teaming</h3>
+                    <p>Red-team large language models for safety, hallucination, bias, and toxicity. Expert evaluators test AI responses across sensitive categories.</p>
+                    <div class="project-tags">
+                        <span class="ptag">LLM</span><span class="ptag">Red Team</span><span class="ptag">Safety</span><span class="ptag">Bias Detection</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-status"><span class="status-dot dot-active"></span><span style="color:#10b981;">Open</span></div>
+                        <a href="careers.html" class="join-btn">Apply →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Labeling -->
+            <div class="project-card reveal">
+                <div class="project-banner pb-6">📊</div>
+                <div class="project-body">
+                    <h3>Multi-Modal Data Labeling</h3>
+                    <p>Label text, audio, and video datasets for training next-gen AI models. Includes intent tagging, NER, sentiment analysis, and content classification.</p>
+                    <div class="project-tags">
+                        <span class="ptag">NLP</span><span class="ptag">NER</span><span class="ptag">Sentiment</span><span class="ptag">Multi-Modal</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-status"><span class="status-dot dot-active"></span><span style="color:#10b981;">Open</span></div>
+                        <a href="careers.html" class="join-btn">Apply →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Evaluation -->
+            <div class="project-card reveal">
+                <div class="project-banner pb-7">🔍</div>
+                <div class="project-body">
+                    <h3>Search Engine Evaluation</h3>
+                    <p>Evaluate and rank search engine results for relevance, freshness, and user intent satisfaction. Rate queries across web, image, and video search.</p>
+                    <div class="project-tags">
+                        <span class="ptag">Search QA</span><span class="ptag">SERP</span><span class="ptag">Relevance</span><span class="ptag">Intent</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-status"><span class="status-dot dot-upcoming"></span><span style="color:#f59e0b;">Upcoming</span></div>
+                        <a href="careers.html" class="join-btn outline">Notify Me</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Image Generation -->
+            <div class="project-card reveal">
+                <div class="project-banner pb-8">🎨</div>
+                <div class="project-body">
+                    <h3>AI Image Generation QA</h3>
+                    <p>Evaluate AI-generated images for prompt accuracy, visual quality, artistic coherence, and safety. Compare outputs across diffusion models.</p>
+                    <div class="project-tags">
+                        <span class="ptag">Image Gen</span><span class="ptag">Diffusion</span><span class="ptag">Prompt QA</span><span class="ptag">Comparison</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-status"><span class="status-dot dot-upcoming"></span><span style="color:#f59e0b;">Upcoming</span></div>
+                        <a href="careers.html" class="join-btn outline">Notify Me</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Moderation -->
+            <div class="project-card reveal">
+                <div class="project-banner pb-1">🛡️</div>
+                <div class="project-body">
+                    <h3>AI Content Moderation</h3>
+                    <p>Review AI platform content for policy violations, harmful material, misinformation, and NSFW detection. Multilingual moderation across text and media.</p>
+                    <div class="project-tags">
+                        <span class="ptag">Moderation</span><span class="ptag">Safety</span><span class="ptag">Policy</span><span class="ptag">Multilingual</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-status"><span class="status-dot dot-active"></span><span style="color:#10b981;">Open</span></div>
+                        <a href="careers.html" class="join-btn">Apply →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SKILLS NEEDED -->
+    <section>
+        <div class="section-header reveal">
+            <div class="section-label">🎯 Skills Needed</div>
+            <h2>We're Looking For <span class="gradient-text">Experts In</span></h2>
+        </div>
+        <div class="skill-chips reveal">
+            <span class="skill-chip">🎙️ Audio Evaluation</span>
+            <span class="skill-chip">🎬 Video Analysis</span>
+            <span class="skill-chip">🗣️ Voice Quality Rating</span>
+            <span class="skill-chip">🖼️ Image Annotation</span>
+            <span class="skill-chip">📝 Text Labeling</span>
+            <span class="skill-chip">🌍 Multilingual Review</span>
+            <span class="skill-chip">🔍 Search Evaluation</span>
+            <span class="skill-chip">🧠 AI Safety Testing</span>
+            <span class="skill-chip">🛡️ Content Moderation</span>
+            <span class="skill-chip">📊 Data Annotation</span>
+            <span class="skill-chip">🤖 LLM Evaluation</span>
+            <span class="skill-chip">💬 Chatbot Testing</span>
+        </div>
+    </section>
+
+    <!-- INVITATION CTA -->
+    <section style="max-width:900px;">
+        <div class="invite-banner reveal">
+            <div style="position:relative;z-index:1;">
+                <div style="font-size:3rem;margin-bottom:1rem;">🚀</div>
+                <h2 style="font-size:1.8rem;">Join Our AI Contributor Network</h2>
+                <p style="color:var(--text-secondary);max-width:600px;margin:1rem auto 2rem;line-height:1.8;">
+                    Work remotely on cutting-edge AI projects. Flexible hours, competitive pay, and the opportunity to shape the future of artificial intelligence.
+                </p>
+                <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+                    <a href="careers.html" class="btn btn-primary">Apply Now →</a>
+                    <a href="https://wa.me/919544842260" class="btn btn-outline" target="_blank">💬 Ask on WhatsApp</a>
+                </div>
+                <div style="margin-top:1.5rem;display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;">
+                    <span style="color:var(--text-muted);font-size:.85rem;">🏠 Fully Remote</span>
+                    <span style="color:var(--text-muted);font-size:.85rem;">💰 Per-Project Pay</span>
+                    <span style="color:var(--text-muted);font-size:.85rem;">⏰ Flexible Hours</span>
+                    <span style="color:var(--text-muted);font-size:.85rem;">🌍 Global Team</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="logo-container" style="margin-bottom:.5rem;"><img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'"><span class="logo-text">Evalis <span class="ai-badge">AI</span></span></a>
+                <p>AI-powered software company from Kerala.</p>
+                <div class="social-links"><a href="https://www.facebook.com/share/14arF3zkgWU/" target="_blank">📘</a><a href="https://www.linkedin.com/company/evalis-ai/" target="_blank">💼</a><a href="https://wa.me/919544842260" target="_blank">💬</a></div>
+            </div>
+            <div class="footer-col"><h4>Services</h4><a href="services.html">AI Data Services</a><a href="services.html">Web Development</a><a href="services.html">SaaS Platforms</a></div>
+            <div class="footer-col"><h4>Company</h4><a href="about.html">About</a><a href="careers.html">Careers</a><a href="contact.html">Contact</a></div>
+            <div class="footer-col"><h4>Projects</h4><a href="projects.html">AI Dubbing</a><a href="projects.html">Lip Syncing</a><a href="projects.html">Data Labeling</a></div>
+        </div>
+        <div class="footer-bottom">&copy; 2026 Evalis AI — Perinthalmanna, Kerala</div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/supabase.js"></script>
+</body>
+</html>

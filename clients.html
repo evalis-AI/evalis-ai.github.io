@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clients & Use Cases | Evalis AI</title>
+    <meta name="description" content="Explore Evalis AI's client industries and use cases — AI platforms, search engines, e-commerce, healthcare, and more.">
+    <link rel="icon" type="image/png" href="favicon-96x96.png">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .use-case{background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;transition:var(--transition);text-align:center}
+        .use-case:hover{transform:translateY(-8px);border-color:var(--border-hover);box-shadow:var(--shadow-glow)}
+        .use-icon{font-size:2.5rem;margin-bottom:1rem}
+    </style>
+</head>
+<body>
+    <div class="mesh-bg"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <nav>
+        <a href="index.html" class="logo-container">
+            <img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'">
+            <span class="logo-text">Evalis <span class="ai-badge">AI</span></span>
+        </a>
+        <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">☰</button>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="services.html">Services</a>
+            <a href="projects.html">Projects</a>
+            <a href="marketplace.html">Marketplace</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="careers.html" class="btn-nav">Join Us →</a>
+        </div>
+    </nav>
+
+    <header class="hero" style="padding-bottom:20px;">
+        <div class="section-label reveal">🏢 Industries</div>
+        <h1 class="reveal">Clients & <span class="gradient-text">Use Cases</span></h1>
+        <p class="hero-subtitle reveal">We serve businesses across diverse industries with AI evaluation, software development, and intelligent automation.</p>
+    </header>
+
+    <section>
+        <div class="grid-3">
+            <div class="use-case reveal"><div class="use-icon">🤖</div><h3>AI & ML Platforms</h3><p style="color:var(--text-secondary);font-size:.9rem">Model evaluation, data labeling, red-teaming, and RLHF for AI companies building production LLMs.</p></div>
+            <div class="use-case reveal"><div class="use-icon">🔍</div><h3>Search Engines</h3><p style="color:var(--text-secondary);font-size:.9rem">Search quality evaluation, relevance scoring, and multilingual SERP auditing.</p></div>
+            <div class="use-case reveal"><div class="use-icon">🛒</div><h3>E-Commerce</h3><p style="color:var(--text-secondary);font-size:.9rem">Product catalog annotation, recommendation system evaluation, and content moderation.</p></div>
+            <div class="use-case reveal"><div class="use-icon">🏥</div><h3>Healthcare AI</h3><p style="color:var(--text-secondary);font-size:.9rem">Medical data annotation, clinical NLP validation, and AI safety auditing for health platforms.</p></div>
+            <div class="use-case reveal"><div class="use-icon">🚀</div><h3>Startups</h3><p style="color:var(--text-secondary);font-size:.9rem">Full-stack development, MVP building, SaaS platform engineering, and AI feature integration.</p></div>
+            <div class="use-case reveal"><div class="use-icon">🏛️</div><h3>Enterprise</h3><p style="color:var(--text-secondary);font-size:.9rem">Custom web apps, internal tools, automation workflows, and scalable cloud infrastructure.</p></div>
+        </div>
+    </section>
+
+    <section style="text-align:center;max-width:800px;">
+        <div class="reveal" style="background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(168,85,247,.05));border:1px solid var(--border);border-radius:var(--radius-xl);padding:3rem;">
+            <h2>Become a Client</h2>
+            <p style="color:var(--text-secondary);margin:1rem 0 2rem">Tell us about your project and get a free consultation.</p>
+            <a href="contact.html" class="btn btn-primary">Start Your Project →</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="logo-container" style="margin-bottom:.5rem"><img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'"><span class="logo-text">Evalis <span class="ai-badge">AI</span></span></a>
+                <p>AI-powered software company from Kerala.</p>
+            </div>
+            <div class="footer-col"><h4>Services</h4><a href="services.html">AI Data Services</a><a href="services.html">Web Development</a></div>
+            <div class="footer-col"><h4>Company</h4><a href="about.html">About</a><a href="careers.html">Careers</a><a href="contact.html">Contact</a></div>
+        </div>
+        <div class="footer-bottom">&copy; 2026 Evalis AI — Perinthalmanna, Kerala</div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

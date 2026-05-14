@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You | Evalis AI</title>
+    <link rel="icon" type="image/png" href="favicon-96x96.png">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .thank-you-container {
+            min-height: 70vh; display: flex; align-items: center; justify-content: center;
+            text-align: center; padding: 80px 5%;
+        }
+        .thank-you-card {
+            background: var(--bg-card); backdrop-filter: blur(20px);
+            border: 1px solid var(--border); border-radius: var(--radius-xl);
+            padding: 4rem 3rem; max-width: 600px; position: relative; overflow: hidden;
+        }
+        .thank-you-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+            background: var(--gradient-primary);
+        }
+        .success-icon {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: rgba(16,185,129,0.15); border: 2px solid rgba(16,185,129,0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; margin: 0 auto 1.5rem;
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0); opacity: 1; }
+            100% { transform: translateY(-200px) rotate(720deg); opacity: 0; }
+        }
+        .confetti-particle {
+            position: absolute; width: 8px; height: 8px; border-radius: 2px;
+            animation: confetti 2s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="mesh-bg"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <nav>
+        <a href="index.html" class="logo-container">
+            <img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'">
+            <span class="logo-text">Evalis <span class="ai-badge">AI</span></span>
+        </a>
+        <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">☰</button>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="services.html">Services</a>
+            <a href="marketplace.html">Marketplace</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="assessment.html" class="btn-nav">Get Started →</a>
+        </div>
+    </nav>
+
+    <div class="thank-you-container">
+        <div class="thank-you-card" id="thankYouCard">
+            <div class="success-icon">✅</div>
+            <h1 style="font-size:2rem;margin-bottom:1rem;">Thank You!</h1>
+            <p style="color:var(--text-secondary);font-size:1.1rem;line-height:1.8;margin-bottom:2rem;">
+                Your submission has been received successfully. Our team will review your information and get back to you within <strong style="color:var(--primary-light);">24 hours</strong>.
+            </p>
+            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+                <a href="index.html" class="btn btn-primary">← Back to Home</a>
+                <a href="services.html" class="btn btn-outline">Explore Services</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-bottom">&copy; 2026 Evalis AI — Perinthalmanna, Kerala</div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Confetti animation on load
+        const card = document.getElementById('thankYouCard');
+        const colors = ['#6366f1','#a855f7','#06b6d4','#10b981','#f59e0b','#f43f5e'];
+        for (let i = 0; i < 20; i++) {
+            const p = document.createElement('div');
+            p.className = 'confetti-particle';
+            p.style.background = colors[Math.floor(Math.random() * colors.length)];
+            p.style.left = Math.random() * 100 + '%';
+            p.style.bottom = '20%';
+            p.style.animationDelay = Math.random() * 1 + 's';
+            p.style.animationDuration = (1.5 + Math.random()) + 's';
+            card.appendChild(p);
+        }
+    </script>
+</body>
+</html>

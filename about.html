@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Evalis AI | AI-Powered Software Company in Kerala</title>
+    <meta name="description" content="Learn about Evalis AI — a human-led AI evaluation and full-stack software company in Perinthalmanna, Kerala. Our mission, values, and vision.">
+    <link rel="icon" type="image/png" href="favicon-96x96.png">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .values-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+        .value-card {
+            background: var(--bg-card); backdrop-filter: blur(20px);
+            border: 1px solid var(--border); border-radius: var(--radius-lg);
+            padding: 2rem; transition: var(--transition); text-align: center;
+        }
+        .value-card:hover { transform: translateY(-6px); border-color: var(--border-hover); box-shadow: var(--shadow-glow); }
+        .value-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .timeline { position: relative; max-width: 700px; margin: 0 auto; padding-left: 40px; }
+        .timeline::before {
+            content: ''; position: absolute; left: 14px; top: 0; bottom: 0;
+            width: 2px; background: linear-gradient(to bottom, var(--primary), var(--secondary));
+        }
+        .timeline-item { position: relative; margin-bottom: 2rem; padding-left: 30px; }
+        .timeline-item::before {
+            content: ''; position: absolute; left: -30px; top: 6px;
+            width: 12px; height: 12px; border-radius: 50%;
+            background: var(--primary); border: 2px solid var(--bg-deep);
+            box-shadow: 0 0 12px rgba(99,102,241,0.4);
+        }
+        .timeline-item h4 { font-family: 'Space Grotesk', sans-serif; color: var(--primary-light); font-size: 0.85rem; margin-bottom: 4px; }
+        .timeline-item h3 { font-size: 1.1rem; margin-bottom: 6px; }
+        .timeline-item p { color: var(--text-secondary); font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="mesh-bg"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <nav>
+        <a href="index.html" class="logo-container">
+            <img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'">
+            <span class="logo-text">Evalis <span class="ai-badge">AI</span></span>
+        </a>
+        <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">☰</button>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="services.html">Services</a>
+            <a href="projects.html">Projects</a>
+            <a href="marketplace.html">Marketplace</a>
+            <a href="about.html" class="active">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="careers.html" class="btn-nav">Join Us →</a>
+        </div>
+    </nav>
+
+    <header class="hero" style="padding-bottom:20px;">
+        <div class="section-label reveal">🏢 About Us</div>
+        <h1 class="reveal">Our <span class="gradient-text">Vision & Mission</span></h1>
+        <p class="hero-subtitle reveal">Bridging the gap between human intelligence and cutting-edge technology to build products that matter.</p>
+    </header>
+
+    <!-- About -->
+    <section style="max-width:900px;">
+        <div class="card reveal" style="padding:2.5rem;">
+            <h2 style="font-size:1.6rem;margin-bottom:1.2rem;">About Evalis AI</h2>
+            <p style="color:var(--text-secondary);line-height:1.9;margin-bottom:1rem;">Evalis AI is a specialized, human-led technology company based in Perinthalmanna, Kerala. We deliver premium AI evaluation, full-stack web & app development, and SaaS platform engineering to clients worldwide.</p>
+            <p style="color:var(--text-secondary);line-height:1.9;">Unlike automated or crowd-based models, Evalis AI emphasizes expert judgment, contextual understanding, and strict quality control across every engagement — from AI data labeling to enterprise software development.</p>
+        </div>
+    </section>
+
+    <!-- Mission -->
+    <section style="max-width:900px;">
+        <div class="card reveal" style="padding:2.5rem;border-left:3px solid var(--primary);">
+            <h2 style="font-size:1.6rem;margin-bottom:1rem;">🎯 Our Mission</h2>
+            <p style="color:var(--text-secondary);line-height:1.9;font-size:1.1rem;">To strengthen AI systems with reliable human intelligence and deliver world-class software solutions — ensuring fairness, relevance, safety, and real-world usability for businesses of every scale.</p>
+        </div>
+    </section>
+
+    <!-- What We Do -->
+    <section>
+        <div class="section-header reveal">
+            <div class="section-label">💡 What We Do</div>
+            <h2>Our <span class="gradient-text">Capabilities</span></h2>
+        </div>
+        <div class="grid-4">
+            <div class="card reveal" style="text-align:center;padding:1.5rem;">
+                <div style="font-size:2rem;margin-bottom:0.8rem;">🤖</div>
+                <h3 style="font-size:1rem;">AI Data Evaluation</h3>
+                <p style="font-size:0.85rem;">Accuracy checks, bias detection, quality scoring</p>
+            </div>
+            <div class="card reveal" style="text-align:center;padding:1.5rem;">
+                <div style="font-size:2rem;margin-bottom:0.8rem;">🌐</div>
+                <h3 style="font-size:1rem;">Web & App Dev</h3>
+                <p style="font-size:0.85rem;">React, Next.js, Flutter, React Native</p>
+            </div>
+            <div class="card reveal" style="text-align:center;padding:1.5rem;">
+                <div style="font-size:2rem;margin-bottom:0.8rem;">☁️</div>
+                <h3 style="font-size:1rem;">SaaS Engineering</h3>
+                <p style="font-size:0.85rem;">Multi-tenant, scalable cloud platforms</p>
+            </div>
+            <div class="card reveal" style="text-align:center;padding:1.5rem;">
+                <div style="font-size:2rem;margin-bottom:0.8rem;">🔍</div>
+                <h3 style="font-size:1rem;">Search & Content QA</h3>
+                <p style="font-size:0.85rem;">Multilingual review, localization, moderation</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values -->
+    <section>
+        <div class="section-header reveal">
+            <div class="section-label">💎 Our Values</div>
+            <h2>Why <span class="gradient-text">Choose Us</span></h2>
+        </div>
+        <div class="values-grid">
+            <div class="value-card reveal">
+                <div class="value-icon">🧠</div>
+                <h3>100% Human-Led</h3>
+                <p style="color:var(--text-secondary);font-size:0.9rem;">No automated shortcuts. Real expert judgment on every task.</p>
+            </div>
+            <div class="value-card reveal">
+                <div class="value-icon">🔒</div>
+                <h3>Strict Confidentiality</h3>
+                <p style="color:var(--text-secondary);font-size:0.9rem;">NDA-protected, enterprise-grade security on all projects.</p>
+            </div>
+            <div class="value-card reveal">
+                <div class="value-icon">⚡</div>
+                <h3>Rapid Delivery</h3>
+                <p style="color:var(--text-secondary);font-size:0.9rem;">Agile sprints with regular demos and fast turnarounds.</p>
+            </div>
+            <div class="value-card reveal">
+                <div class="value-icon">🌍</div>
+                <h3>Global Reach</h3>
+                <p style="color:var(--text-secondary);font-size:0.9rem;">Serving clients worldwide from Perinthalmanna, Kerala.</p>
+            </div>
+            <div class="value-card reveal">
+                <div class="value-icon">🤝</div>
+                <h3>Ethical AI-First</h3>
+                <p style="color:var(--text-secondary);font-size:0.9rem;">Committed to fair, unbiased, and responsible AI development.</p>
+            </div>
+            <div class="value-card reveal">
+                <div class="value-icon">📊</div>
+                <h3>Structured Deliverables</h3>
+                <p style="color:var(--text-secondary);font-size:0.9rem;">Clear documentation, audit-ready workflows, and transparent processes.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section style="text-align:center;max-width:800px;">
+        <div class="reveal" style="background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(168,85,247,0.05));border:1px solid var(--border);border-radius:var(--radius-xl);padding:3rem;">
+            <h2>Let's Work Together</h2>
+            <p style="color:var(--text-secondary);margin:1rem 0 2rem;">Have a project in mind? Let's build something amazing together.</p>
+            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+                <a href="contact.html" class="btn btn-primary">Get in Touch →</a>
+                <a href="careers.html" class="btn btn-outline">Join Our Team</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="logo-container" style="margin-bottom:0.5rem;">
+                    <img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'">
+                    <span class="logo-text">Evalis <span class="ai-badge">AI</span></span>
+                </a>
+                <p>AI-powered software company from Kerala.</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/share/14arF3zkgWU/" target="_blank">📘</a>
+                    <a href="https://www.linkedin.com/company/evalis-ai/" target="_blank">💼</a>
+                    <a href="https://wa.me/919544842260" target="_blank">💬</a>
+                </div>
+            </div>
+            <div class="footer-col"><h4>Services</h4><a href="services.html">AI Data Services</a><a href="services.html">Web Development</a><a href="services.html">SaaS Platforms</a></div>
+            <div class="footer-col"><h4>Company</h4><a href="about.html">About</a><a href="careers.html">Careers</a><a href="contact.html">Contact</a></div>
+            <div class="footer-col"><h4>Resources</h4><a href="marketplace.html">Marketplace</a><a href="assessment.html">Assessment</a><a href="trustscore.html">TrustScore</a></div>
+        </div>
+        <div class="footer-bottom">&copy; 2026 Evalis AI — Perinthalmanna, Kerala</div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/supabase.js"></script>
+</body>
+</html>

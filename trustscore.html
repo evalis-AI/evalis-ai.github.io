@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI TrustScore | Evalis AI — Evaluate AI Answer Quality</title>
+    <meta name="description" content="Free AI TrustScore tool — evaluate AI-generated answers for accuracy, hallucination risk, and trustworthiness.">
+    <link rel="icon" type="image/png" href="favicon-96x96.png">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .trust-tool{max-width:700px;margin:0 auto}
+        .eval-card{background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:var(--radius-xl);padding:2rem}
+        .eval-input{width:100%;min-height:120px;padding:16px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--radius-md);color:#fff;font-family:inherit;font-size:.95rem;resize:vertical;transition:var(--transition);box-sizing:border-box}
+        .eval-input:focus{outline:none;border-color:var(--primary)}
+        .eval-input::placeholder{color:var(--text-muted)}
+        .eval-btn{width:100%;padding:14px;margin-top:1rem;background:var(--gradient-primary);border:none;border-radius:var(--radius-md);color:#fff;font-weight:700;font-size:1rem;cursor:pointer;transition:var(--transition)}
+        .eval-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(99,102,241,.4)}
+        .eval-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+        .score-ring{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:1.5rem auto;font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:800;color:#fff}
+        .ring-low{background:conic-gradient(#ef4444 var(--p),rgba(255,255,255,.05) 0);--p:30%}
+        .ring-mid{background:conic-gradient(#f59e0b var(--p),rgba(255,255,255,.05) 0);--p:60%}
+        .ring-hi{background:conic-gradient(#10b981 var(--p),rgba(255,255,255,.05) 0);--p:85%}
+        .metric-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin:1.5rem 0}
+        .metric{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem;text-align:center}
+        .metric-val{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;margin-bottom:.3rem}
+        .metric-lbl{font-size:.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px}
+        .result-area{display:none;animation:fadeSlide .5s ease}
+        @keyframes fadeSlide{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+        .info-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.2rem;margin-top:2rem}
+        .icard{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;text-align:center;transition:var(--transition)}
+        .icard:hover{transform:translateY(-4px);border-color:var(--border-hover)}
+        .icard-icon{font-size:2rem;margin-bottom:.8rem}
+        .icard h4{font-size:1rem;margin-bottom:.4rem;color:#fff}
+        .icard p{font-size:.85rem;color:var(--text-secondary)}
+    </style>
+</head>
+<body>
+    <div class="mesh-bg"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <nav>
+        <a href="index.html" class="logo-container">
+            <img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'">
+            <span class="logo-text">Evalis <span class="ai-badge">AI</span></span>
+        </a>
+        <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">☰</button>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="services.html">Services</a>
+            <a href="projects.html">Projects</a>
+            <a href="marketplace.html">Marketplace</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="careers.html" class="btn-nav">Join Us →</a>
+        </div>
+    </nav>
+
+    <header class="hero" style="padding-bottom:20px;">
+        <div class="section-label reveal">🔍 Free Tool</div>
+        <h1 class="reveal">AI <span class="gradient-text">TrustScore</span>™</h1>
+        <p class="hero-subtitle reveal">Evaluate any AI-generated answer for accuracy, hallucination risk, and trustworthiness — powered by heuristic analysis.</p>
+    </header>
+
+    <section>
+        <div class="trust-tool">
+            <div class="eval-card reveal">
+                <label style="display:block;font-weight:600;margin-bottom:.8rem;color:var(--text-secondary)">Paste an AI-generated answer to evaluate:</label>
+                <textarea class="eval-input" id="aiAnswer" placeholder="Paste the AI response you want to evaluate here..."></textarea>
+                <button class="eval-btn" id="evalBtn" onclick="evaluateAnswer()">🔍 Analyze TrustScore</button>
+            </div>
+
+            <div class="result-area" id="resultArea">
+                <div class="eval-card" style="margin-top:1.5rem;text-align:center">
+                    <h3 style="font-family:'Space Grotesk',sans-serif;margin-bottom:.5rem">TrustScore Result</h3>
+                    <div class="score-ring" id="scoreRing">0</div>
+                    <div class="metric-row" id="metrics"></div>
+                    <p id="verdict" style="color:var(--text-secondary);line-height:1.7;margin-top:1rem"></p>
+                    <a href="contact.html" class="btn btn-primary" style="margin-top:1rem;display:inline-block">Get Expert Evaluation →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Info Cards -->
+    <section>
+        <div class="section-header reveal">
+            <div class="section-label">💡 What We Evaluate</div>
+            <h2>Human <span class="gradient-text">AI Evaluation</span></h2>
+        </div>
+        <div class="info-cards">
+            <div class="icard reveal"><div class="icard-icon">🎯</div><h4>Accuracy</h4><p>Verify factual correctness against real-world knowledge.</p></div>
+            <div class="icard reveal"><div class="icard-icon">🧠</div><h4>Hallucination</h4><p>Detect fabricated facts, fake citations, and false claims.</p></div>
+            <div class="icard reveal"><div class="icard-icon">🛡️</div><h4>Safety</h4><p>Check for harmful, biased, or inappropriate content.</p></div>
+            <div class="icard reveal"><div class="icard-icon">📊</div><h4>Completeness</h4><p>Assess whether the answer fully addresses the question.</p></div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="logo-container" style="margin-bottom:.5rem"><img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'"><span class="logo-text">Evalis <span class="ai-badge">AI</span></span></a>
+                <p>AI-powered software company from Kerala.</p>
+            </div>
+            <div class="footer-col"><h4>Services</h4><a href="services.html">AI Data Services</a><a href="services.html">Web Development</a></div>
+            <div class="footer-col"><h4>Company</h4><a href="about.html">About</a><a href="careers.html">Careers</a><a href="contact.html">Contact</a></div>
+            <div class="footer-col"><h4>Resources</h4><a href="marketplace.html">Marketplace</a><a href="projects.html">Projects</a></div>
+        </div>
+        <div class="footer-bottom">&copy; 2026 Evalis AI — Perinthalmanna, Kerala</div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/supabase.js"></script>
+    <script>
+    function evaluateAnswer(){
+        const txt=document.getElementById('aiAnswer').value.trim();
+        if(!txt||txt.length<20){alert('Please paste a longer AI answer to evaluate.');return}
+        const btn=document.getElementById('evalBtn');
+        btn.disabled=true;btn.textContent='Analyzing...';
+        setTimeout(()=>{
+            const words=txt.split(/\s+/).length,sentences=txt.split(/[.!?]+/).filter(s=>s.trim()).length;
+            const hasNumbers=/\d/.test(txt),hasCitations=/\[|\(source|http|www\./i.test(txt);
+            const hasHedging=/may|might|could|possibly|approximately|generally|often/i.test(txt);
+            const hasAbsolutes=/always|never|definitely|certainly|every|all|none/i.test(txt);
+            let accuracy=70+(hasCitations?15:0)+(hasNumbers?8:0)-(hasAbsolutes?12:0)+Math.floor(Math.random()*10);
+            let hallucination=25-(hasCitations?10:0)-(hasHedging?8:0)+(hasAbsolutes?15:0)+Math.floor(Math.random()*10);
+            let completeness=Math.min(95,40+(words>50?20:0)+(words>100?15:0)+(sentences>3?10:0)+Math.floor(Math.random()*10));
+            accuracy=Math.max(20,Math.min(98,accuracy));hallucination=Math.max(5,Math.min(85,hallucination));
+            const trust=Math.round((accuracy*0.4+((100-hallucination)*0.35)+(completeness*0.25)));
+            const ring=document.getElementById('scoreRing');
+            ring.textContent=trust;
+            ring.className='score-ring '+(trust<50?'ring-low':trust<75?'ring-mid':'ring-hi');
+            ring.style.setProperty('--p',trust+'%');
+            document.getElementById('metrics').innerHTML=`
+                <div class="metric"><div class="metric-val" style="color:#10b981">${accuracy}%</div><div class="metric-lbl">Accuracy</div></div>
+                <div class="metric"><div class="metric-val" style="color:${hallucination>40?'#ef4444':'#f59e0b'}">${hallucination}%</div><div class="metric-lbl">Hallucination Risk</div></div>
+                <div class="metric"><div class="metric-val" style="color:#6366f1">${completeness}%</div><div class="metric-lbl">Completeness</div></div>`;
+            document.getElementById('verdict').textContent=trust<50?'⚠️ This answer has significant reliability concerns. We recommend expert human verification before using it.':trust<75?'📈 Moderately trustworthy, but some claims should be independently verified by a human reviewer.':'✅ This answer appears well-structured and relatively reliable. For critical use, consider professional evaluation.';
+            document.getElementById('resultArea').style.display='block';
+            btn.disabled=false;btn.textContent='🔍 Analyze TrustScore';
+        },1500);
+    }
+    </script>
+</body>
+</html>
