@@ -1,7 +1,7 @@
 /* ============================================
-   EVALIS AI — EMBEDDABLE AI AGENT v2.0
+   EVALIS AI — EMBEDDABLE AI AGENT v3.0
    Multi-tenant white-label voice + text chatbot
-   with API key auth & client isolation
+   with streaming, hands-free & API key auth
    ============================================ */
 
 (function() {
@@ -140,6 +140,7 @@
   let isOpen = false;
   let isListening = false;
   let isSpeaking = false;
+  let isHandsFree = false;
   let recognition = null;
   let history = [];
 
@@ -187,36 +188,59 @@
     input.value = '';
     addMsg(text, 'user');
     history.push({ role: 'user', content: text });
-
-    const typing = document.createElement('div');
-    typing.className = 'evai-msg bot typing';
-    typing.textContent = `${AGENT_NAME} is thinking...`;
-    msgs.appendChild(typing);
-    msgs.scrollTop = msgs.scrollHeight;
     send.disabled = true;
 
     try {
-      const res = await fetch(`${API_BASE}/api/ai/chat`, {
+      const res = await fetch(`${API_BASE}/api/ai/chat/stream`, {
         method: 'POST',
         headers: buildHeaders(),
-        body: JSON.stringify({
-          message: text,
-          history: history.slice(-6),
-          agent_id: AGENT_ID,
-        })
+        body: JSON.stringify({ message: text, history: history.slice(-6), agent_id: AGENT_ID })
       });
-      typing.remove();
-      if (!res.ok) throw new Error('API error');
-      const data = await res.json();
-      const reply = data.reply || "I'm sorry, please try again.";
-      addMsg(reply, 'bot');
-      history.push({ role: 'assistant', content: reply });
+      if (!res.ok) throw new Error('Stream failed');
 
-      // Speak the reply if voice enabled
-      if (VOICE_ENABLED) speak(reply);
+      const botDiv = document.createElement('div');
+      botDiv.className = 'evai-msg bot';
+      botDiv.textContent = '';
+      msgs.appendChild(botDiv);
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let fullReply = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        for (const line of chunk.split('\n')) {
+          if (!line.startsWith('data: ')) continue;
+          try {
+            const d = JSON.parse(line.slice(6));
+            if (d.done) { fullReply = d.full || fullReply; break; }
+            if (d.token) { fullReply += d.token; botDiv.textContent = fullReply; }
+          } catch(e) {}
+        }
+        msgs.scrollTop = msgs.scrollHeight;
+      }
+
+      if (!fullReply) fullReply = "I'm here to help!";
+      botDiv.innerHTML = fullReply;
+      history.push({ role: 'assistant', content: fullReply });
+      if (VOICE_ENABLED) speak(fullReply);
+
     } catch(e) {
-      typing.remove();
-      addMsg("I'm having trouble connecting. Please try again!", 'bot');
+      try {
+        const res2 = await fetch(`${API_BASE}/api/ai/chat`, {
+          method: 'POST', headers: buildHeaders(),
+          body: JSON.stringify({ message: text, history: history.slice(-6), agent_id: AGENT_ID })
+        });
+        const data = await res2.json();
+        const reply = data.reply || "Please try again.";
+        addMsg(reply, 'bot');
+        history.push({ role: 'assistant', content: reply });
+        if (VOICE_ENABLED) speak(reply);
+      } catch(e2) {
+        addMsg("I'm having trouble connecting. Please try again!", 'bot');
+      }
     }
     send.disabled = false;
   }
@@ -237,7 +261,7 @@
         const url = URL.createObjectURL(blob);
         audioEl.src = url;
         audioEl.onplay = () => { isSpeaking = true; wave.classList.add('active'); };
-        audioEl.onended = () => { isSpeaking = false; wave.classList.remove('active'); URL.revokeObjectURL(url); };
+        audioEl.onended = () => { isSpeaking = false; wave.classList.remove('active'); URL.revokeObjectURL(url); if (isHandsFree) setTimeout(startListening, 600); };
         audioEl.onerror = () => { isSpeaking = false; wave.classList.remove('active'); speakFallback(clean); };
         await audioEl.play();
         return;
@@ -255,7 +279,7 @@
     const pref = voices.find(v => v.name.includes('Zira') || v.name.includes('Female') || v.name.includes('Google UK English Female'));
     if (pref) u.voice = pref;
     u.onstart = () => { isSpeaking = true; wave.classList.add('active'); };
-    u.onend = () => { isSpeaking = false; wave.classList.remove('active'); };
+    u.onend = () => { isSpeaking = false; wave.classList.remove('active'); if (isHandsFree) setTimeout(startListening, 600); };
     u.onerror = () => { isSpeaking = false; wave.classList.remove('active'); };
     window.speechSynthesis.speak(u);
   }

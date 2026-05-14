@@ -1,7 +1,7 @@
 /* ============================================
-   EVALIS AI — VOICE AI AGENT v1.0
-   Stunning floating voice assistant with
-   Cloudflare Workers AI backend
+   EVALIS AI — VOICE AI AGENT v2.0
+   Real-time streaming voice assistant with
+   VAD, hands-free mode & Cloudflare Workers AI
    ============================================ */
 
 (function() {
@@ -218,8 +218,11 @@
   let isOpen = false;
   let isListening = false;
   let isSpeaking = false;
+  let isHandsFree = false;
   let recognition = null;
   let conversationHistory = [];
+  let mediaRecorder = null;
+  let audioChunks = [];
 
   // ── Toggle Panel ──
   btn.addEventListener('click', () => {
@@ -269,38 +272,67 @@
     inputEl.value = '';
     addMessage(text, 'user');
     conversationHistory.push({ role: 'user', content: text });
-    showTyping();
     sendBtn.disabled = true;
 
+    // Try streaming first, fallback to regular
     try {
-      const res = await fetch(`${API_BASE}/api/ai/chat`, {
+      const res = await fetch(`${API_BASE}/api/ai/chat/stream`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: text,
-          history: conversationHistory.slice(-6)
-        })
+        body: JSON.stringify({ message: text, history: conversationHistory.slice(-6) })
       });
 
-      removeTyping();
+      if (!res.ok) throw new Error('Stream failed');
 
-      if (!res.ok) throw new Error('API error');
+      // Create bot message element for streaming
+      const botDiv = document.createElement('div');
+      botDiv.className = 'eva-msg bot';
+      botDiv.textContent = '';
+      messagesEl.appendChild(botDiv);
 
-      const data = await res.json();
-      const reply = data.reply || data.response || "I'm sorry, I couldn't process that. Please try again.";
-      addMessage(reply, 'bot');
-      conversationHistory.push({ role: 'assistant', content: reply });
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let fullReply = '';
 
-      // Speak the response
-      speak(reply);
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        for (const line of chunk.split('\n')) {
+          if (!line.startsWith('data: ')) continue;
+          try {
+            const d = JSON.parse(line.slice(6));
+            if (d.done) { fullReply = d.full || fullReply; break; }
+            if (d.token) { fullReply += d.token; botDiv.textContent = fullReply; }
+          } catch(e) {}
+        }
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }
+
+      if (!fullReply) fullReply = "I'm here to help!";
+      botDiv.innerHTML = fullReply;
+      conversationHistory.push({ role: 'assistant', content: fullReply });
+      speak(fullReply);
 
     } catch (err) {
-      removeTyping();
-      // Fallback to local responses
-      const reply = getLocalResponse(text);
-      addMessage(reply, 'bot');
-      conversationHistory.push({ role: 'assistant', content: reply });
-      speak(reply);
+      // Fallback: non-streaming request
+      try {
+        const res2 = await fetch(`${API_BASE}/api/ai/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, history: conversationHistory.slice(-6) })
+        });
+        const data = await res2.json();
+        const reply = data.reply || getLocalResponse(text);
+        addMessage(reply, 'bot');
+        conversationHistory.push({ role: 'assistant', content: reply });
+        speak(reply);
+      } catch(e2) {
+        const reply = getLocalResponse(text);
+        addMessage(reply, 'bot');
+        conversationHistory.push({ role: 'assistant', content: reply });
+        speak(reply);
+      }
     }
     sendBtn.disabled = false;
   }
@@ -434,7 +466,7 @@
         const url = URL.createObjectURL(blob);
         audioEl.src = url;
         audioEl.onplay = () => { isSpeaking = true; waveEl.classList.add('active'); };
-        audioEl.onended = () => { isSpeaking = false; waveEl.classList.remove('active'); URL.revokeObjectURL(url); };
+        audioEl.onended = () => { isSpeaking = false; waveEl.classList.remove('active'); URL.revokeObjectURL(url); if (isHandsFree) setTimeout(startListening, 600); };
         audioEl.onerror = () => { isSpeaking = false; waveEl.classList.remove('active'); speakBrowserFallback(clean); };
         await audioEl.play();
         return;
@@ -459,11 +491,30 @@
     if (preferred) utter.voice = preferred;
 
     utter.onstart = () => { isSpeaking = true; waveEl.classList.add('active'); };
-    utter.onend = () => { isSpeaking = false; waveEl.classList.remove('active'); };
+    utter.onend = () => { isSpeaking = false; waveEl.classList.remove('active'); if (isHandsFree) setTimeout(startListening, 600); };
     utter.onerror = () => { isSpeaking = false; waveEl.classList.remove('active'); };
 
     window.speechSynthesis.speak(utter);
   }
+
+  // ── Hands-Free Toggle ──
+  const hfBtn = document.createElement('button');
+  hfBtn.className = 'eva-action-btn';
+  hfBtn.id = 'eva-handsfree';
+  hfBtn.textContent = '🎙️ Hands-Free';
+  hfBtn.title = 'Toggle hands-free conversation mode';
+  hfBtn.style.cssText = 'margin-left:auto;transition:all .2s';
+  const actionsRow = panel.querySelector('.eva-actions');
+  if (actionsRow) actionsRow.appendChild(hfBtn);
+
+  hfBtn.addEventListener('click', () => {
+    isHandsFree = !isHandsFree;
+    hfBtn.style.background = isHandsFree ? 'rgba(16,185,129,.2)' : '';
+    hfBtn.style.borderColor = isHandsFree ? 'rgba(16,185,129,.5)' : '';
+    hfBtn.style.color = isHandsFree ? '#10b981' : '';
+    hfBtn.textContent = isHandsFree ? '🟢 Hands-Free ON' : '🎙️ Hands-Free';
+    if (isHandsFree && !isListening && !isSpeaking) startListening();
+  });
 
   // Preload voices
   if (window.speechSynthesis) {
