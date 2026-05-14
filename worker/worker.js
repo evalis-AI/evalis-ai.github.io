@@ -613,12 +613,266 @@ window.EVALIS_AGENT_CONFIG = {
         }
       }
 
+      // ─── POST /api/ai/chat/stream — Streaming AI Chat (SSE) ───
+      if (url.pathname === '/api/ai/chat/stream' && request.method === 'POST') {
+        const body = await request.json();
+        const agentId = body.agent_id || apiClient?.agent_id;
+
+        if (!checkClientRateLimit(agentId, ip)) {
+          return new Response('data: {"error":"Rate limited"}\n\n', {
+            status: 429,
+            headers: { 'Content-Type': 'text/event-stream', ...corsHeaders(origin, env) },
+          });
+        }
+
+        const userMessage = body.message?.trim();
+        if (!userMessage) {
+          return new Response('data: {"error":"Message required"}\n\n', {
+            status: 400,
+            headers: { 'Content-Type': 'text/event-stream', ...corsHeaders(origin, env) },
+          });
+        }
+
+        // Resolve system prompt (white-label support)
+        let systemPrompt = SYSTEM_PROMPT;
+        if (body.agent_id) {
+          try {
+            const configs = await supabaseSelect('agent_configs',
+              `agent_id=eq.${encodeURIComponent(body.agent_id)}&is_active=eq.true&limit=1`, env);
+            if (configs.length > 0) systemPrompt = buildAgentPrompt(configs[0]);
+          } catch(e) { /* fallback */ }
+        }
+
+        const messages = [
+          { role: 'system', content: systemPrompt },
+          ...(body.history || []).slice(-6),
+          { role: 'user', content: userMessage }
+        ];
+
+        // Use streaming AI response
+        try {
+          const aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+            messages,
+            max_tokens: 256,
+            temperature: 0.7,
+            stream: true,
+          });
+
+          // If the AI returns a ReadableStream, pipe it as SSE
+          if (aiResponse instanceof ReadableStream) {
+            const { readable, writable } = new TransformStream();
+            const writer = writable.getWriter();
+            const encoder = new TextEncoder();
+
+            // Process the AI stream in background
+            (async () => {
+              const reader = aiResponse.getReader();
+              const decoder = new TextDecoder();
+              let fullResponse = '';
+
+              try {
+                while (true) {
+                  const { done, value } = await reader.read();
+                  if (done) break;
+
+                  const chunk = decoder.decode(value, { stream: true });
+                  // Parse SSE data lines from Workers AI
+                  const lines = chunk.split('\n');
+                  for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                      const data = line.slice(6).trim();
+                      if (data === '[DONE]') {
+                        await writer.write(encoder.encode(`data: {"done":true,"full":"${fullResponse.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"}\n\n`));
+                        continue;
+                      }
+                      try {
+                        const parsed = JSON.parse(data);
+                        const token = parsed.response || '';
+                        fullResponse += token;
+                        await writer.write(encoder.encode(`data: ${JSON.stringify({ token, partial: fullResponse })}\n\n`));
+                      } catch(e) { /* skip unparseable chunks */ }
+                    }
+                  }
+                }
+              } catch(e) {
+                await writer.write(encoder.encode(`data: {"error":"Stream interrupted"}\n\n`));
+              } finally {
+                // Log the chat (non-blocking)
+                if (fullResponse) {
+                  try {
+                    await supabaseInsert('ai_chats', {
+                      visitor_ip: ip.substring(0, 10) + '***',
+                      user_message: userMessage.substring(0, 500),
+                      ai_response: fullResponse.substring(0, 1000),
+                      page: body.page || '/',
+                      agent_id: body.agent_id || 'eva-default',
+                    }, env);
+                  } catch(e) { /* silent */ }
+                }
+                await writer.close();
+              }
+            })();
+
+            return new Response(readable, {
+              headers: {
+                'Content-Type': 'text/event-stream',
+                'Cache-Control': 'no-cache',
+                'Connection': 'keep-alive',
+                ...corsHeaders(origin, env),
+              },
+            });
+          }
+
+          // Fallback: non-streaming response (wrap as SSE)
+          const reply = aiResponse.response || "I'm here to help!";
+          const sseData = `data: ${JSON.stringify({ token: reply, partial: reply })}\n\ndata: {"done":true,"full":"${reply.replace(/"/g, '\\"')}"}\n\n`;
+          return new Response(sseData, {
+            headers: {
+              'Content-Type': 'text/event-stream',
+              'Cache-Control': 'no-cache',
+              ...corsHeaders(origin, env),
+            },
+          });
+
+        } catch(aiErr) {
+          console.error('Streaming AI error:', aiErr);
+          return new Response(`data: {"error":"AI unavailable"}\n\n`, {
+            status: 500,
+            headers: { 'Content-Type': 'text/event-stream', ...corsHeaders(origin, env) },
+          });
+        }
+      }
+
+      // ─── POST /api/ai/stt — Speech-to-Text (Whisper) ───
+      if (url.pathname === '/api/ai/stt' && request.method === 'POST') {
+        if (!checkRateLimit(ip, 20, 60000)) {
+          return new Response('Rate limited', { status: 429, headers: corsHeaders(origin, env) });
+        }
+
+        try {
+          const audioData = await request.arrayBuffer();
+          if (audioData.byteLength < 100) {
+            return json({ error: 'Audio data too small' }, 400, origin, env);
+          }
+
+          const result = await env.AI.run('@cf/openai/whisper', {
+            audio: [...new Uint8Array(audioData)],
+          });
+
+          return json({
+            text: result.text || '',
+            language: result.vtt ? 'detected' : 'en',
+          }, 200, origin, env);
+
+        } catch(sttErr) {
+          console.error('STT error:', sttErr);
+          return json({ error: 'Speech recognition failed' }, 500, origin, env);
+        }
+      }
+
+      // ─── POST /api/ai/voice — Full Voice Pipeline (Audio In → Audio Out) ───
+      if (url.pathname === '/api/ai/voice' && request.method === 'POST') {
+        if (!checkRateLimit(ip, 15, 60000)) {
+          return new Response('Rate limited', { status: 429, headers: corsHeaders(origin, env) });
+        }
+
+        try {
+          // Step 1: Read the audio from the request
+          const formData = await request.formData();
+          const audioFile = formData.get('audio');
+          const agentId = formData.get('agent_id') || null;
+          const historyStr = formData.get('history') || '[]';
+          let history = [];
+          try { history = JSON.parse(historyStr); } catch(e) {}
+
+          if (!audioFile) {
+            return json({ error: 'Audio file required' }, 400, origin, env);
+          }
+
+          const audioBuffer = await audioFile.arrayBuffer();
+
+          // Step 2: Speech-to-Text (Whisper)
+          const sttResult = await env.AI.run('@cf/openai/whisper', {
+            audio: [...new Uint8Array(audioBuffer)],
+          });
+
+          const userText = (sttResult.text || '').trim();
+          if (!userText) {
+            return json({ error: 'Could not understand audio', text: '' }, 200, origin, env);
+          }
+
+          // Step 3: AI Chat
+          let systemPrompt = SYSTEM_PROMPT;
+          if (agentId) {
+            try {
+              const configs = await supabaseSelect('agent_configs',
+                `agent_id=eq.${encodeURIComponent(agentId)}&is_active=eq.true&limit=1`, env);
+              if (configs.length > 0) systemPrompt = buildAgentPrompt(configs[0]);
+            } catch(e) { /* fallback */ }
+          }
+
+          const messages = [
+            { role: 'system', content: systemPrompt + '\nKeep responses under 60 words for voice conversations. Be concise and conversational.' },
+            ...history.slice(-4),
+            { role: 'user', content: userText }
+          ];
+
+          const aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+            messages,
+            max_tokens: 150,
+            temperature: 0.7,
+          });
+
+          const reply = aiResponse.response || "I'm here to help!";
+
+          // Step 4: Text-to-Speech
+          const cleanReply = reply.replace(/<[^>]*>/g, '').replace(/&[^;]+;/g, ' ').trim();
+          let audioOut = null;
+          try {
+            audioOut = await env.AI.run('@cf/myshell-ai/melotts', {
+              text: cleanReply.substring(0, 300),
+              language: 'en',
+            });
+          } catch(e) { /* TTS failed, return text only */ }
+
+          // Log conversation
+          try {
+            await supabaseInsert('ai_chats', {
+              visitor_ip: ip.substring(0, 10) + '***',
+              user_message: userText.substring(0, 500),
+              ai_response: reply.substring(0, 1000),
+              page: '/voice',
+              agent_id: agentId || 'eva-voice',
+            }, env);
+          } catch(e) { /* silent */ }
+
+          // Return audio if TTS succeeded, otherwise JSON
+          if (audioOut) {
+            return new Response(audioOut, {
+              status: 200,
+              headers: {
+                'Content-Type': 'audio/wav',
+                'X-User-Text': encodeURIComponent(userText),
+                'X-AI-Reply': encodeURIComponent(cleanReply.substring(0, 200)),
+                ...corsHeaders(origin, env),
+              },
+            });
+          }
+
+          return json({ text: userText, reply, audio: null }, 200, origin, env);
+
+        } catch(voiceErr) {
+          console.error('Voice pipeline error:', voiceErr);
+          return json({ error: 'Voice processing failed' }, 500, origin, env);
+        }
+      }
+
       // ─── Health check ───
       if (url.pathname === '/api/health') {
         return json({
           status: 'ok',
-          service: 'Evalis AI API v3.0',
-          features: ['ai-chat', 'cloud-tts', 'whatsapp-bot', 'document-ai', 'lead-qualify', 'agent-builder', 'tracking', 'forms', 'projects'],
+          service: 'Evalis AI API v3.1',
+          features: ['ai-chat', 'ai-chat-stream', 'cloud-tts', 'cloud-stt', 'voice-pipeline', 'whatsapp-bot', 'document-ai', 'lead-qualify', 'agent-builder', 'tracking', 'forms', 'projects'],
           timestamp: new Date().toISOString()
         }, 200, origin, env);
       }
