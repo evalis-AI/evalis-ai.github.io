@@ -546,12 +546,43 @@ window.EVALIS_AGENT_CONFIG = {
         return json(projects, 200, origin, env);
       }
 
+      // ─── POST /api/ai/tts — Cloud Text-to-Speech ───
+      if (url.pathname === '/api/ai/tts' && request.method === 'POST') {
+        if (!checkRateLimit(ip, 20, 60000)) {
+          return new Response('Rate limited', { status: 429, headers: corsHeaders(origin, env) });
+        }
+
+        const body = await request.json();
+        const text = (body.text || '').trim().substring(0, 500);
+        if (!text) {
+          return new Response('Text required', { status: 400, headers: corsHeaders(origin, env) });
+        }
+
+        try {
+          const audio = await env.AI.run('@cf/myshell-ai/melotts', {
+            text: text,
+            language: body.language || 'en',
+          });
+
+          return new Response(audio, {
+            status: 200,
+            headers: {
+              'Content-Type': 'audio/wav',
+              ...corsHeaders(origin, env),
+            },
+          });
+        } catch(ttsErr) {
+          console.error('TTS error:', ttsErr);
+          return new Response('TTS failed', { status: 500, headers: corsHeaders(origin, env) });
+        }
+      }
+
       // ─── Health check ───
       if (url.pathname === '/api/health') {
         return json({
           status: 'ok',
           service: 'Evalis AI API v3.0',
-          features: ['ai-chat', 'whatsapp-bot', 'document-ai', 'lead-qualify', 'agent-builder', 'tracking', 'forms', 'projects'],
+          features: ['ai-chat', 'cloud-tts', 'whatsapp-bot', 'document-ai', 'lead-qualify', 'agent-builder', 'tracking', 'forms', 'projects'],
           timestamp: new Date().toISOString()
         }, 200, origin, env);
       }

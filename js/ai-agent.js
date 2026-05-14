@@ -411,21 +411,49 @@
     }
   }
 
-  // ── Voice Output (Text-to-Speech) ──
-  function speak(text) {
-    if (!window.speechSynthesis) return;
-    // Strip HTML tags for speech
-    const clean = text.replace(/<[^>]*>/g, '').replace(/&[^;]+;/g, ' ');
-    if (!clean.trim()) return;
+  // ── Voice Output (Cloud TTS → Browser Fallback) ──
+  const audioEl = document.createElement('audio');
+  audioEl.style.display = 'none';
+  document.body.appendChild(audioEl);
 
+  async function speak(text) {
+    // Strip HTML tags for speech
+    const clean = text.replace(/<[^>]*>/g, '').replace(/&[^;]+;/g, ' ').trim();
+    if (!clean) return;
+
+    // Try cloud TTS first (human-like voice)
+    try {
+      const res = await fetch(`${API_BASE}/api/ai/tts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: clean.substring(0, 300), language: 'en' })
+      });
+
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        audioEl.src = url;
+        audioEl.onplay = () => { isSpeaking = true; waveEl.classList.add('active'); };
+        audioEl.onended = () => { isSpeaking = false; waveEl.classList.remove('active'); URL.revokeObjectURL(url); };
+        audioEl.onerror = () => { isSpeaking = false; waveEl.classList.remove('active'); speakBrowserFallback(clean); };
+        await audioEl.play();
+        return;
+      }
+    } catch(e) { /* fall through to browser TTS */ }
+
+    // Fallback: browser speech synthesis
+    speakBrowserFallback(clean);
+  }
+
+  function speakBrowserFallback(text) {
+    if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(clean);
+    const utter = new SpeechSynthesisUtterance(text);
     utter.lang = 'en-IN';
     utter.rate = 1.0;
     utter.pitch = 1.1;
     utter.volume = 0.8;
 
-    // Try to use a female voice
     const voices = window.speechSynthesis.getVoices();
     const preferred = voices.find(v => v.name.includes('Zira') || v.name.includes('Female') || v.name.includes('Google UK English Female'));
     if (preferred) utter.voice = preferred;
