@@ -1,7 +1,8 @@
 /**
- * EVALIS AI — Cloudflare Worker API v2.0
- * Handles: AI Chat, Contact forms, Contributor registration,
- * Waitlist, User tracking, Rate limiting
+ * EVALIS AI — Cloudflare Worker API v3.0
+ * Handles: AI Chat, WhatsApp Bot, Document Intelligence,
+ * White-Label Agent Config, Lead Gen, Contact forms,
+ * Contributor registration, Waitlist, User tracking
  */
 
 const CORS_HEADERS = {
@@ -73,11 +74,11 @@ function validateEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-// ─── AI System Prompt ───
+// ─── AI System Prompt (Updated with all 13 services) ───
 const SYSTEM_PROMPT = `You are Eva, the friendly AI assistant for Evalis AI — a cutting-edge AI software company based in Perinthalmanna, Kerala, India.
 
 About Evalis AI:
-- Full-service AI & software company delivering global AI data services, web & app development, and SaaS platforms
+- Full-service AI & software company delivering global AI data services, web & app development, SaaS platforms, and next-gen AI solutions
 - Founded and headquartered in Perinthalmanna, Malappuram District, Kerala, India
 - Serving clients across all 14 districts of Kerala, pan-India, and worldwide
 - Contact: evalisglobal@gmail.com | WhatsApp: +91 9544842260
@@ -91,25 +92,48 @@ Core Services:
 5. AI Integration — Custom chatbots, workflow automation, AI agents, predictive analytics
 6. Search & Content Evaluation — Human-powered search quality auditing, content moderation
 
+Next-Gen AI Services (Trending 2026):
+7. WhatsApp AI Chatbot (RAG) — Intelligent WhatsApp bots trained on business data, multilingual (English, Malayalam, Hindi), 24/7 auto-reply, order booking, lead capture. Starting at ₹25,000
+8. Custom AI Agent Builder — White-label AI assistant for any website in 48 hours, trained on client docs, with analytics dashboard. Starting at ₹50,000
+9. AI Workflow Automation — Autonomous workflows using n8n/Make: invoice processing, email routing, CRM integration, social media automation. Starting at ₹30,000
+10. AI Document Intelligence — OCR + NLP for GST invoices, contracts, medical records. Tally/Zoho integration. Starting at ₹1,00,000
+11. AI Lead Generation Agent — Autonomous prospect research, lead scoring, auto-outreach via email & WhatsApp. Starting at ₹20,000/month
+12. AI Voice Agent & Virtual Receptionist — 24/7 AI phone receptionist, appointment booking, multilingual voice. Starting at ₹15,000/month
+13. Generative Engine Optimization (GEO) — SEO for AI search engines (ChatGPT, Perplexity, Gemini). Schema markup, citation optimization. Starting at ₹50,000/month
+
 Key Products:
 - TrustScore: AI model evaluation framework
 - AI Arena: Side-by-side model comparison tool
 - AI Assessment: Organization AI readiness evaluation
-- AI Marketplace: Connect businesses with AI talent
-
-Why Evalis AI:
-- Human-led intelligence with expert judgment
-- Enterprise-grade security with NDA protection
-- Rapid agile delivery
-- Cost-effective premium quality
-- Serving 50+ global clients with 150+ projects delivered
 
 Instructions:
 - Be warm, professional, and concise
 - Keep responses under 100 words
+- Actively promote the new Next-Gen AI services when relevant
 - Recommend contacting the team for custom quotes
 - If asked about competitors, stay positive about Evalis
-- Always offer to connect with the team for detailed discussions`;
+- Always offer to connect with the team for detailed discussions
+- When asked about WhatsApp bots, AI agents, automation, or document processing, highlight our expertise and quick deployment times`;
+
+// ─── White-label agent prompt generator ───
+function buildAgentPrompt(config) {
+  return `You are ${config.agent_name || 'AI Assistant'}, the AI assistant for ${config.company_name || 'our company'}.
+
+About the company:
+${config.company_description || 'A modern business leveraging AI technology.'}
+
+${config.custom_knowledge || ''}
+
+Contact: ${config.contact_email || ''} ${config.contact_phone ? '| Phone: ' + config.contact_phone : ''}
+${config.website ? 'Website: ' + config.website : ''}
+
+Instructions:
+- Be warm, professional, and concise
+- Keep responses under 100 words
+- Answer only about this company and its products/services
+- For complex queries, recommend contacting the team directly
+- Stay on-brand and helpful`;
+}
 
 export default {
   async fetch(request, env) {
@@ -135,8 +159,20 @@ export default {
           return json({ error: 'Message is required.' }, 400, origin, env);
         }
 
+        // Support white-label: use custom prompt if agent_id provided
+        let systemPrompt = SYSTEM_PROMPT;
+        if (body.agent_id) {
+          try {
+            const configs = await supabaseSelect('agent_configs',
+              `agent_id=eq.${encodeURIComponent(body.agent_id)}&is_active=eq.true&limit=1`, env);
+            if (configs.length > 0) {
+              systemPrompt = buildAgentPrompt(configs[0]);
+            }
+          } catch(e) { /* fallback to default */ }
+        }
+
         const messages = [
-          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'system', content: systemPrompt },
           ...(body.history || []).slice(-6),
           { role: 'user', content: userMessage }
         ];
@@ -157,6 +193,7 @@ export default {
               user_message: userMessage.substring(0, 500),
               ai_response: reply.substring(0, 1000),
               page: body.page || '/',
+              agent_id: body.agent_id || 'eva-default',
             }, env);
           } catch(e) { /* silent */ }
 
@@ -170,11 +207,254 @@ export default {
         }
       }
 
+      // ─── POST /api/ai/document — Document Intelligence ───
+      if (url.pathname === '/api/ai/document' && request.method === 'POST') {
+        if (!checkRateLimit(ip, 5, 60000)) {
+          return json({ error: 'Rate limit exceeded.' }, 429, origin, env);
+        }
+
+        const body = await request.json();
+        const { text, doc_type } = body;
+        if (!text) {
+          return json({ error: 'Document text is required.' }, 400, origin, env);
+        }
+
+        const docPrompts = {
+          invoice: 'Extract the following from this invoice: vendor name, invoice number, date, line items (description, quantity, amount), subtotal, tax (GST/CGST/SGST), total amount. Return as JSON.',
+          contract: 'Extract key terms from this contract: parties involved, effective date, termination date, key obligations, payment terms, penalties. Return as JSON.',
+          receipt: 'Extract from this receipt: store name, date, items purchased, amounts, total, payment method. Return as JSON.',
+          general: 'Analyze this document and extract all key information, entities, dates, and amounts. Return as structured JSON.',
+        };
+
+        const prompt = docPrompts[doc_type] || docPrompts.general;
+
+        try {
+          const aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+            messages: [
+              { role: 'system', content: `You are a document analysis AI. ${prompt} Be precise and only return valid JSON.` },
+              { role: 'user', content: text.substring(0, 4000) }
+            ],
+            max_tokens: 1024,
+            temperature: 0.1,
+          });
+
+          const result = aiResponse.response || '{}';
+
+          // Log processing
+          try {
+            await supabaseInsert('document_jobs', {
+              doc_type: doc_type || 'general',
+              input_length: text.length,
+              status: 'completed',
+              client_ip: ip.substring(0, 10) + '***',
+            }, env);
+          } catch(e) { /* silent */ }
+
+          return json({ result, doc_type: doc_type || 'general' }, 200, origin, env);
+        } catch(aiErr) {
+          return json({ error: 'Document processing failed. Try again.' }, 500, origin, env);
+        }
+      }
+
+      // ─── POST /api/leads/qualify — AI Lead Qualification ───
+      if (url.pathname === '/api/leads/qualify' && request.method === 'POST') {
+        if (!checkRateLimit(ip, 10, 60000)) {
+          return json({ error: 'Rate limit exceeded.' }, 429, origin, env);
+        }
+
+        const body = await request.json();
+        const { company_name, industry, website, notes } = body;
+        if (!company_name) {
+          return json({ error: 'Company name is required.' }, 400, origin, env);
+        }
+
+        try {
+          const aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+            messages: [
+              { role: 'system', content: `You are a B2B lead qualification AI for Evalis AI. Analyze the prospect and return JSON with: score (1-100), qualification (hot/warm/cold), recommended_services (array from: WhatsApp AI Chatbot, AI Agent Builder, Workflow Automation, Document Intelligence, Lead Generation, Voice Agent, GEO, Web Dev, App Dev, SaaS, AI Data Services), suggested_pitch (2-3 sentences), estimated_deal_value_inr (number).` },
+              { role: 'user', content: `Company: ${company_name}\nIndustry: ${industry || 'Unknown'}\nWebsite: ${website || 'N/A'}\nNotes: ${notes || 'None'}` }
+            ],
+            max_tokens: 512,
+            temperature: 0.3,
+          });
+
+          const result = aiResponse.response || '{}';
+
+          // Store lead
+          try {
+            await supabaseInsert('leads', {
+              company_name: company_name.trim(),
+              industry: industry || '',
+              website: website || '',
+              notes: notes || '',
+              ai_score: result,
+              status: 'new',
+              source: 'api',
+            }, env);
+          } catch(e) { /* silent */ }
+
+          return json({ qualification: result }, 200, origin, env);
+        } catch(aiErr) {
+          return json({ error: 'Lead qualification failed.' }, 500, origin, env);
+        }
+      }
+
+      // ─── POST /api/agent/config — Create/Update White-Label Agent ───
+      if (url.pathname === '/api/agent/config' && request.method === 'POST') {
+        if (!checkRateLimit(ip, 5, 60000)) {
+          return json({ error: 'Rate limit exceeded.' }, 429, origin, env);
+        }
+
+        const body = await request.json();
+        if (!body.company_name || !body.contact_email) {
+          return json({ error: 'Company name and contact email required.' }, 400, origin, env);
+        }
+
+        const agentId = 'agent_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+
+        const config = await supabaseInsert('agent_configs', {
+          agent_id: agentId,
+          company_name: body.company_name.trim(),
+          agent_name: body.agent_name?.trim() || 'AI Assistant',
+          company_description: body.company_description || '',
+          custom_knowledge: body.custom_knowledge || '',
+          contact_email: body.contact_email.trim(),
+          contact_phone: body.contact_phone || '',
+          website: body.website || '',
+          brand_color: body.brand_color || '#6366f1',
+          is_active: true,
+        }, env);
+
+        // Generate embed script
+        const embedScript = `<!-- ${body.company_name} AI Agent - Powered by Evalis AI -->
+<script>
+window.EVALIS_AGENT_CONFIG = {
+  agentId: "${agentId}",
+  agentName: "${body.agent_name || 'AI Assistant'}",
+  brandColor: "${body.brand_color || '#6366f1'}",
+  apiBase: "https://evalis-api.evalisglobal.workers.dev"
+};
+</script>
+<script src="https://evalis-ai.github.io/js/agent-embed.js" defer></script>`;
+
+        return json({
+          success: true,
+          agent_id: agentId,
+          embed_code: embedScript,
+          message: 'Agent created! Add the embed code to your website.'
+        }, 201, origin, env);
+      }
+
+      // ─── GET /api/agent/config/:id — Get Agent Config ───
+      if (url.pathname.startsWith('/api/agent/config/') && request.method === 'GET') {
+        const agentId = url.pathname.split('/').pop();
+        const configs = await supabaseSelect('agent_configs',
+          `agent_id=eq.${encodeURIComponent(agentId)}&is_active=eq.true&limit=1`, env);
+
+        if (configs.length === 0) {
+          return json({ error: 'Agent not found' }, 404, origin, env);
+        }
+
+        const c = configs[0];
+        return json({
+          agent_id: c.agent_id,
+          agent_name: c.agent_name,
+          company_name: c.company_name,
+          brand_color: c.brand_color,
+        }, 200, origin, env);
+      }
+
+      // ─── WhatsApp Webhook Verification (GET) ───
+      if (url.pathname === '/api/whatsapp/webhook' && request.method === 'GET') {
+        const mode = url.searchParams.get('hub.mode');
+        const token = url.searchParams.get('hub.verify_token');
+        const challenge = url.searchParams.get('hub.challenge');
+
+        if (mode === 'subscribe' && token === (env.WA_VERIFY_TOKEN || 'evalis_wa_2026')) {
+          return new Response(challenge, { status: 200, headers: { 'Content-Type': 'text/plain' } });
+        }
+        return new Response('Forbidden', { status: 403 });
+      }
+
+      // ─── WhatsApp Webhook (POST) — Receive & Reply ───
+      if (url.pathname === '/api/whatsapp/webhook' && request.method === 'POST') {
+        const body = await request.json();
+
+        // Extract message from WhatsApp payload
+        const entry = body.entry?.[0];
+        const changes = entry?.changes?.[0];
+        const message = changes?.value?.messages?.[0];
+
+        if (!message || message.type !== 'text') {
+          return new Response('ok', { status: 200 });
+        }
+
+        const from = message.from;
+        const text = message.text?.body || '';
+        const phoneId = changes?.value?.metadata?.phone_number_id;
+
+        // Determine which client's bot this is
+        let systemPrompt = SYSTEM_PROMPT;
+        const clientId = url.searchParams.get('client');
+        if (clientId) {
+          try {
+            const configs = await supabaseSelect('agent_configs',
+              `agent_id=eq.${encodeURIComponent(clientId)}&is_active=eq.true&limit=1`, env);
+            if (configs.length > 0) {
+              systemPrompt = buildAgentPrompt(configs[0]);
+            }
+          } catch(e) { /* fallback */ }
+        }
+
+        // Generate AI reply
+        let reply = "Thanks for reaching out! Our team will get back to you shortly.";
+        try {
+          const aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+            messages: [
+              { role: 'system', content: systemPrompt + '\nYou are replying on WhatsApp. Keep responses under 50 words. Use emojis sparingly.' },
+              { role: 'user', content: text.substring(0, 500) }
+            ],
+            max_tokens: 128,
+            temperature: 0.7,
+          });
+          reply = aiResponse.response || reply;
+        } catch(e) { /* use fallback */ }
+
+        // Send reply via WhatsApp API
+        if (env.WA_ACCESS_TOKEN && phoneId) {
+          try {
+            await fetch(`https://graph.facebook.com/v18.0/${phoneId}/messages`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${env.WA_ACCESS_TOKEN}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                messaging_product: 'whatsapp',
+                to: from,
+                type: 'text',
+                text: { body: reply },
+              }),
+            });
+          } catch(e) { console.error('WA send error:', e); }
+        }
+
+        // Log conversation
+        try {
+          await supabaseInsert('wa_chats', {
+            phone_from: from.substring(0, 6) + '****',
+            user_message: text.substring(0, 500),
+            ai_response: reply.substring(0, 1000),
+            client_id: clientId || 'evalis',
+          }, env);
+        } catch(e) { /* silent */ }
+
+        return new Response('ok', { status: 200 });
+      }
+
       // ─── POST /api/track ───
       if (url.pathname === '/api/track' && request.method === 'POST') {
-        // Lightweight — no rate limiting on tracking
         const body = await request.json();
-        
         try {
           await supabaseInsert('analytics', {
             event: body.event || 'unknown',
@@ -194,7 +474,6 @@ export default {
             title: (body.title || '').substring(0, 200),
           }, env);
         } catch(e) { /* silent */ }
-
         return json({ ok: true }, 200, origin, env);
       }
 
@@ -271,8 +550,8 @@ export default {
       if (url.pathname === '/api/health') {
         return json({
           status: 'ok',
-          service: 'Evalis AI API v2.0',
-          features: ['ai-chat', 'tracking', 'forms', 'projects'],
+          service: 'Evalis AI API v3.0',
+          features: ['ai-chat', 'whatsapp-bot', 'document-ai', 'lead-qualify', 'agent-builder', 'tracking', 'forms', 'projects'],
           timestamp: new Date().toISOString()
         }, 200, origin, env);
       }

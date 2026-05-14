@@ -309,22 +309,33 @@
   function getLocalResponse(input) {
     const l = input.toLowerCase();
     const responses = {
-      'service': 'We offer AI Data Services, Web & App Development, SaaS Platform Development, AI Integration, and Search Quality Evaluation. Visit our <a href="services.html" style="color:#a5b4fc">Services page</a> for details!',
-      'price': 'Our pricing is project-based and competitive. Contact us at <a href="contact.html" style="color:#a5b4fc">our contact page</a> for a custom quote!',
+      'service': 'We offer 13 services: AI Data Services, Web & App Dev, SaaS Platforms, WhatsApp AI Chatbots, Custom AI Agent Builder, Workflow Automation, Document Intelligence, AI Lead Generation, Voice Agents, and GEO. Visit our <a href="services.html" style="color:#a5b4fc">Services page</a> for details!',
+      'price': 'Our pricing varies by service. WhatsApp bots start at ₹25K, AI Agents at ₹50K, Automation at ₹30K, and GEO at ₹50K/month. Contact us at <a href="contact.html" style="color:#a5b4fc">our contact page</a> for a custom quote!',
       'contact': 'Reach us at evalisglobal@gmail.com or WhatsApp <a href="https://wa.me/919544842260" style="color:#a5b4fc" target="_blank">+91 9544842260</a>. We reply within 24 hours!',
+      'whatsapp': 'Our WhatsApp AI Chatbot service builds RAG-powered bots trained on your product catalog. Auto-reply 24/7 in English, Malayalam & Hindi. Starting at ₹25,000! 💬',
+      'chatbot': 'We build intelligent chatbots for WhatsApp and websites — trained on YOUR data with RAG technology. They answer accurately, capture leads, and book appointments automatically!',
+      'agent': 'Our Custom AI Agent Builder creates a white-label AI assistant for your website in 48 hours! Trained on your docs, branded to you, with built-in analytics. Starting at ₹50,000! 🧠',
+      'automation': 'AI Workflow Automation eliminates repetitive tasks — auto-classify emails, process invoices into Tally, qualify leads, and more. Starting at ₹30,000 per workflow! ⚙️',
+      'workflow': 'We automate business workflows with AI: invoice processing, email routing, lead qualification, social media scheduling, and CRM integration using n8n & custom APIs.',
+      'document': 'Our AI Document Intelligence extracts data from GST invoices, contracts, medical records using OCR + NLP. Integrates with Tally & Zoho. Starting at ₹1,00,000! 📄',
+      'invoice': 'We automate GST invoice processing with AI — extract vendor details, line items, tax amounts automatically and sync with Tally/Zoho. Starting at ₹1,00,000!',
+      'lead': 'Our AI Lead Generation Agent researches prospects, qualifies leads, scores intent, and auto-sends personalized outreach via email & WhatsApp. Starting at ₹20,000/month! 🎯',
+      'voice': 'AI Voice Agent & Virtual Receptionist answers phone calls 24/7, books appointments, handles FAQs in English, Malayalam & Hindi. Starting at ₹15,000/month! 🎙️',
+      'geo': 'Generative Engine Optimization (GEO) gets your brand into AI search results — ChatGPT, Perplexity, Gemini. The future of SEO! Starting at ₹50,000/month! 🔮',
+      'seo': 'Beyond traditional SEO, we offer GEO — Generative Engine Optimization to make your brand visible in AI-powered search engines like ChatGPT and Perplexity.',
       'web': 'We build stunning websites with React, Next.js, and modern tech stacks — from landing pages to enterprise platforms!',
       'app': 'We develop cross-platform mobile and desktop apps using React Native, Flutter, and PWA technologies.',
       'saas': 'We architect complete SaaS platforms with multi-tenancy, auth, billing, and analytics — from MVP to enterprise.',
-      'ai': 'We integrate AI into businesses: custom chatbots, automation, LLM integration, and intelligent workflows.',
-      'hello': 'Hello! 👋 Welcome to Evalis AI. How can I help you today?',
-      'hi': 'Hi there! Looking for AI services, web development, or SaaS solutions?',
+      'ai': 'We integrate AI into businesses: custom chatbots, WhatsApp bots, workflow automation, document processing, lead gen agents, voice AI, and more!',
+      'hello': 'Hello! 👋 Welcome to Evalis AI. How can I help you today? Ask me about our 13 services!',
+      'hi': 'Hi there! 👋 Looking for WhatsApp AI bots, custom agents, workflow automation, or web development?',
       'kerala': 'We\'re based in Perinthalmanna, Kerala 🌴 — serving clients across India and worldwide!',
       'location': 'Our headquarters are in Perinthalmanna, Malappuram, Kerala, India. We serve clients globally!',
     };
     for (const [key, val] of Object.entries(responses)) {
       if (l.includes(key)) return val;
     }
-    return "Thanks for reaching out! I can help with info about our <strong>services</strong>, <strong>pricing</strong>, <strong>web development</strong>, <strong>AI solutions</strong>, or connect you with our team. What would you like to know?";
+    return "Thanks for reaching out! I can help with <strong>WhatsApp AI Chatbots</strong>, <strong>Custom AI Agents</strong>, <strong>Workflow Automation</strong>, <strong>Document Intelligence</strong>, <strong>Web/App Development</strong>, and more. What interests you?";
   }
 
   // ── Voice Input (Speech Recognition) ──
