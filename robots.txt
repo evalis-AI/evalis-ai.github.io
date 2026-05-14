@@ -1,5 +1,24 @@
+# Evalis AI — Robots.txt
+# AI Software Company | Kerala, India
+
 User-agent: *
 Allow: /
+Disallow: /worker/
+Disallow: /migrations/
+Disallow: /supabase-setup.sql
+
+# Sitemap
 Sitemap: https://evalis-ai.github.io/sitemap.xml
 
-# Evalis AI — AI-Powered Software & Data Services
+# Crawl-delay (be polite)
+Crawl-delay: 1
+
+# Google specific
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Bing specific
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1

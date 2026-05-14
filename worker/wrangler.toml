@@ -3,6 +3,9 @@ main = "worker.js"
 compatibility_date = "2024-01-01"
 account_id = "029da5186c1540a3ed9c71819352efac"
 
+[ai]
+binding = "AI"
+
 [vars]
 SUPABASE_URL = "https://mdbgdlawjuoyuvqxthar.supabase.co"
 SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kYmdkbGF3anVveXV2cXh0aGFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1NDA1NDcsImV4cCI6MjA5NDExNjU0N30.IvVXnMXDiNIZHOrCrjsi84YT0IK11TikgPOxieyGUNE"

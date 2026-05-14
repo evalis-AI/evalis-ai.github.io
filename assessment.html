@@ -109,6 +109,8 @@
 
     <script src="js/main.js"></script>
     <script src="js/supabase.js"></script>
+    <script src="js/ai-agent.js" defer></script>
+    <script src="js/tracker.js" defer></script>
     <script>
         let sc=0;const TQ=4;
         function mv(c,p){sc+=p;document.getElementById('q'+c).classList.remove('active');document.getElementById('pFill').style.width=((c/TQ)*100)+'%';let n=document.getElementById('q'+(c+1));if(n)n.classList.add('active');else showR()}

@@ -1,6 +1,7 @@
 /**
- * EVALIS AI — Cloudflare Worker API
- * Handles: Contact forms, contributor registration, waitlist, rate limiting
+ * EVALIS AI — Cloudflare Worker API v2.0
+ * Handles: AI Chat, Contact forms, Contributor registration,
+ * Waitlist, User tracking, Rate limiting
  */
 
 const CORS_HEADERS = {
@@ -72,6 +73,44 @@ function validateEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+// ─── AI System Prompt ───
+const SYSTEM_PROMPT = `You are Eva, the friendly AI assistant for Evalis AI — a cutting-edge AI software company based in Perinthalmanna, Kerala, India.
+
+About Evalis AI:
+- Full-service AI & software company delivering global AI data services, web & app development, and SaaS platforms
+- Founded and headquartered in Perinthalmanna, Malappuram District, Kerala, India
+- Serving clients across all 14 districts of Kerala, pan-India, and worldwide
+- Contact: evalisglobal@gmail.com | WhatsApp: +91 9544842260
+- Website: https://evalis-ai.github.io
+
+Core Services:
+1. AI Data Services — Data labeling, LLM safety testing, search relevance evaluation, RLHF training data
+2. Web Development — React, Next.js, full-stack websites and web applications
+3. App Development — React Native, Flutter, cross-platform mobile apps
+4. SaaS Platform Development — Multi-tenant platforms with auth, billing, analytics
+5. AI Integration — Custom chatbots, workflow automation, AI agents, predictive analytics
+6. Search & Content Evaluation — Human-powered search quality auditing, content moderation
+
+Key Products:
+- TrustScore: AI model evaluation framework
+- AI Arena: Side-by-side model comparison tool
+- AI Assessment: Organization AI readiness evaluation
+- AI Marketplace: Connect businesses with AI talent
+
+Why Evalis AI:
+- Human-led intelligence with expert judgment
+- Enterprise-grade security with NDA protection
+- Rapid agile delivery
+- Cost-effective premium quality
+- Serving 50+ global clients with 150+ projects delivered
+
+Instructions:
+- Be warm, professional, and concise
+- Keep responses under 100 words
+- Recommend contacting the team for custom quotes
+- If asked about competitors, stay positive about Evalis
+- Always offer to connect with the team for detailed discussions`;
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -84,6 +123,81 @@ export default {
     }
 
     try {
+      // ─── POST /api/ai/chat ───
+      if (url.pathname === '/api/ai/chat' && request.method === 'POST') {
+        if (!checkRateLimit(ip, 10, 60000)) {
+          return json({ error: 'Too many requests. Please wait a moment.' }, 429, origin, env);
+        }
+
+        const body = await request.json();
+        const userMessage = body.message?.trim();
+        if (!userMessage) {
+          return json({ error: 'Message is required.' }, 400, origin, env);
+        }
+
+        const messages = [
+          { role: 'system', content: SYSTEM_PROMPT },
+          ...(body.history || []).slice(-6),
+          { role: 'user', content: userMessage }
+        ];
+
+        try {
+          const aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+            messages,
+            max_tokens: 256,
+            temperature: 0.7,
+          });
+
+          const reply = aiResponse.response || aiResponse.result?.response || "I'm here to help! Could you rephrase your question?";
+
+          // Log to Supabase (non-blocking)
+          try {
+            await supabaseInsert('ai_chats', {
+              visitor_ip: ip.substring(0, 10) + '***',
+              user_message: userMessage.substring(0, 500),
+              ai_response: reply.substring(0, 1000),
+              page: body.page || '/',
+            }, env);
+          } catch(e) { /* silent */ }
+
+          return json({ reply }, 200, origin, env);
+
+        } catch (aiErr) {
+          console.error('AI error:', aiErr);
+          return json({
+            reply: "I'm currently experiencing high demand. Please try again in a moment, or contact us directly at evalisglobal@gmail.com!"
+          }, 200, origin, env);
+        }
+      }
+
+      // ─── POST /api/track ───
+      if (url.pathname === '/api/track' && request.method === 'POST') {
+        // Lightweight — no rate limiting on tracking
+        const body = await request.json();
+        
+        try {
+          await supabaseInsert('analytics', {
+            event: body.event || 'unknown',
+            visitor_id: body.visitor_id || 'anon',
+            session_id: body.session_id || '',
+            page: body.page || '/',
+            referrer: (body.referrer || '').substring(0, 500),
+            device: body.device || '',
+            browser: body.browser || '',
+            screen_w: body.screenW || 0,
+            screen_h: body.screenH || 0,
+            lang: body.lang || '',
+            duration_seconds: body.duration_seconds || 0,
+            scroll_depth: body.scroll_depth || 0,
+            cta_text: (body.cta_text || '').substring(0, 100),
+            cta_href: (body.cta_href || '').substring(0, 300),
+            title: (body.title || '').substring(0, 200),
+          }, env);
+        } catch(e) { /* silent */ }
+
+        return json({ ok: true }, 200, origin, env);
+      }
+
       // ─── POST /api/enquiry ───
       if (url.pathname === '/api/enquiry' && request.method === 'POST') {
         if (!checkRateLimit(ip, 3)) {
@@ -155,7 +269,12 @@ export default {
 
       // ─── Health check ───
       if (url.pathname === '/api/health') {
-        return json({ status: 'ok', service: 'Evalis AI API', timestamp: new Date().toISOString() }, 200, origin, env);
+        return json({
+          status: 'ok',
+          service: 'Evalis AI API v2.0',
+          features: ['ai-chat', 'tracking', 'forms', 'projects'],
+          timestamp: new Date().toISOString()
+        }, 200, origin, env);
       }
 
       return json({ error: 'Not found' }, 404, origin, env);
