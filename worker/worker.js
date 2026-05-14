@@ -582,7 +582,7 @@ window.EVALIS_AGENT_CONFIG = {
         return json(projects, 200, origin, env);
       }
 
-      // ─── POST /api/ai/tts — Cloud Text-to-Speech ───
+      // ─── POST /api/ai/tts — Cloud Text-to-Speech (multi-model fallback) ───
       if (url.pathname === '/api/ai/tts' && request.method === 'POST') {
         if (!checkRateLimit(ip, 20, 60000)) {
           return new Response('Rate limited', { status: 429, headers: corsHeaders(origin, env) });
@@ -594,23 +594,31 @@ window.EVALIS_AGENT_CONFIG = {
           return new Response('Text required', { status: 400, headers: corsHeaders(origin, env) });
         }
 
-        try {
-          const audio = await env.AI.run('@cf/myshell-ai/melotts', {
-            text: text,
-            language: body.language || 'en',
-          });
+        // Try TTS models in order of quality
+        const ttsModels = [
+          { id: '@cf/deepgram/aura-2-en', params: { text } },
+          { id: '@cf/myshell-ai/melotts', params: { text, language: body.language || 'en' } },
+        ];
 
-          return new Response(audio, {
-            status: 200,
-            headers: {
-              'Content-Type': 'audio/wav',
-              ...corsHeaders(origin, env),
-            },
-          });
-        } catch(ttsErr) {
-          console.error('TTS error:', ttsErr);
-          return new Response('TTS failed', { status: 500, headers: corsHeaders(origin, env) });
+        for (const model of ttsModels) {
+          try {
+            const audio = await env.AI.run(model.id, model.params);
+            if (audio && (audio.byteLength > 0 || audio instanceof ReadableStream)) {
+              return new Response(audio, {
+                status: 200,
+                headers: {
+                  'Content-Type': 'audio/wav',
+                  'X-TTS-Model': model.id,
+                  ...corsHeaders(origin, env),
+                },
+              });
+            }
+          } catch(e) {
+            console.error(`TTS model ${model.id} failed:`, e.message);
+          }
         }
+
+        return new Response('All TTS models failed', { status: 500, headers: corsHeaders(origin, env) });
       }
 
       // ─── POST /api/ai/chat/stream — Streaming AI Chat (SSE) ───
@@ -825,15 +833,19 @@ window.EVALIS_AGENT_CONFIG = {
 
           const reply = aiResponse.response || "I'm here to help!";
 
-          // Step 4: Text-to-Speech
+          // Step 4: Text-to-Speech (multi-model fallback)
           const cleanReply = reply.replace(/<[^>]*>/g, '').replace(/&[^;]+;/g, ' ').trim();
           let audioOut = null;
-          try {
-            audioOut = await env.AI.run('@cf/myshell-ai/melotts', {
-              text: cleanReply.substring(0, 300),
-              language: 'en',
-            });
-          } catch(e) { /* TTS failed, return text only */ }
+          const voiceModels = [
+            { id: '@cf/deepgram/aura-2-en', params: { text: cleanReply.substring(0, 300) } },
+            { id: '@cf/myshell-ai/melotts', params: { text: cleanReply.substring(0, 300), language: 'en' } },
+          ];
+          for (const m of voiceModels) {
+            try {
+              audioOut = await env.AI.run(m.id, m.params);
+              if (audioOut) break;
+            } catch(e) { /* try next */ }
+          }
 
           // Log conversation
           try {
