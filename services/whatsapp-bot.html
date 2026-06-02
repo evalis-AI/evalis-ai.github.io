@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp AI Chatbot for Business | RAG-Powered WhatsApp Bot — Evalis AI</title>
+    <meta name="description" content="Get a WhatsApp AI chatbot trained on your product catalog. Auto-reply 24/7, book orders, capture leads, and support customers — in any language. Starting at $299.">
+    <meta name="keywords" content="WhatsApp chatbot, WhatsApp AI bot, WhatsApp automation, WhatsApp Business API chatbot, WhatsApp customer support bot, WhatsApp order bot, WhatsApp lead generation">
+    <link rel="canonical" href="https://evalis-ai.github.io/services/whatsapp-bot.html">
+    <meta name="robots" content="index, follow">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://evalis-ai.github.io/services/whatsapp-bot.html">
+    <meta property="og:title" content="WhatsApp AI Chatbot for Business | Evalis AI">
+    <meta property="og:description" content="RAG-powered WhatsApp bot trained on your catalog. 24/7 auto-reply, order booking, and multilingual support.">
+    <meta property="og:image" content="https://evalis-ai.github.io/cover.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" href="../favicon-96x96.png">
+    <link rel="stylesheet" href="../css/style.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org", "@type": "Product",
+      "name": "WhatsApp AI Chatbot",
+      "description": "RAG-powered WhatsApp chatbot trained on your product catalog with multilingual auto-reply and lead capture.",
+      "brand": {"@type": "Brand", "name": "Evalis AI"},
+      "offers": {"@type": "Offer", "priceCurrency": "USD", "price": "299", "availability": "https://schema.org/InStock"}
+    }
+    </script>
+    <style>
+        .pain-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        .pain-card { background: rgba(244,63,94,0.05); border: 1px solid rgba(244,63,94,0.15); border-radius: var(--radius-lg); padding: 1.5rem; }
+        .pain-card h4 { color: #f87171; font-size: 0.95rem; margin-bottom: 0.5rem; }
+        .pain-card p { color: var(--text-secondary); font-size: 0.88rem; line-height: 1.7; }
+        .solution-card { background: rgba(16,185,129,0.05); border: 1px solid rgba(16,185,129,0.15); border-radius: var(--radius-lg); padding: 1.5rem; }
+        .solution-card h4 { color: #34d399; font-size: 0.95rem; margin-bottom: 0.5rem; }
+        .solution-card p { color: var(--text-secondary); font-size: 0.88rem; line-height: 1.7; }
+        .use-case-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .use-case { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; text-align: center; transition: var(--transition); }
+        .use-case:hover { transform: translateY(-6px); border-color: var(--border-hover); box-shadow: var(--shadow-glow); }
+        .use-case .icon { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+        .use-case h4 { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; margin-bottom: 0.5rem; color: #fff; }
+        .use-case p { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6; }
+        .step-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; counter-reset: step; }
+        .step-item { text-align: center; padding: 2rem 1.5rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); transition: var(--transition); }
+        .step-item:hover { border-color: var(--border-hover); transform: translateY(-4px); }
+        .step-item::before { counter-increment: step; content: counter(step); width: 44px; height: 44px; border-radius: 50%; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; font-weight: 800; margin: 0 auto 1rem; box-shadow: 0 4px 16px rgba(99,102,241,0.3); }
+        .step-item h4 { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; margin-bottom: 0.5rem; }
+        .step-item p { color: var(--text-secondary); font-size: 0.85rem; }
+        .feature-grid-6 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .feat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; text-align: center; transition: var(--transition); }
+        .feat-card:hover { transform: translateY(-6px); border-color: var(--border-hover); box-shadow: var(--shadow-glow); }
+        .feat-card .icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+        .feat-card h4 { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; margin-bottom: 0.5rem; color: #fff; }
+        .feat-card p { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6; }
+        .stat-highlight { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.5rem; }
+        .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; text-align: center; }
+        .stat-card .num { font-family:'Space Grotesk',sans-serif; font-size: 2.2rem; font-weight: 800; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-card .label { color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.3rem; }
+        .faq-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 1rem; overflow: hidden; }
+        .faq-q { padding: 1.2rem 1.5rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 0.95rem; color: #fff; transition: var(--transition); }
+        .faq-q:hover { color: var(--primary-light); }
+        .faq-q .arrow { transition: transform 0.3s; font-size: 0.8rem; color: var(--text-muted); }
+        .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.8; }
+        .faq-item.open .faq-a { max-height: 300px; padding: 0 1.5rem 1.2rem; }
+        .faq-item.open .arrow { transform: rotate(180deg); }
+        @media (max-width: 768px) { .pain-grid, .use-case-grid, .step-grid, .feature-grid-6, .stat-highlight { grid-template-columns: 1fr; } }
+        @media (max-width: 1024px) and (min-width: 769px) { .step-grid, .stat-highlight { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+    <div class="mesh-bg"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <nav>
+        <a href="../index.html" class="logo-container">
+            <img src="../logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'">
+            <span class="logo-text">Evalis <span class="ai-badge">AI</span></span>
+        </a>
+        <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">☰</button>
+        <div class="nav-links" id="navLinks">
+            <a href="../index.html">Home</a>
+            <a href="../services.html" class="active">Services</a>
+            <a href="../pricing.html">Pricing</a>
+            <a href="../projects.html">Projects</a>
+            <a href="../about.html">About</a>
+            <a href="../contact.html">Contact</a>
+            <a href="../careers.html" class="btn-nav">Join Us →</a>
+        </div>
+    </nav>
+
+    <header class="hero" style="padding-bottom:30px;">
+        <div class="section-label reveal">💬 WhatsApp AI Chatbot</div>
+        <h1 class="reveal">Turn WhatsApp into Your <span class="gradient-text">Sales Machine</span></h1>
+        <p class="hero-subtitle reveal">AI-powered WhatsApp bot trained on your product catalog. Auto-reply 24/7, take orders, capture leads, and support customers — in any language.</p>
+        <div class="hero-cta reveal" style="margin-top:1.5rem;">
+            <a href="../contact.html" class="btn btn-primary">Get Your WhatsApp Bot →</a>
+            <a href="https://wa.me/919544842260?text=Hi!%20I%20want%20a%20WhatsApp%20AI%20bot%20for%20my%20business." class="btn btn-outline" target="_blank">💬 Message Us on WhatsApp</a>
+        </div>
+        <div style="display:flex;gap:2rem;justify-content:center;margin-top:1.5rem;flex-wrap:wrap;opacity:0.6;" class="reveal">
+            <span style="font-size:0.8rem;color:var(--text-muted);">🤖 RAG-Powered</span>
+            <span style="font-size:0.8rem;color:var(--text-muted);">🌐 Multilingual</span>
+            <span style="font-size:0.8rem;color:var(--text-muted);">📦 Order Booking</span>
+            <span style="font-size:0.8rem;color:var(--text-muted);">💰 From $299</span>
+        </div>
+    </header>
+
+    <!-- STATS -->
+    <section>
+        <div class="stat-highlight reveal">
+            <div class="stat-card"><div class="num">2B+</div><div class="label">people use WhatsApp daily</div></div>
+            <div class="stat-card"><div class="num">98%</div><div class="label">message open rate (vs 20% for email)</div></div>
+            <div class="stat-card"><div class="num">45%</div><div class="label">higher conversion on WhatsApp vs web</div></div>
+            <div class="stat-card"><div class="num">24/7</div><div class="label">instant replies — never miss a message</div></div>
+        </div>
+    </section>
+
+    <!-- PROBLEM -->
+    <section>
+        <div class="section-header reveal">
+            <div class="section-label">😤 The Problem</div>
+            <h2>You're Drowning in <span class="gradient-text">WhatsApp Messages</span></h2>
+        </div>
+        <div class="pain-grid">
+            <div class="pain-card reveal"><h4>❌ 100+ messages a day, same questions</h4><p>"What's the price?", "Is this available?", "Where are you located?" — answering the same things over and over wastes hours daily.</p></div>
+            <div class="pain-card reveal"><h4>❌ Slow replies lose customers</h4><p>When you take 2 hours to reply, customers have already bought from your competitor who replied in 2 minutes.</p></div>
+            <div class="pain-card reveal"><h4>❌ Nights & weekends = zero support</h4><p>Your best customers shop at 10 PM and on Sundays. No one's there to answer. Orders go elsewhere.</p></div>
+            <div class="pain-card reveal"><h4>❌ Can't scale without hiring</h4><p>Hiring support staff for WhatsApp costs $1,500–3,000/month. For most small businesses, it's not viable.</p></div>
+        </div>
+    </section>
+
+    <!-- SOLUTION -->
+    <section>
+        <div class="section-header reveal">
+            <div class="section-label">✅ The Solution</div>
+            <h2>AI That Knows Your <span class="gradient-text">Business Inside Out</span></h2>
+        </div>
+        <div class="pain-grid">
+            <div class="solution-card reveal"><h4>✓ Trained on YOUR catalog</h4><p>Upload your product list, pricing, FAQs, and policies. The bot learns everything and answers accurately — no generic responses.</p></div>
+            <div class="solution-card reveal"><h4>✓ Takes orders automatically</h4><p>Customers browse your catalog, choose products, and place orders — all within WhatsApp. No website needed.</p></div>
+            <div class="solution-card reveal"><h4>✓ Speaks your customer's language</h4><p>Auto-detects language and responds naturally in 50+ languages — perfect for global audiences.</p></div>
+            <div class="solution-card reveal"><h4>✓ Captures every lead</h4><p>Collects name, email, phone, and purchase intent from every conversation. Pipes to your CRM or Google Sheets.</p></div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section>
+        <div class="section-header reveal">
+            <div class="section-label">⚡ Features</div>
+            <h2>Everything Your WhatsApp <span class="gradient-text">Needs</span></h2>
+        </div>
+        <div class="feature-grid-6">
+            <div class="feat-card reveal"><span class="icon">🧠</span><h4>RAG Knowledge Base</h4><p>Upload catalogs, PDFs, or spreadsheets. The bot learns your entire product line.</p></div>
+            <div class="feat-card reveal"><span class="icon">📦</span><h4>Order Booking</h4><p>Customers browse, select, and order — all within the chat. Supports payment links too.</p></div>
+            <div class="feat-card reveal"><span class="icon">🌐</span><h4>Multi-Language</h4><p>Auto-detects and responds in 50+ languages. Serve global customers effortlessly.</p></div>
+            <div class="feat-card reveal"><span class="icon">🎯</span><h4>Lead Capture</h4><p>Auto-collect emails, phones, and buying signals. Export to CRM or spreadsheet.</p></div>
+            <div class="feat-card reveal"><span class="icon">📊</span><h4>Analytics</h4><p>Track conversations, popular products, peak hours, and conversion rates.</p></div>
+            <div class="feat-card reveal"><span class="icon">🔗</span><h4>Integrations</h4><p>Connect to Google Sheets, HubSpot, Zapier, Shopify, and more.</p></div>
+            <div class="feat-card reveal"><span class="icon">📸</span><h4>Rich Media</h4><p>Send product images, videos, PDFs, and location maps within the chat.</p></div>
+            <div class="feat-card reveal"><span class="icon">🔔</span><h4>Broadcast & Campaigns</h4><p>Send promotional messages, offers, and updates to segmented customer lists.</p></div>
+            <div class="feat-card reveal"><span class="icon">👤</span><h4>Human Handoff</h4><p>When the AI can't help, it seamlessly transfers to a human agent with full context.</p></div>
+        </div>
+    </section>
+
+    <!-- WHO IT'S FOR -->
+    <section>
+        <div class="section-header reveal">
+            <div class="section-label">👥 Perfect For</div>
+            <h2>Businesses That <span class="gradient-text">Sell on WhatsApp</span></h2>
+        </div>
+        <div class="use-case-grid">
+            <div class="use-case reveal"><span class="icon">🛒</span><h4>E-Commerce & D2C</h4><p>Auto-answer product questions, share catalogs, take orders, and send tracking updates.</p></div>
+            <div class="use-case reveal"><span class="icon">🍕</span><h4>Food & Restaurants</h4><p>Take food orders, share menus, handle delivery inquiries, and send offers.</p></div>
+            <div class="use-case reveal"><span class="icon">🏥</span><h4>Healthcare</h4><p>Book appointments, answer clinic questions, send health tips and reminders.</p></div>
+            <div class="use-case reveal"><span class="icon">🎓</span><h4>Education & Coaching</h4><p>Handle enrollment queries, share course catalogs, send study materials and schedules.</p></div>
+            <div class="use-case reveal"><span class="icon">🏠</span><h4>Real Estate</h4><p>Share property listings, qualify buyer leads, and schedule site visits via WhatsApp.</p></div>
+            <div class="use-case reveal"><span class="icon">✈️</span><h4>Travel & Tourism</h4><p>Share itineraries, answer booking questions, send vouchers and confirmation details.</p></div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section>
+        <div class="section-header reveal">
+            <div class="section-label">🛠️ Setup</div>
+            <h2>Live in <span class="gradient-text">3–5 Days</span></h2>
+        </div>
+        <div class="step-grid">
+            <div class="step-item reveal"><h4>Share Your Data</h4><p>Send us your product catalog, pricing, FAQs, and business info.</p></div>
+            <div class="step-item reveal"><h4>We Build & Train</h4><p>We set up the WhatsApp Business API and train the bot on your data.</p></div>
+            <div class="step-item reveal"><h4>Test Everything</h4><p>Try it yourself. Test with real questions and refine responses.</p></div>
+            <div class="step-item reveal"><h4>Go Live</h4><p>Connect to your WhatsApp number. Start answering customers instantly.</p></div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section style="max-width:800px;">
+        <div class="section-header reveal">
+            <div class="section-label">❓ FAQ</div>
+            <h2>Common <span class="gradient-text">Questions</span></h2>
+        </div>
+        <div class="faq-item reveal">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Do I need a WhatsApp Business account?<span class="arrow">▼</span></div>
+            <div class="faq-a">Yes, a WhatsApp Business account is required. If you don't have one, we'll help you set it up as part of the onboarding process — no extra charge.</div>
+        </div>
+        <div class="faq-item reveal">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Can the bot handle images and videos?<span class="arrow">▼</span></div>
+            <div class="faq-a">Yes! The bot can send and receive images, videos, PDFs, and location pins. It can share product photos, catalogs, and even video demos within the conversation.</div>
+        </div>
+        <div class="faq-item reveal">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Can I still chat with customers manually?<span class="arrow">▼</span></div>
+            <div class="faq-a">Absolutely. The bot handles routine questions automatically, but you can take over any conversation at any time. When you're offline, the bot covers for you.</div>
+        </div>
+        <div class="faq-item reveal">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">How accurate are the bot's responses?<span class="arrow">▼</span></div>
+            <div class="faq-a">Since the bot is trained exclusively on YOUR data (using RAG architecture), it gives highly accurate, contextual answers. It doesn't make things up — if it doesn't know, it asks the customer to contact you directly.</div>
+        </div>
+        <div class="faq-item reveal">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Is there a message limit?<span class="arrow">▼</span></div>
+            <div class="faq-a">Our standard plan includes 2,000 conversations/month. Higher-volume plans are available for businesses with more traffic. We'll recommend the right plan during consultation.</div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section style="text-align:center;max-width:800px;">
+        <div class="reveal" style="background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(168,85,247,0.06));border:1px solid var(--border);border-radius:var(--radius-xl);padding:3rem;">
+            <h2>Turn WhatsApp into Your <span class="gradient-text">24/7 Sales Team</span></h2>
+            <p style="color:var(--text-secondary);margin:1rem 0 2rem;">Stop losing customers to slow replies. Get an AI-powered WhatsApp bot that sells, supports, and captures leads — around the clock.</p>
+            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+                <a href="../contact.html" class="btn btn-primary">Get Your WhatsApp Bot →</a>
+                <a href="https://wa.me/919544842260?text=Hi!%20I%20want%20a%20WhatsApp%20AI%20chatbot%20for%20my%20business." class="btn btn-outline" target="_blank">💬 WhatsApp Us</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="../index.html" class="logo-container" style="margin-bottom:0.5rem;">
+                    <img src="../logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'">
+                    <span class="logo-text">Evalis <span class="ai-badge">AI</span></span>
+                </a>
+                <p>AI-powered software company delivering web & app development, AI solutions, and SaaS platforms worldwide.</p>
+            </div>
+            <div class="footer-col"><h4>Services</h4><a href="../services.html">AI Solutions</a><a href="../services.html">Web Development</a><a href="../services.html">App Development</a></div>
+            <div class="footer-col"><h4>Company</h4><a href="../about.html">About</a><a href="../careers.html">Careers</a><a href="../contact.html">Contact</a></div>
+            <div class="footer-col"><h4>Resources</h4><a href="../marketplace.html">Marketplace</a><a href="../pricing.html">Pricing</a><a href="../trustscore.html">TrustScore</a></div>
+        </div>
+        <div class="footer-bottom">&copy; 2026 Evalis AI — AI-Powered Software & Development Services</div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="../js/ai-agent.js" defer></script>
+    <script src="../js/tracker.js" defer></script>
+</body>
+</html>

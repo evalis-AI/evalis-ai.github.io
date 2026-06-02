@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing | Evalis AI — Web, App, AI & SaaS Development Pricing</title>
+    <meta name="description" content="Transparent pricing for Evalis AI services — web development, app development, SaaS platforms, AI chatbots, AI agents, workflow automation, and more. Clear pricing, no hidden fees.">
+    <meta name="keywords" content="web development pricing, app development cost, AI chatbot pricing, SaaS development cost, software development pricing, WhatsApp bot cost, AI agent pricing, workflow automation pricing">
+    <link rel="canonical" href="https://evalis-ai.github.io/pricing.html">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://evalis-ai.github.io/pricing.html">
+    <meta property="og:title" content="Pricing | Evalis AI — Transparent Service Pricing">
+    <meta property="og:description" content="Clear, transparent pricing for web development, AI solutions, and SaaS development. No hidden fees.">
+    <meta property="og:image" content="https://evalis-ai.github.io/cover.png">
+    <meta property="og:locale" content="en_US">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Pricing | Evalis AI">
+    <meta name="twitter:description" content="Transparent pricing for web, app, AI & SaaS development services.">
+
+    <link rel="icon" type="image/png" href="favicon-96x96.png">
+    <link rel="stylesheet" href="css/style.css">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Evalis AI Pricing",
+      "description": "Transparent pricing for all Evalis AI software and AI services.",
+      "url": "https://evalis-ai.github.io/pricing.html",
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://evalis-ai.github.io/"},
+          {"@type": "ListItem", "position": 2, "name": "Pricing", "item": "https://evalis-ai.github.io/pricing.html"}
+        ]
+      }
+    }
+    </script>
+
+    <style>
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .pricing-card {
+            background: var(--bg-card); backdrop-filter: blur(20px);
+            border: 1px solid var(--border); border-radius: var(--radius-xl);
+            padding: 2.5rem 2rem; position: relative; overflow: hidden;
+            transition: var(--transition); display: flex; flex-direction: column;
+        }
+        .pricing-card:hover {
+            transform: translateY(-8px); border-color: var(--border-hover);
+            box-shadow: var(--shadow-glow);
+        }
+        .pricing-card.featured {
+            border-color: var(--primary);
+            box-shadow: 0 0 40px rgba(99,102,241,0.1);
+        }
+        .pricing-card.featured::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0;
+            height: 3px; background: var(--gradient-primary);
+        }
+
+        .pricing-badge {
+            display: inline-block; padding: 4px 14px; border-radius: 100px;
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+        }
+        .badge-popular { background: rgba(99,102,241,0.15); color: var(--primary-light); }
+        .badge-value { background: rgba(16,185,129,0.15); color: #10b981; }
+        .badge-premium { background: rgba(245,158,11,0.15); color: #f59e0b; }
+
+        .pricing-icon {
+            width: 52px; height: 52px; border-radius: var(--radius-md);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; margin-bottom: 1.2rem;
+        }
+        .icon-indigo { background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.2); }
+        .icon-emerald { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.2); }
+        .icon-cyan { background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.2); }
+        .icon-rose { background: rgba(244,63,94,0.12); border: 1px solid rgba(244,63,94,0.2); }
+        .icon-amber { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.2); }
+        .icon-violet { background: rgba(168,85,247,0.12); border: 1px solid rgba(168,85,247,0.2); }
+        .icon-green { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.2); }
+
+        .pricing-card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem;
+        }
+        .pricing-card .desc {
+            color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .price-block { margin-bottom: 1.5rem; }
+        .price-amount {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem; font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .price-period { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+
+        .price-features { list-style: none; margin-bottom: 2rem; flex: 1; }
+        .price-features li {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 8px 0; font-size: 0.88rem; color: var(--text-secondary);
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        .price-features li:last-child { border-bottom: none; }
+        .price-features li::before {
+            content: '✓'; color: #10b981; font-weight: 700;
+            flex-shrink: 0; margin-top: 1px;
+        }
+
+        .pricing-cta {
+            display: block; width: 100%; padding: 14px; text-align: center;
+            border-radius: var(--radius-md); font-weight: 600; font-size: 0.9rem;
+            text-decoration: none; transition: all 0.3s; margin-top: auto;
+        }
+        .cta-primary {
+            background: var(--gradient-primary); color: #fff;
+            box-shadow: 0 4px 20px rgba(99,102,241,0.3);
+        }
+        .cta-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(99,102,241,0.4); }
+        .cta-outline {
+            background: transparent; color: var(--primary-light);
+            border: 1px solid rgba(99,102,241,0.3);
+        }
+        .cta-outline:hover { background: rgba(99,102,241,0.08); border-color: var(--primary); }
+
+        .pricing-note {
+            display: flex; align-items: flex-start; gap: 12px;
+            background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.15);
+            border-radius: var(--radius-md); padding: 1.2rem 1.5rem;
+            margin-top: 2rem; font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7;
+        }
+        .pricing-note .note-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+
+        .compare-table {
+            width: 100%; border-collapse: collapse;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); overflow: hidden;
+        }
+        .compare-table th, .compare-table td {
+            padding: 14px 20px; text-align: left; font-size: 0.88rem;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .compare-table th {
+            background: rgba(99,102,241,0.06); color: var(--primary-light);
+            font-weight: 700; font-size: 0.8rem; text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .compare-table td { color: var(--text-secondary); }
+        .compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+        .compare-table .service-name {
+            color: #fff; font-weight: 600; display: flex; align-items: center; gap: 10px;
+        }
+        .compare-table .price-cell {
+            font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #10b981;
+        }
+
+        .faq-pricing { max-width: 800px; margin: 0 auto; }
+        .faq-item {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius-md); margin-bottom: 1rem; overflow: hidden;
+        }
+        .faq-q {
+            padding: 1.2rem 1.5rem; cursor: pointer; display: flex;
+            justify-content: space-between; align-items: center;
+            font-weight: 600; font-size: 0.95rem; color: #fff;
+            transition: var(--transition);
+        }
+        .faq-q:hover { color: var(--primary-light); }
+        .faq-q .arrow { transition: transform 0.3s; font-size: 0.8rem; color: var(--text-muted); }
+        .faq-a {
+            max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s;
+            color: var(--text-secondary); font-size: 0.9rem; line-height: 1.8;
+        }
+        .faq-item.open .faq-a { max-height: 300px; padding: 0 1.5rem 1.2rem; }
+        .faq-item.open .arrow { transform: rotate(180deg); }
+
+        @media (max-width: 1024px) { .pricing-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 640px) {
+            .pricing-grid { grid-template-columns: 1fr; }
+            .compare-table { font-size: 0.8rem; }
+            .compare-table th, .compare-table td { padding: 10px 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="mesh-bg"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <nav>
+        <a href="index.html" class="logo-container">
+            <img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'">
+            <span class="logo-text">Evalis <span class="ai-badge">AI</span></span>
+        </a>
+        <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">☰</button>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="services.html">Services</a>
+            <a href="pricing.html" class="active">Pricing</a>
+            <a href="projects.html">Projects</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="careers.html" class="btn-nav">Join Us →</a>
+        </div>
+    </nav>
+
+    <header class="hero" style="padding-bottom:30px;">
+        <div class="section-label reveal">💰 Transparent Pricing</div>
+        <h1 class="reveal">Simple, Honest <span class="gradient-text">Pricing</span></h1>
+        <p class="hero-subtitle reveal">No hidden fees. No surprises. Premium quality at competitive global rates — from startup MVPs to enterprise AI solutions.</p>
+    </header>
+
+    <!-- ====== DEVELOPMENT SERVICES ====== -->
+    <section>
+        <div class="section-header reveal">
+            <div class="section-label">🛠️ Development</div>
+            <h2>Software <span class="gradient-text">Development</span></h2>
+            <p style="color:var(--text-secondary);max-width:640px;margin:0 auto;">Custom-built websites, apps, and SaaS platforms tailored to your business needs.</p>
+        </div>
+
+        <div class="pricing-grid">
+            <!-- Web Development -->
+            <div class="pricing-card reveal">
+                <div class="pricing-icon icon-cyan">🌐</div>
+                <h3>Web Development</h3>
+                <p class="desc">Stunning, high-performance websites and web applications built with React, Next.js, and modern frameworks.</p>
+                <div class="price-block">
+                    <div class="price-amount">$299</div>
+                    <div class="price-period">starting price</div>
+                </div>
+                <ul class="price-features">
+                    <li>Custom responsive design</li>
+                    <li>SEO optimized</li>
+                    <li>React / Next.js / HTML</li>
+                    <li>Admin dashboard (optional)</li>
+                    <li>3 months free support</li>
+                </ul>
+                <a href="contact.html" class="pricing-cta cta-outline">Get a Quote →</a>
+            </div>
+
+            <!-- App Development -->
+            <div class="pricing-card featured reveal">
+                <span class="pricing-badge badge-popular">MOST REQUESTED</span>
+                <div class="pricing-icon icon-emerald">📱</div>
+                <h3>App Development</h3>
+                <p class="desc">Cross-platform mobile and desktop apps with native-like performance using React Native & Flutter.</p>
+                <div class="price-block">
+                    <div class="price-amount">$599</div>
+                    <div class="price-period">starting price</div>
+                </div>
+                <ul class="price-features">
+                    <li>iOS + Android (cross-platform)</li>
+                    <li>Native-like performance</li>
+                    <li>Push notifications</li>
+                    <li>App Store submission</li>
+                    <li>6 months free support</li>
+                </ul>
+                <a href="contact.html" class="pricing-cta cta-primary">Get a Quote →</a>
+            </div>
+
+            <!-- SaaS Platform -->
+            <div class="pricing-card reveal">
+                <span class="pricing-badge badge-premium">ENTERPRISE</span>
+                <div class="pricing-icon icon-rose">☁️</div>
+                <h3>SaaS Platform</h3>
+                <p class="desc">End-to-end SaaS product engineering — multi-tenant architecture, billing, analytics, and scalable cloud infrastructure.</p>
+                <div class="price-block">
+                    <div class="price-amount">$1,799</div>
+                    <div class="price-period">starting price</div>
+                </div>
+                <ul class="price-features">
+                    <li>Multi-tenant architecture</li>
+                    <li>Stripe / payment integration</li>
+                    <li>Auth, RBAC & team management</li>
+                    <li>Analytics dashboard</li>
+                    <li>Cloud deployment (AWS/GCP)</li>
+                </ul>
+                <a href="contact.html" class="pricing-cta cta-outline">Get a Quote →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== AI SOLUTIONS ====== -->
+    <section>
+        <div class="section-header reveal">
+            <div class="section-label">🤖 AI Solutions</div>
+            <h2>AI-Powered <span class="gradient-text">Services</span></h2>
+            <p style="color:var(--text-secondary);max-width:640px;margin:0 auto;">Intelligent automation and AI tools that drive real business results.</p>
+        </div>
+
+        <div class="pricing-grid">
+            <!-- WhatsApp AI Chatbot -->
+            <div class="pricing-card reveal">
+                <div class="pricing-icon icon-green">💬</div>
+                <h3>WhatsApp AI Chatbot</h3>
+                <p class="desc">RAG-powered WhatsApp bot trained on your product catalog — auto-reply 24/7 with multilingual support.</p>
+                <div class="price-block">
+                    <div class="price-amount">$299</div>
+                    <div class="price-period">one-time setup</div>
+                </div>
+                <ul class="price-features">
+                    <li>Trained on your business data</li>
+                    <li>Multi-language support</li>
+                    <li>Order booking & lead capture</li>
+                    <li>24/7 auto-responses</li>
+                    <li>WhatsApp Business API</li>
+                </ul>
+                <a href="contact.html" class="pricing-cta cta-outline">Get Started →</a>
+            </div>
+
+            <!-- Custom AI Agent -->
+            <div class="pricing-card featured reveal">
+                <span class="pricing-badge badge-popular">POPULAR</span>
+                <div class="pricing-icon icon-indigo">🧠</div>
+                <h3>Custom AI Agent</h3>
+                <p class="desc">White-label AI assistant for your website in 48 hours — trained on your docs with voice, lead capture & analytics.</p>
+                <div class="price-block">
+                    <div class="price-amount">$599</div>
+                    <div class="price-period">one-time + $60/mo hosting</div>
+                </div>
+                <ul class="price-features">
+                    <li>Trained on YOUR data (RAG)</li>
+                    <li>Voice-enabled (TTS)</li>
+                    <li>Fully branded & white-label</li>
+                    <li>Lead capture & CRM sync</li>
+                    <li>Analytics dashboard</li>
+                    <li>48-hour deployment</li>
+                </ul>
+                <a href="ai-agent-demo.html" class="pricing-cta cta-primary">See Live Demo →</a>
+            </div>
+
+            <!-- AI Workflow Automation -->
+            <div class="pricing-card reveal">
+                <div class="pricing-icon icon-cyan">⚙️</div>
+                <h3>Workflow Automation</h3>
+                <p class="desc">Eliminate repetitive tasks — auto-classify emails, process invoices, qualify leads, and route workflows with AI.</p>
+                <div class="price-block">
+                    <div class="price-amount">$359</div>
+                    <div class="price-period">per workflow</div>
+                </div>
+                <ul class="price-features">
+                    <li>n8n / Make integration</li>
+                    <li>Invoice & document processing</li>
+                    <li>Email routing & classification</li>
+                    <li>CRM integration</li>
+                    <li>Custom API connectors</li>
+                </ul>
+                <a href="contact.html" class="pricing-cta cta-outline">Get Started →</a>
+            </div>
+
+            <!-- AI Document Intelligence -->
+            <div class="pricing-card reveal">
+                <div class="pricing-icon icon-amber">📄</div>
+                <h3>Document Intelligence</h3>
+                <p class="desc">AI-powered OCR + NLP for invoices, contracts, medical records — extract, validate, and digitize data at scale.</p>
+                <div class="price-block">
+                    <div class="price-amount">$1,199</div>
+                    <div class="price-period">starting price</div>
+                </div>
+                <ul class="price-features">
+                    <li>Invoice & receipt processing</li>
+                    <li>Contract analysis</li>
+                    <li>ERP / accounting integration</li>
+                    <li>Bulk document processing</li>
+                    <li>Multilingual OCR support</li>
+                </ul>
+                <a href="contact.html" class="pricing-cta cta-outline">Get a Quote →</a>
+            </div>
+
+            <!-- AI Lead Generation -->
+            <div class="pricing-card reveal">
+                <div class="pricing-icon icon-rose">🎯</div>
+                <h3>AI Lead Generation</h3>
+                <p class="desc">Autonomous AI sales agent — research prospects, qualify leads, score intent, auto-send personalized outreach.</p>
+                <div class="price-block">
+                    <div class="price-amount">$239</div>
+                    <div class="price-period">per month</div>
+                </div>
+                <ul class="price-features">
+                    <li>Prospect research</li>
+                    <li>Intent-based lead scoring</li>
+                    <li>Auto email & messaging outreach</li>
+                    <li>CRM sync</li>
+                    <li>Pipeline analytics</li>
+                </ul>
+                <a href="contact.html" class="pricing-cta cta-outline">Get Started →</a>
+            </div>
+
+            <!-- AI Voice Agent -->
+            <div class="pricing-card reveal">
+                <div class="pricing-icon icon-violet">🎙️</div>
+                <h3>AI Voice Agent</h3>
+                <p class="desc">24/7 AI phone receptionist — answers calls, books appointments, handles FAQs in multiple languages.</p>
+                <div class="price-block">
+                    <div class="price-amount">$179</div>
+                    <div class="price-period">per month</div>
+                </div>
+                <ul class="price-features">
+                    <li>24/7 call answering</li>
+                    <li>Appointment booking</li>
+                    <li>Multilingual voice support</li>
+                    <li>Smart escalation rules</li>
+                    <li>Call analytics dashboard</li>
+                </ul>
+                <a href="contact.html" class="pricing-cta cta-outline">Get Started →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== GEO SECTION ====== -->
+    <section>
+        <div class="section-header reveal">
+            <div class="section-label">🔮 Next-Gen SEO</div>
+            <h2>Generative Engine <span class="gradient-text">Optimization</span></h2>
+        </div>
+        <div style="max-width:700px;margin:0 auto;">
+            <div class="pricing-card featured reveal" style="text-align:center;">
+                <div class="pricing-icon icon-indigo" style="margin:0 auto 1.2rem;">🔮</div>
+                <h3>GEO — AI Search Optimization</h3>
+                <p class="desc">Get your brand visible in AI-powered search results — ChatGPT, Perplexity, Gemini, and Google AI Overviews. The future of SEO starts here.</p>
+                <div class="price-block">
+                    <div class="price-amount">$599</div>
+                    <div class="price-period">per month</div>
+                </div>
+                <ul class="price-features" style="text-align:left;max-width:400px;margin:0 auto 2rem;">
+                    <li>AI search visibility audit</li>
+                    <li>Schema markup optimization</li>
+                    <li>Citation & entity optimization</li>
+                    <li>Content strategy for AI engines</li>
+                    <li>Monthly reports & tracking</li>
+                    <li>Brand authority building</li>
+                </ul>
+                <a href="contact.html" class="pricing-cta cta-primary" style="max-width:400px;margin:0 auto;">Get Your GEO Audit →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== COMPARISON TABLE ====== -->
+    <section>
+        <div class="section-header reveal">
+            <div class="section-label">📊 Quick Compare</div>
+            <h2>All Services <span class="gradient-text">At a Glance</span></h2>
+        </div>
+        <div class="reveal" style="overflow-x:auto;">
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Starting Price</th>
+                        <th>Billing</th>
+                        <th>Delivery Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="service-name">🌐 Web Development</td>
+                        <td class="price-cell">$299</td>
+                        <td>One-time</td>
+                        <td>2–4 weeks</td>
+                    </tr>
+                    <tr>
+                        <td class="service-name">📱 App Development</td>
+                        <td class="price-cell">$599</td>
+                        <td>One-time</td>
+                        <td>4–8 weeks</td>
+                    </tr>
+                    <tr>
+                        <td class="service-name">☁️ SaaS Platform</td>
+                        <td class="price-cell">$1,799</td>
+                        <td>One-time</td>
+                        <td>8–16 weeks</td>
+                    </tr>
+                    <tr>
+                        <td class="service-name">💬 WhatsApp AI Bot</td>
+                        <td class="price-cell">$299</td>
+                        <td>One-time</td>
+                        <td>3–5 days</td>
+                    </tr>
+                    <tr>
+                        <td class="service-name">🧠 Custom AI Agent</td>
+                        <td class="price-cell">$599</td>
+                        <td>One-time + monthly</td>
+                        <td>48 hours</td>
+                    </tr>
+                    <tr>
+                        <td class="service-name">⚙️ Workflow Automation</td>
+                        <td class="price-cell">$359</td>
+                        <td>Per workflow</td>
+                        <td>1–2 weeks</td>
+                    </tr>
+                    <tr>
+                        <td class="service-name">📄 Document Intelligence</td>
+                        <td class="price-cell">$1,199</td>
+                        <td>One-time</td>
+                        <td>4–6 weeks</td>
+                    </tr>
+                    <tr>
+                        <td class="service-name">🎯 AI Lead Generation</td>
+                        <td class="price-cell">$239/mo</td>
+                        <td>Monthly</td>
+                        <td>1 week</td>
+                    </tr>
+                    <tr>
+                        <td class="service-name">🎙️ AI Voice Agent</td>
+                        <td class="price-cell">$179/mo</td>
+                        <td>Monthly</td>
+                        <td>1 week</td>
+                    </tr>
+                    <tr>
+                        <td class="service-name">🔮 GEO Optimization</td>
+                        <td class="price-cell">$599/mo</td>
+                        <td>Monthly</td>
+                        <td>Ongoing</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pricing-note reveal">
+            <span class="note-icon">💡</span>
+            <div>
+                <strong style="color:#fff;">All prices are starting prices.</strong> Final cost depends on project scope, features, and complexity. We provide a detailed estimate after understanding your requirements — <strong style="color:var(--primary-light);">no obligation, no pressure</strong>. Contact us for a free consultation.
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== ENTERPRISE CTA ====== -->
+    <section style="max-width:900px;">
+        <div class="reveal" style="background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(168,85,247,0.06));border:1px solid var(--border);border-radius:var(--radius-xl);padding:3rem;text-align:center;">
+            <div style="font-size:2.5rem;margin-bottom:1rem;">🏢</div>
+            <h2>Enterprise & Custom Projects</h2>
+            <p style="color:var(--text-secondary);margin:1rem 0 0.5rem;max-width:600px;display:inline-block;">Need something bigger? We handle enterprise-scale projects with dedicated teams, custom SLAs, and flexible engagement models.</p>
+            <ul style="list-style:none;display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;margin:1.5rem 0 2rem;color:var(--text-secondary);font-size:0.9rem;">
+                <li>✓ Dedicated project manager</li>
+                <li>✓ Custom SLA</li>
+                <li>✓ NDA-protected</li>
+                <li>✓ Flexible billing</li>
+            </ul>
+            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+                <a href="contact.html" class="btn btn-primary">Talk to Sales →</a>
+                <a href="https://wa.me/919544842260?text=Hi%20Evalis!%20I%20need%20a%20custom%20enterprise%20project%20quote." class="btn btn-outline" target="_blank">💬 WhatsApp Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== FAQ ====== -->
+    <section>
+        <div class="section-header reveal">
+            <div class="section-label">❓ FAQ</div>
+            <h2>Pricing <span class="gradient-text">Questions</span></h2>
+        </div>
+        <div class="faq-pricing">
+            <div class="faq-item reveal">
+                <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                    Do you charge upfront or after delivery?
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="faq-a">We typically work with a 50% advance and 50% on delivery model. For larger projects, we offer milestone-based payments (e.g., 30-30-40). Enterprise clients can discuss NET-30 terms.</div>
+            </div>
+            <div class="faq-item reveal">
+                <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                    Are there any hidden fees?
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="faq-a">Absolutely not. The price we quote is the price you pay. Third-party costs like hosting (AWS, Vercel), domain names, API subscriptions, or app store fees are separate and clearly communicated upfront.</div>
+            </div>
+            <div class="faq-item reveal">
+                <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                    What if my project needs more features later?
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="faq-a">We offer maintenance contracts and can add features anytime at agreed hourly rates. All our code is well-documented and extensible — you're never locked in.</div>
+            </div>
+            <div class="faq-item reveal">
+                <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                    Do you offer refunds?
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="faq-a">If we haven't started development, we offer a full refund. Once development begins, we don't offer refunds — but we do guarantee revisions until you're satisfied with the deliverable.</div>
+            </div>
+            <div class="faq-item reveal">
+                <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                    What payment methods do you accept?
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="faq-a">We accept bank transfer (SWIFT), PayPal, Wise, Payoneer, and Stripe. All invoices are in USD. We work with clients across the US, UK, UAE, Europe, Australia, and worldwide.</div>
+            </div>
+            <div class="faq-item reveal">
+                <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                    What timezone do you work in?
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="faq-a">Our core hours are IST (UTC+5:30), but we regularly overlap with US, UK, and Middle East timezones. We're flexible and async-friendly — communication never suffers regardless of your location.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== FINAL CTA ====== -->
+    <section style="text-align:center;max-width:800px;">
+        <div class="reveal" style="background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(168,85,247,0.05));border:1px solid var(--border);border-radius:var(--radius-xl);padding:3rem;">
+            <h2>Ready to Get Started?</h2>
+            <p style="color:var(--text-secondary);margin:1rem 0 2rem;">Tell us about your project and get a detailed quote within 24 hours — absolutely free.</p>
+            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+                <a href="contact.html" class="btn btn-primary">Get Free Quote →</a>
+                <a href="https://wa.me/919544842260" class="btn btn-outline" target="_blank">💬 WhatsApp Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="logo-container" style="margin-bottom:0.5rem;">
+                    <img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'">
+                    <span class="logo-text">Evalis <span class="ai-badge">AI</span></span>
+                </a>
+                <p>AI-powered software company delivering web & app development, AI solutions, and SaaS platforms worldwide.</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/share/14arF3zkgWU/" target="_blank">📘</a>
+                    <a href="https://www.linkedin.com/company/evalis-ai/" target="_blank">💼</a>
+                    <a href="https://wa.me/919544842260" target="_blank">💬</a>
+                </div>
+            </div>
+            <div class="footer-col"><h4>Services</h4><a href="services.html">AI Solutions</a><a href="services.html">Web Development</a><a href="services.html">App Development</a><a href="services.html">SaaS Platforms</a></div>
+            <div class="footer-col"><h4>Company</h4><a href="about.html">About Us</a><a href="careers.html">Careers</a><a href="contact.html">Contact</a><a href="pricing.html">Pricing</a></div>
+            <div class="footer-col"><h4>Resources</h4><a href="marketplace.html">Marketplace</a><a href="assessment.html">Assessment</a><a href="trustscore.html">TrustScore</a></div>
+        </div>
+        <div class="footer-bottom">&copy; 2026 Evalis AI — AI-Powered Software & Development Services</div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/ai-agent.js" defer></script>
+    <script src="js/tracker.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | Evalis AI — AI, Web Development & Business Automation Insights</title>
+    <meta name="description" content="Expert insights on AI chatbots, web development, SaaS building, workflow automation, and GEO optimization. Actionable guides for startups and businesses.">
+    <meta name="keywords" content="AI blog, web development blog, SaaS blog, AI chatbot guide, GEO optimization, business automation tips, startup tech blog">
+    <link rel="canonical" href="https://evalis-ai.github.io/blog.html">
+    <meta name="robots" content="index, follow">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://evalis-ai.github.io/blog.html">
+    <meta property="og:title" content="Blog | Evalis AI — AI & Tech Insights">
+    <meta property="og:description" content="Expert guides on AI chatbots, SaaS development, workflow automation, and the future of search.">
+    <meta property="og:image" content="https://evalis-ai.github.io/cover.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" href="favicon-96x96.png">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        .blog-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius-xl); overflow: hidden;
+            transition: var(--transition); display: flex; flex-direction: column;
+        }
+        .blog-card:hover {
+            transform: translateY(-8px); border-color: var(--border-hover);
+            box-shadow: var(--shadow-glow);
+        }
+        .blog-card-img {
+            width: 100%; height: 200px; object-fit: cover;
+            border-bottom: 1px solid var(--border);
+        }
+        .blog-card-img-placeholder {
+            width: 100%; height: 200px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .img-ai { background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(168,85,247,0.1)); }
+        .img-geo { background: linear-gradient(135deg, rgba(6,182,212,0.15), rgba(99,102,241,0.1)); }
+        .img-saas { background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(6,182,212,0.1)); }
+
+        .blog-card-body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
+        .blog-meta {
+            display: flex; gap: 1rem; align-items: center;
+            font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.8rem;
+        }
+        .blog-tag {
+            padding: 3px 10px; border-radius: 100px; font-weight: 600;
+            font-size: 0.7rem; letter-spacing: 0.3px;
+        }
+        .tag-ai { background: rgba(99,102,241,0.15); color: var(--primary-light); }
+        .tag-dev { background: rgba(16,185,129,0.15); color: #34d399; }
+        .tag-seo { background: rgba(6,182,212,0.15); color: #22d3ee; }
+        .tag-business { background: rgba(245,158,11,0.15); color: #fbbf24; }
+
+        .blog-card-body h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.15rem; font-weight: 700; color: #fff;
+            margin-bottom: 0.6rem; line-height: 1.4;
+        }
+        .blog-card-body h3 a {
+            color: inherit; text-decoration: none; transition: color 0.3s;
+        }
+        .blog-card-body h3 a:hover { color: var(--primary-light); }
+        .blog-excerpt {
+            color: var(--text-secondary); font-size: 0.88rem;
+            line-height: 1.7; margin-bottom: 1.5rem; flex: 1;
+        }
+        .blog-read-more {
+            color: var(--primary-light); font-weight: 600; font-size: 0.88rem;
+            text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+            transition: gap 0.3s;
+        }
+        .blog-read-more:hover { gap: 12px; }
+
+        .blog-featured {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius-xl); overflow: hidden;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+            margin-bottom: 3rem; transition: var(--transition);
+        }
+        .blog-featured:hover {
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-glow);
+        }
+        .blog-featured-img {
+            width: 100%; height: 100%; min-height: 300px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 5rem;
+            background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(168,85,247,0.08));
+        }
+        .blog-featured-body {
+            padding: 2.5rem; display: flex; flex-direction: column; justify-content: center;
+        }
+        .blog-featured-body .blog-tag { margin-bottom: 1rem; display: inline-block; width: fit-content; }
+        .blog-featured-body h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.6rem; font-weight: 700; color: #fff;
+            margin-bottom: 1rem; line-height: 1.3;
+        }
+        .blog-featured-body h2 a { color: inherit; text-decoration: none; }
+        .blog-featured-body h2 a:hover { color: var(--primary-light); }
+        .blog-featured-body p {
+            color: var(--text-secondary); font-size: 0.95rem; line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .newsletter-box {
+            background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(168,85,247,0.05));
+            border: 1px solid var(--border); border-radius: var(--radius-xl);
+            padding: 3rem; text-align: center; margin-top: 2rem;
+        }
+        .newsletter-box h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; margin-bottom: 0.5rem; }
+        .newsletter-box p { color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.95rem; }
+        .newsletter-form {
+            display: flex; gap: 0.8rem; max-width: 500px; margin: 0 auto;
+        }
+        .newsletter-form input {
+            flex: 1; padding: 12px 16px; border-radius: var(--radius-md);
+            background: var(--bg-card); border: 1px solid var(--border);
+            color: #fff; font-size: 0.9rem; outline: none;
+        }
+        .newsletter-form input:focus { border-color: var(--primary); }
+        .newsletter-form button {
+            padding: 12px 24px; border-radius: var(--radius-md);
+            background: var(--gradient-primary); color: #fff; border: none;
+            font-weight: 600; cursor: pointer; transition: all 0.3s;
+            white-space: nowrap;
+        }
+        .newsletter-form button:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(99,102,241,0.3); }
+
+        @media (max-width: 1024px) { .blog-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) {
+            .blog-grid { grid-template-columns: 1fr; }
+            .blog-featured { grid-template-columns: 1fr; }
+            .blog-featured-img { min-height: 200px; }
+            .newsletter-form { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="mesh-bg"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <nav>
+        <a href="index.html" class="logo-container">
+            <img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'">
+            <span class="logo-text">Evalis <span class="ai-badge">AI</span></span>
+        </a>
+        <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">☰</button>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="services.html">Services</a>
+            <a href="pricing.html">Pricing</a>
+            <a href="projects.html">Projects</a>
+            <a href="blog.html" class="active">Blog</a>
+            <a href="contact.html">Contact</a>
+            <a href="careers.html" class="btn-nav">Join Us →</a>
+        </div>
+    </nav>
+
+    <header class="hero" style="padding-bottom:30px;">
+        <div class="section-label reveal">📝 Blog</div>
+        <h1 class="reveal">Insights & <span class="gradient-text">Guides</span></h1>
+        <p class="hero-subtitle reveal">Expert articles on AI, web development, SaaS building, and the future of search. Actionable knowledge for founders and businesses.</p>
+    </header>
+
+    <!-- FEATURED POST -->
+    <section>
+        <div class="blog-featured reveal">
+            <div class="blog-featured-img">🤖</div>
+            <div class="blog-featured-body">
+                <span class="blog-tag tag-ai">AI</span>
+                <h2><a href="blog/ai-chatbot-business-guide.html">5 Ways AI Chatbots Can 10x Your Business in 2026</a></h2>
+                <p>From 24/7 customer support to automated lead capture — discover how businesses are using AI chatbots to cut costs and boost revenue dramatically.</p>
+                <div style="display:flex;align-items:center;gap:1.5rem;">
+                    <a href="blog/ai-chatbot-business-guide.html" class="blog-read-more">Read Article →</a>
+                    <span style="font-size:0.75rem;color:var(--text-muted);">8 min read • June 2, 2026</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ALL POSTS -->
+    <section>
+        <div class="section-header reveal">
+            <div class="section-label">📚 Latest Articles</div>
+            <h2>All <span class="gradient-text">Posts</span></h2>
+        </div>
+
+        <div class="blog-grid">
+            <!-- Post 1 -->
+            <div class="blog-card reveal">
+                <div class="blog-card-img-placeholder img-ai">🤖</div>
+                <div class="blog-card-body">
+                    <div class="blog-meta">
+                        <span class="blog-tag tag-ai">AI</span>
+                        <span>June 2, 2026</span>
+                        <span>8 min</span>
+                    </div>
+                    <h3><a href="blog/ai-chatbot-business-guide.html">5 Ways AI Chatbots Can 10x Your Business in 2026</a></h3>
+                    <p class="blog-excerpt">From 24/7 customer support to automated lead capture — discover how businesses are using AI chatbots to cut costs and boost revenue.</p>
+                    <a href="blog/ai-chatbot-business-guide.html" class="blog-read-more">Read More →</a>
+                </div>
+            </div>
+
+            <!-- Post 2 -->
+            <div class="blog-card reveal">
+                <div class="blog-card-img-placeholder img-geo">🔮</div>
+                <div class="blog-card-body">
+                    <div class="blog-meta">
+                        <span class="blog-tag tag-seo">SEO</span>
+                        <span>June 2, 2026</span>
+                        <span>10 min</span>
+                    </div>
+                    <h3><a href="blog/what-is-geo-optimization.html">What is GEO? The Future of SEO in the Age of AI</a></h3>
+                    <p class="blog-excerpt">Generative Engine Optimization is the next frontier. Learn how to get your brand visible in ChatGPT, Perplexity, and Google AI Overviews.</p>
+                    <a href="blog/what-is-geo-optimization.html" class="blog-read-more">Read More →</a>
+                </div>
+            </div>
+
+            <!-- Post 3 -->
+            <div class="blog-card reveal">
+                <div class="blog-card-img-placeholder img-saas">☁️</div>
+                <div class="blog-card-body">
+                    <div class="blog-meta">
+                        <span class="blog-tag tag-business">Business</span>
+                        <span>June 2, 2026</span>
+                        <span>12 min</span>
+                    </div>
+                    <h3><a href="blog/saas-development-cost-guide.html">How Much Does It Cost to Build a SaaS Product in 2026?</a></h3>
+                    <p class="blog-excerpt">A no-BS breakdown of SaaS development costs — from MVP to scale. Real numbers, real timelines, and how to get the best ROI.</p>
+                    <a href="blog/saas-development-cost-guide.html" class="blog-read-more">Read More →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <section style="max-width:800px;">
+        <div class="newsletter-box reveal">
+            <h3>Stay Ahead of the Curve</h3>
+            <p>Get weekly AI & tech insights delivered to your inbox. No spam, just actionable knowledge.</p>
+            <form class="newsletter-form" onsubmit="event.preventDefault();this.querySelector('button').textContent='Subscribed ✓';this.querySelector('button').style.background='#10b981';">
+                <input type="email" placeholder="your@email.com" required>
+                <button type="submit">Subscribe</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="logo-container" style="margin-bottom:0.5rem;">
+                    <img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'">
+                    <span class="logo-text">Evalis <span class="ai-badge">AI</span></span>
+                </a>
+                <p>AI-powered software company delivering web & app development, AI solutions, and SaaS platforms worldwide.</p>
+            </div>
+            <div class="footer-col"><h4>Services</h4><a href="services.html">AI Solutions</a><a href="services.html">Web Development</a><a href="services.html">App Development</a></div>
+            <div class="footer-col"><h4>Company</h4><a href="about.html">About</a><a href="careers.html">Careers</a><a href="contact.html">Contact</a><a href="pricing.html">Pricing</a></div>
+            <div class="footer-col"><h4>Resources</h4><a href="marketplace.html">Marketplace</a><a href="blog.html">Blog</a><a href="trustscore.html">TrustScore</a></div>
+        </div>
+        <div class="footer-bottom">&copy; 2026 Evalis AI — AI-Powered Software & Development Services</div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/ai-agent.js" defer></script>
+    <script src="js/tracker.js" defer></script>
+</body>
+</html>
