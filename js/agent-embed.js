@@ -125,7 +125,7 @@
       ${VOICE_ENABLED ? '<button class="evai-mic" id="evai-mic" title="Voice input">🎤</button>' : ''}
       <button class="evai-send" id="evai-send" title="Send">➤</button>
     </div>
-    <div class="evai-ft">Powered by <a href="https://evalis-ai.github.io" target="_blank" rel="noopener">Evalis AI</a></div>
+    <div class="evai-ft">Powered by <a href="https://evalisai.com" target="_blank" rel="noopener">Evalis AI</a></div>
   `;
 
   document.body.appendChild(panel);

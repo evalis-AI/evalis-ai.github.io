@@ -112,7 +112,7 @@ About Evalis AI:
 - Founded and headquartered in Perinthalmanna, Malappuram District, Kerala, India
 - Serving clients across all 14 districts of Kerala, pan-India, and worldwide
 - Contact: evalisglobal@gmail.com | WhatsApp: +91 9544842260
-- Website: https://evalis-ai.github.io
+- Website: https://evalisai.com
 
 Core Services:
 1. AI Data Services — Data labeling, LLM safety testing, search relevance evaluation, RLHF training data
@@ -371,7 +371,7 @@ window.EVALIS_AGENT_CONFIG = {
   apiBase: "https://evalis-api.evalisglobal.workers.dev"
 };
 </script>
-<script src="https://evalis-ai.github.io/js/agent-embed.js" defer></script>`;
+<script src="https://evalisai.com/js/agent-embed.js" defer></script>`;
 
         return json({
           success: true,

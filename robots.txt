@@ -8,7 +8,7 @@ Disallow: /migrations/
 Disallow: /supabase-setup.sql
 
 # Sitemap
-Sitemap: https://evalis-ai.github.io/sitemap.xml
+Sitemap: https://evalisai.com/sitemap.xml
 
 # Crawl-delay (be polite)
 Crawl-delay: 1
