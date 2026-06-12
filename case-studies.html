@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Studies | Evalis AI — AI Data Services Success Stories</title>
+    <meta name="description" content="See how Evalis AI helps AI companies with search evaluation, data annotation, RLHF training data, and LLM testing. Real project results with measurable outcomes.">
+    <meta name="keywords" content="AI data services case studies, search evaluation results, data annotation case study, RLHF project, LLM testing results, Evalis AI projects">
+    <link rel="canonical" href="https://evalisai.com/case-studies.html">
+    <meta name="robots" content="index, follow">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://evalisai.com/case-studies.html">
+    <meta property="og:title" content="Case Studies | Evalis AI — AI Data Services Success Stories">
+    <meta property="og:description" content="Real project results: search evaluation, data annotation, RLHF, LLM testing. See how AI companies scale with Evalis AI.">
+    <meta property="og:image" content="https://evalisai.com/cover.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" href="favicon-96x96.png">
+    <link rel="stylesheet" href="css/style.css">
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Evalis AI Case Studies","description":"AI data services case studies and success stories.","url":"https://evalisai.com/case-studies.html","breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://evalisai.com/"},{"@type":"ListItem","position":2,"name":"Case Studies","item":"https://evalisai.com/case-studies.html"}]}}</script>
+    <style>
+        .case-study {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius-xl); overflow: hidden;
+            transition: var(--transition); margin-bottom: 2.5rem;
+        }
+        .case-study:hover { border-color: var(--border-hover); box-shadow: var(--shadow-glow); }
+        .case-header {
+            background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(168,85,247,0.05));
+            padding: 2.5rem; border-bottom: 1px solid var(--border);
+        }
+        .case-tag {
+            display: inline-block; padding: 4px 14px; border-radius: 100px;
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px;
+            margin-bottom: 1rem; background: rgba(99,102,241,0.15); color: var(--primary-light);
+        }
+        .case-header h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;
+        }
+        .case-header .client-type {
+            color: var(--text-muted); font-size: 0.85rem; display: flex; align-items: center; gap: 8px;
+        }
+        .case-body { padding: 2.5rem; }
+        .case-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        .case-section h4 {
+            font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;
+            color: var(--primary-light); margin-bottom: 0.8rem; font-weight: 700;
+        }
+        .case-section p, .case-section li {
+            color: var(--text-secondary); font-size: 0.92rem; line-height: 1.7;
+        }
+        .case-section ul { list-style: none; }
+        .case-section ul li { padding: 4px 0; display: flex; align-items: flex-start; gap: 8px; }
+        .case-section ul li::before { content: '✓'; color: #10b981; font-weight: 700; flex-shrink: 0; }
+        .case-metrics {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+            padding: 2rem 2.5rem; border-top: 1px solid var(--border);
+            background: rgba(16,185,129,0.03);
+        }
+        .metric { text-align: center; }
+        .metric-value {
+            font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem;
+            font-weight: 800; background: var(--gradient-primary);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .metric-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+        .trust-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;
+        }
+        .trust-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 2rem 1.5rem;
+            text-align: center; transition: var(--transition);
+        }
+        .trust-card:hover { border-color: var(--border-hover); transform: translateY(-4px); }
+        .trust-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .trust-card h4 { font-size: 0.95rem; margin-bottom: 0.5rem; }
+        .trust-card p { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; }
+        @media (max-width: 768px) {
+            .case-grid { grid-template-columns: 1fr; }
+            .case-metrics { grid-template-columns: repeat(2, 1fr); }
+            .trust-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="mesh-bg"></div><canvas id="particles-canvas"></canvas>
+    <nav><a href="index.html" class="logo-container"><img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'"><span class="logo-text">Evalis <span class="ai-badge">AI</span></span></a><button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">&#9776;</button><div class="nav-links" id="navLinks"><a href="index.html">Home</a><a href="services.html">Services</a><a href="case-studies.html" class="active">Case Studies</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="careers.html" class="btn-nav">Join Us &rarr;</a></div></nav>
+
+    <header class="hero" style="padding-bottom:20px;">
+        <div class="section-label reveal">📊 Proven Results</div>
+        <h1 class="reveal"><span class="gradient-text">Case Studies</span></h1>
+        <p class="hero-subtitle reveal">Real project results from AI companies we've partnered with. From search evaluation to RLHF training data — see how Evalis AI delivers measurable outcomes.</p>
+    </header>
+
+    <!-- Trust Badges -->
+    <section>
+        <div class="trust-grid">
+            <div class="trust-card reveal">
+                <div class="trust-icon">🔒</div>
+                <h4>GDPR Compliant</h4>
+                <p>Full compliance with EU General Data Protection Regulation for all data handling</p>
+            </div>
+            <div class="trust-card reveal">
+                <div class="trust-icon">📋</div>
+                <h4>NDA Protected</h4>
+                <p>All projects under strict Non-Disclosure Agreements. Client details are confidential</p>
+            </div>
+            <div class="trust-card reveal">
+                <div class="trust-icon">🛡️</div>
+                <h4>ISO-Aligned Processes</h4>
+                <p>Quality management aligned with ISO 9001 and information security per ISO 27001</p>
+            </div>
+            <div class="trust-card reveal">
+                <div class="trust-icon">✅</div>
+                <h4>SOC 2 Practices</h4>
+                <p>Security, availability, and confidentiality controls following SOC 2 principles</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CASE STUDY 1: Search Evaluation -->
+    <section style="max-width:950px;">
+        <div class="case-study reveal">
+            <div class="case-header">
+                <span class="case-tag">SEARCH EVALUATION</span>
+                <h3>Multilingual Search Quality Evaluation for Major AI Search Platform</h3>
+                <div class="client-type">🏢 Client: US-Based AI Search Company &bull; 🌍 Languages: 8 European Languages</div>
+            </div>
+            <div class="case-body">
+                <div class="case-grid">
+                    <div class="case-section">
+                        <h4>Challenge</h4>
+                        <p>A major US-based AI search platform needed expert human evaluators to assess search result relevance and quality across 8 European languages. Their previous vendor (a large crowdsourcing platform) was delivering inconsistent quality with high evaluator turnover.</p>
+                    </div>
+                    <div class="case-section">
+                        <h4>Solution</h4>
+                        <ul>
+                            <li>Deployed dedicated evaluation teams for German, French, Dutch, Swedish, Spanish, Italian, Portuguese, and Polish</li>
+                            <li>Created language-specific evaluation guidelines</li>
+                            <li>Implemented dual-review quality assurance</li>
+                            <li>48-hour ramp-up with continuous training</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="case-metrics">
+                <div class="metric"><div class="metric-value">96.2%</div><div class="metric-label">Evaluation Accuracy</div></div>
+                <div class="metric"><div class="metric-value">8</div><div class="metric-label">Languages Covered</div></div>
+                <div class="metric"><div class="metric-value">50K+</div><div class="metric-label">Queries Evaluated</div></div>
+                <div class="metric"><div class="metric-value">65%</div><div class="metric-label">Cost Reduction</div></div>
+            </div>
+        </div>
+
+        <!-- CASE STUDY 2: Data Annotation -->
+        <div class="case-study reveal">
+            <div class="case-header">
+                <span class="case-tag" style="background:rgba(16,185,129,0.15);color:#10b981;">DATA ANNOTATION</span>
+                <h3>Large-Scale Image & Text Annotation for Computer Vision Startup</h3>
+                <div class="client-type">🏢 Client: European AI Startup &bull; 📊 Volume: 200K+ Annotations</div>
+            </div>
+            <div class="case-body">
+                <div class="case-grid">
+                    <div class="case-section">
+                        <h4>Challenge</h4>
+                        <p>A European AI startup building a computer vision product for retail needed high-quality bounding box annotations, semantic segmentation, and product classification across 200K+ images. They required fast turnaround with strict accuracy requirements.</p>
+                    </div>
+                    <div class="case-section">
+                        <h4>Solution</h4>
+                        <ul>
+                            <li>Assembled a 15-person dedicated annotation team</li>
+                            <li>Custom annotation guidelines & taxonomy</li>
+                            <li>Multi-stage QA pipeline (annotate → review → audit)</li>
+                            <li>Weekly quality reports and iterative guideline updates</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="case-metrics">
+                <div class="metric"><div class="metric-value">97.1%</div><div class="metric-label">Annotation Accuracy</div></div>
+                <div class="metric"><div class="metric-value">200K+</div><div class="metric-label">Images Annotated</div></div>
+                <div class="metric"><div class="metric-value">6 wks</div><div class="metric-label">Completion Time</div></div>
+                <div class="metric"><div class="metric-value">70%</div><div class="metric-label">Cost vs Competitors</div></div>
+            </div>
+        </div>
+
+        <!-- CASE STUDY 3: RLHF -->
+        <div class="case-study reveal">
+            <div class="case-header">
+                <span class="case-tag" style="background:rgba(168,85,247,0.15);color:#a855f7;">RLHF & LLM TRAINING</span>
+                <h3>RLHF Preference Data & Safety Evaluation for LLM Company</h3>
+                <div class="client-type">🏢 Client: US AI Research Lab &bull; 🤖 Type: LLM Alignment & Safety</div>
+            </div>
+            <div class="case-body">
+                <div class="case-grid">
+                    <div class="case-section">
+                        <h4>Challenge</h4>
+                        <p>A US-based AI research lab developing a large language model needed expert human evaluators to create RLHF preference rankings, conduct red teaming, and perform safety evaluation across English and 4 European languages before public deployment.</p>
+                    </div>
+                    <div class="case-section">
+                        <h4>Solution</h4>
+                        <ul>
+                            <li>Trained 20+ expert evaluators on specific alignment criteria</li>
+                            <li>Created pairwise preference data for reward model training</li>
+                            <li>Conducted adversarial red teaming in 5 languages</li>
+                            <li>Provided detailed safety reports with risk categorization</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="case-metrics">
+                <div class="metric"><div class="metric-value">25K+</div><div class="metric-label">Preference Pairs</div></div>
+                <div class="metric"><div class="metric-value">5</div><div class="metric-label">Languages Tested</div></div>
+                <div class="metric"><div class="metric-value">340+</div><div class="metric-label">Vulnerabilities Found</div></div>
+                <div class="metric"><div class="metric-value">94%</div><div class="metric-label">Evaluator Agreement</div></div>
+            </div>
+        </div>
+
+        <!-- CASE STUDY 4: Localization -->
+        <div class="case-study reveal">
+            <div class="case-header">
+                <span class="case-tag" style="background:rgba(245,158,11,0.15);color:#f59e0b;">LOCALIZATION & TRANSLATION</span>
+                <h3>Multilingual Translation Quality Evaluation for Enterprise AI Platform</h3>
+                <div class="client-type">🏢 Client: UK Enterprise Tech Company &bull; 🌍 Languages: 12 Languages</div>
+            </div>
+            <div class="case-body">
+                <div class="case-grid">
+                    <div class="case-section">
+                        <h4>Challenge</h4>
+                        <p>A UK-based enterprise technology company needed native-speaker linguists to evaluate machine translation quality, perform post-editing assessment, and score translation accuracy for their AI-powered localization platform across 12 target languages.</p>
+                    </div>
+                    <div class="case-section">
+                        <h4>Solution</h4>
+                        <ul>
+                            <li>Deployed native-speaker evaluators for 12 European languages</li>
+                            <li>MQM-based quality scoring methodology</li>
+                            <li>Error categorization (accuracy, fluency, terminology)</li>
+                            <li>Ongoing monthly evaluation cycles</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="case-metrics">
+                <div class="metric"><div class="metric-value">12</div><div class="metric-label">Languages Evaluated</div></div>
+                <div class="metric"><div class="metric-value">100K+</div><div class="metric-label">Segments Scored</div></div>
+                <div class="metric"><div class="metric-value">98%</div><div class="metric-label">Evaluator Consistency</div></div>
+                <div class="metric"><div class="metric-value">3 days</div><div class="metric-label">Avg Turnaround</div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section style="text-align:center;max-width:800px;">
+        <div class="reveal" style="background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(168,85,247,0.05));border:1px solid var(--border);border-radius:var(--radius-xl);padding:3rem;">
+            <h2>Want Similar <span class="gradient-text">Results</span>?</h2>
+            <p style="color:var(--text-secondary);margin:1rem 0 2rem;">Get a free consultation. Tell us about your AI data needs and we'll create a custom plan for your project.</p>
+            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+                <a href="contact.html" class="btn btn-primary">Get Free Consultation &rarr;</a>
+                <a href="https://wa.me/919544842260" class="btn btn-outline" target="_blank">💬 WhatsApp Us</a>
+            </div>
+        </div>
+    </section>
+
+    <footer><div class="footer-grid"><div class="footer-brand"><a href="index.html" class="logo-container" style="margin-bottom:0.5rem;"><img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'"><span class="logo-text">Evalis <span class="ai-badge">AI</span></span></a><p>AI data services company — search evaluation, data annotation, RLHF & LLM testing globally.</p><div class="social-links"><a href="https://www.facebook.com/share/14arF3zkgWU/" target="_blank">📘</a><a href="https://www.linkedin.com/company/evalis-ai/" target="_blank">💼</a><a href="https://wa.me/919544842260" target="_blank">💬</a></div></div><div class="footer-col"><h4>Services</h4><a href="services.html">AI Data Services</a><a href="geo/ai-data-labeling-company.html">Data Labeling</a><a href="geo/ai-search-evaluation-services.html">Search Evaluation</a></div><div class="footer-col"><h4>Company</h4><a href="about.html">About</a><a href="case-studies.html">Case Studies</a><a href="careers.html">Careers</a><a href="contact.html">Contact</a></div><div class="footer-col"><h4>Compare</h4><a href="geo/appen-alternative.html">vs Appen</a><a href="geo/telus-alternative.html">vs Telus</a><a href="geo/rws-alternative.html">vs RWS</a></div></div><div class="footer-bottom">&copy; 2026 Evalis AI — AI Data Services & Evaluation</div></footer>
+    <script src="js/main.js"></script><script src="js/supabase.js"></script><script src="js/ai-agent.js" defer></script><script src="js/tracker.js" defer></script>
+</body>
+</html>
