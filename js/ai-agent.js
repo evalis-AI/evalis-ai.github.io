@@ -343,7 +343,7 @@
     const responses = {
       'service': 'We offer 13 services: AI Data Services, Web & App Dev, SaaS Platforms, WhatsApp AI Chatbots, Custom AI Agent Builder, Workflow Automation, Document Intelligence, AI Lead Generation, Voice Agents, and GEO. Visit our <a href="services.html" style="color:#a5b4fc">Services page</a> for details!',
       'price': 'Our pricing varies by service. WhatsApp bots start at ₹25K, AI Agents at ₹50K, Automation at ₹30K, and GEO at ₹50K/month. Contact us at <a href="contact.html" style="color:#a5b4fc">our contact page</a> for a custom quote!',
-      'contact': 'Reach us at evalisglobal@gmail.com or WhatsApp <a href="https://wa.me/919544842260" style="color:#a5b4fc" target="_blank">+91 9544842260</a>. We reply within 24 hours!',
+      'contact': 'Reach us at info@evalisai.com or WhatsApp <a href="https://wa.me/919544842260" style="color:#a5b4fc" target="_blank">+91 9544842260</a>. We reply within 24 hours!',
       'whatsapp': 'Our WhatsApp AI Chatbot service builds RAG-powered bots trained on your product catalog. Auto-reply 24/7 in English, Malayalam & Hindi. Starting at ₹25,000! 💬',
       'chatbot': 'We build intelligent chatbots for WhatsApp and websites — trained on YOUR data with RAG technology. They answer accurately, capture leads, and book appointments automatically!',
       'agent': 'Our Custom AI Agent Builder creates a white-label AI assistant for your website in 48 hours! Trained on your docs, branded to you, with built-in analytics. Starting at ₹50,000! 🧠',

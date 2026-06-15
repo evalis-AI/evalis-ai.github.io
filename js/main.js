@@ -146,7 +146,7 @@ function initChatbot() {
         'hi': 'Hi there! Looking for AI services, web development, or SaaS solutions?',
         'services': 'We offer: AI Data Services, Web & App Development, SaaS Platform Development, AI Integration, and more! Visit our Services page for details.',
         'pricing': 'Our pricing is project-based. Contact us for a custom quote tailored to your needs!',
-        'contact': 'Reach us at evalisglobal@gmail.com or WhatsApp +919544842260. We reply within 24 hours!',
+        'contact': 'Reach us at info@evalisai.com or WhatsApp +919544842260. We reply within 24 hours!',
         'web': 'We build stunning, modern websites with Next.js, React, and cutting-edge tech. From landing pages to full-stack platforms!',
         'app': 'We develop mobile and web applications using React Native, Flutter, and progressive web technologies.',
         'saas': 'We architect and build complete SaaS platforms — from MVP to enterprise scale. Multi-tenant, secure, and scalable.',

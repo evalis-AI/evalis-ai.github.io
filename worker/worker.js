@@ -111,7 +111,7 @@ About Evalis AI:
 - Full-service AI & software company delivering global AI data services, web & app development, SaaS platforms, and next-gen AI solutions
 - Founded and headquartered in Perinthalmanna, Malappuram District, Kerala, India
 - Serving clients across all 14 districts of Kerala, pan-India, and worldwide
-- Contact: evalisglobal@gmail.com | WhatsApp: +91 9544842260
+- Contact: info@evalisai.com | WhatsApp: +91 9544842260
 - Website: https://evalisai.com
 
 Core Services:
@@ -238,7 +238,7 @@ export default {
         } catch (aiErr) {
           console.error('AI error:', aiErr);
           return json({
-            reply: "I'm currently experiencing high demand. Please try again in a moment, or contact us directly at evalisglobal@gmail.com!"
+            reply: "I'm currently experiencing high demand. Please try again in a moment, or contact us directly at info@evalisai.com!"
           }, 200, origin, env);
         }
       }
