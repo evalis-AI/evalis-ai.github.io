@@ -513,6 +513,102 @@ window.EVALIS_AGENT_CONFIG = {
         return json({ ok: true }, 200, origin, env);
       }
 
+      // ─── POST /api/notify — Visitor Notification (Email + WhatsApp) ───
+      if (url.pathname === '/api/notify' && request.method === 'POST') {
+        // Rate limit: max 30 notifications per minute to prevent spam
+        if (!checkRateLimit('notify:' + ip, 2, 300000)) {
+          return json({ ok: true, throttled: true }, 200, origin, env);
+        }
+
+        const body = await request.json();
+        const visitorPage = body.page || '/';
+        const visitorRef = body.referrer || 'direct';
+        const visitorDevice = body.device || 'unknown';
+        const visitorBrowser = body.browser || 'unknown';
+        const visitorLang = body.lang || 'en';
+        const visitorCountry = body.country || '';
+        const visitorCity = body.city || '';
+        const visitorRegion = body.region || '';
+        const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+        const locationStr = [visitorCity, visitorRegion, visitorCountry].filter(Boolean).join(', ') || 'Unknown location';
+
+        const notifMessage = `🔔 *New Visitor on Evalis AI*\n\n` +
+          `📍 Location: ${locationStr}\n` +
+          `📄 Page: ${visitorPage}\n` +
+          `🔗 Referrer: ${visitorRef}\n` +
+          `💻 Device: ${visitorDevice} / ${visitorBrowser}\n` +
+          `🌐 Language: ${visitorLang}\n` +
+          `🕐 Time: ${now} IST`;
+
+        // 1. Send WhatsApp notification (if WA_ACCESS_TOKEN is configured)
+        if (env.WA_ACCESS_TOKEN && env.WA_NOTIFY_PHONE_ID && env.WA_OWNER_NUMBER) {
+          try {
+            await fetch(`https://graph.facebook.com/v18.0/${env.WA_NOTIFY_PHONE_ID}/messages`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${env.WA_ACCESS_TOKEN}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                messaging_product: 'whatsapp',
+                to: env.WA_OWNER_NUMBER,
+                type: 'text',
+                text: { body: notifMessage },
+              }),
+            });
+          } catch(e) { console.error('WA notify error:', e); }
+        }
+
+        // 2. Send Email notification via MailChannels (free on Cloudflare Workers)
+        try {
+          await fetch('https://api.mailchannels.net/tx/v1/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              personalizations: [{
+                to: [{ email: env.NOTIFY_EMAIL || 'info@evalisai.com', name: 'Evalis AI' }],
+              }],
+              from: { email: 'noreply@evalisai.com', name: 'Evalis AI Tracker' },
+              subject: `🔔 New Visitor: ${locationStr} — ${visitorPage}`,
+              content: [{
+                type: 'text/plain',
+                value: notifMessage.replace(/\*/g, ''),
+              }, {
+                type: 'text/html',
+                value: `<div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;padding:20px;background:#0a0a0f;color:#e2e8f0;border-radius:12px;border:1px solid #1e293b;">
+                  <h2 style="color:#a5b4fc;margin:0 0 16px;">🔔 New Visitor on Evalis AI</h2>
+                  <table style="width:100%;border-collapse:collapse;">
+                    <tr><td style="padding:8px 0;color:#94a3b8;">📍 Location</td><td style="padding:8px 0;font-weight:600;">${locationStr}</td></tr>
+                    <tr><td style="padding:8px 0;color:#94a3b8;">📄 Page</td><td style="padding:8px 0;"><a href="https://evalisai.com${visitorPage}" style="color:#818cf8;">${visitorPage}</a></td></tr>
+                    <tr><td style="padding:8px 0;color:#94a3b8;">🔗 Referrer</td><td style="padding:8px 0;">${visitorRef}</td></tr>
+                    <tr><td style="padding:8px 0;color:#94a3b8;">💻 Device</td><td style="padding:8px 0;">${visitorDevice} / ${visitorBrowser}</td></tr>
+                    <tr><td style="padding:8px 0;color:#94a3b8;">🌐 Language</td><td style="padding:8px 0;">${visitorLang}</td></tr>
+                    <tr><td style="padding:8px 0;color:#94a3b8;">🕐 Time</td><td style="padding:8px 0;">${now} IST</td></tr>
+                  </table>
+                  <p style="margin:16px 0 0;font-size:12px;color:#64748b;">Evalis AI Visitor Tracker — evalisai.com</p>
+                </div>`,
+              }],
+            }),
+          });
+        } catch(e) { console.error('Email notify error:', e); }
+
+        // 3. Log notification to Supabase
+        try {
+          await supabaseInsert('visitor_notifications', {
+            ip_hash: ip.substring(0, 8) + '****',
+            location: locationStr.substring(0, 200),
+            page: visitorPage,
+            referrer: visitorRef.substring(0, 300),
+            device: visitorDevice,
+            browser: visitorBrowser,
+            language: visitorLang,
+          }, env);
+        } catch(e) { /* silent — table may not exist yet */ }
+
+        return json({ ok: true, notified: true }, 200, origin, env);
+      }
+
       // ─── POST /api/enquiry ───
       if (url.pathname === '/api/enquiry' && request.method === 'POST') {
         if (!checkRateLimit(ip, 3)) {

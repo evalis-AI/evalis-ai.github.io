@@ -134,6 +134,61 @@
     });
   });
 
+  // ── Visitor Notification (Email + WhatsApp) ──
+  // Only notifies ONCE per new visitor (not per page view)
+  const NOTIFIED_KEY = 'evalis_notified';
+  const NOTIFY_COOLDOWN = 24 * 60 * 60 * 1000; // 24 hours between notifications per visitor
+
+  async function sendVisitorNotification() {
+    const lastNotified = localStorage.getItem(NOTIFIED_KEY);
+    const now = Date.now();
+
+    // Skip if already notified within cooldown period
+    if (lastNotified && (now - parseInt(lastNotified)) < NOTIFY_COOLDOWN) return;
+
+    // Skip bots and crawlers
+    const ua = navigator.userAgent.toLowerCase();
+    if (/bot|crawl|spider|slurp|googlebot|bingbot|yandex|baidu/i.test(ua)) return;
+
+    try {
+      // Get visitor location from IP (free, no API key needed)
+      let geo = {};
+      try {
+        const geoRes = await fetch('https://ipinfo.io/json?token=', { signal: AbortSignal.timeout(3000) });
+        if (geoRes.ok) geo = await geoRes.json();
+      } catch(e) {
+        // Fallback: try without token
+        try {
+          const geoRes2 = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(3000) });
+          if (geoRes2.ok) {
+            const g = await geoRes2.json();
+            geo = { city: g.city, region: g.region, country: g.country_name };
+          }
+        } catch(e2) { /* proceed without geo */ }
+      }
+
+      // Send notification to our API
+      await fetch(`${API}/api/notify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          page: window.location.pathname,
+          referrer: document.referrer || 'direct',
+          ...getDeviceInfo(),
+          country: geo.country || '',
+          city: geo.city || '',
+          region: geo.region || '',
+        })
+      });
+
+      // Mark as notified
+      localStorage.setItem(NOTIFIED_KEY, now.toString());
+    } catch (e) { /* silent fail */ }
+  }
+
+  // Send notification after a 3-second delay (don't block page load)
+  setTimeout(sendVisitorNotification, 3000);
+
   console.log('[Evalis Tracker] Active — visitor:', getVisitorId());
 
 })();
