@@ -341,7 +341,20 @@
   function getLocalResponse(input) {
     const l = input.toLowerCase();
     const responses = {
-      'service': 'We offer 13 services: AI Data Services, Web & App Dev, SaaS Platforms, WhatsApp AI Chatbots, Custom AI Agent Builder, Workflow Automation, Document Intelligence, AI Lead Generation, Voice Agents, and GEO. Visit our <a href="services.html" style="color:#a5b4fc">Services page</a> for details!',
+      'rlhf': 'We provide high-quality RLHF training data — preference ranking, instruction tuning, DPO evaluation, and AI alignment datasets. Our expert evaluators handle complex reasoning and safety tasks for frontier LLMs. 🤖',
+      'reinforcement': 'RLHF (Reinforcement Learning from Human Feedback) is our core strength. We deliver preference data, reward model training sets, and alignment datasets for LLM training. <a href="geo/llm-testing-red-teaming.html" style="color:#a5b4fc">Learn more</a>',
+      'localization': 'We offer expert localization & translation QA in 20+ languages — English, German, French, Spanish, Dutch, Italian, Swedish, Arabic, Hindi, Japanese, Korean, and more. Native-speaker quality guaranteed! 🌍',
+      'translation': 'Multilingual translation & localization QA across 20+ languages with native speakers. We handle UI/UX localization, content translation, and linguistic testing for AI products. 🌐',
+      'moderation': 'Our content moderation services cover text, image, and video moderation for AI platforms. We handle trust & safety, policy enforcement, and harmful content detection at scale. 🛡️',
+      'content': 'We provide content moderation, content evaluation, and trust & safety services for AI platforms and social media. Expert human reviewers with strict NDA protection.',
+      'annotation': 'Expert data annotation & labeling services — text classification, NER, sentiment analysis, image annotation, bounding boxes, and multi-modal labeling. 95%+ accuracy guaranteed! 🏷️',
+      'labeling': 'Our data labeling team handles text, image, audio, and video annotation for ML training. Dedicated teams, not crowdsourced — ensuring consistent quality. <a href="geo/ai-data-labeling-company.html" style="color:#a5b4fc">Learn more</a>',
+      'search': 'Search Quality Evaluation is one of our flagship services. We rate search relevance, evaluate query results, and improve search engine quality for global platforms. 🔍',
+      'evaluation': 'We specialize in AI model evaluation — search relevance rating, LLM output quality assessment, and benchmark testing. <a href="geo/ai-search-evaluation-services.html" style="color:#a5b4fc">Learn more</a>',
+      'red team': 'Our LLM Red Teaming service tests AI models for safety vulnerabilities, bias, harmful outputs, and jailbreak resistance. Essential for responsible AI deployment. ⚡',
+      'safety': 'AI safety testing & red teaming for LLMs — we identify vulnerabilities, test guardrails, and help you build safer AI products. <a href="geo/llm-testing-red-teaming.html" style="color:#a5b4fc">Learn more</a>',
+      'dpo': 'Direct Preference Optimization (DPO) data collection and evaluation. We provide expert human preferences for training reward models and alignment. 🧠',
+      'service': 'We offer AI Data Services (RLHF, data annotation, search evaluation, content moderation, localization), Web & App Dev, SaaS Platforms, AI Agents, Automation, and GEO. Visit our <a href="services.html" style="color:#a5b4fc">Services page</a>!',
       'price': 'Our pricing is custom — tailored to your project scope, volume, and requirements. We offer competitive global rates with no hidden fees. <a href="contact.html" style="color:#a5b4fc">Contact us</a> for a free consultation and quote!',
       'cost': 'We provide custom pricing based on project scope and requirements. <a href="contact.html" style="color:#a5b4fc">Get a free quote</a> — no obligation!',
       'contact': 'Reach us at info@evalisai.com or WhatsApp <a href="https://wa.me/919544842260" style="color:#a5b4fc" target="_blank">+91 9544842260</a>. We reply within 24 hours!',
@@ -359,16 +372,20 @@
       'web': 'We build stunning websites with React, Next.js, and modern tech stacks — from landing pages to enterprise platforms!',
       'app': 'We develop cross-platform mobile and desktop apps using React Native, Flutter, and PWA technologies.',
       'saas': 'We architect complete SaaS platforms with multi-tenancy, auth, billing, and analytics — from MVP to enterprise.',
-      'ai': 'We integrate AI into businesses: custom chatbots, WhatsApp bots, workflow automation, document processing, lead gen agents, voice AI, and more!',
-      'hello': 'Hello! 👋 Welcome to Evalis AI. How can I help you today? Ask me about our 13 services!',
-      'hi': 'Hi there! 👋 Looking for WhatsApp AI bots, custom agents, workflow automation, or web development?',
-      'kerala': 'We\'re based in Perinthalmanna, Kerala 🌴 — serving clients across India and worldwide!',
-      'location': 'Our headquarters are in Perinthalmanna, Malappuram, Kerala, India. We serve clients globally!',
+      'ai': 'We provide AI data services (RLHF, annotation, evaluation, moderation, localization), custom AI agents, chatbots, workflow automation, and more! 🤖',
+      'appen': 'Looking for an Appen alternative? Evalis AI provides dedicated expert teams instead of anonymous crowds — higher accuracy, faster turnaround, and 60-70% lower costs. <a href="geo/appen-alternative.html" style="color:#a5b4fc">Compare us</a>',
+      'telus': 'Evalis AI is a trusted Telus Digital alternative with dedicated teams, NDA-protected projects, and competitive global rates. <a href="geo/telus-alternative.html" style="color:#a5b4fc">See comparison</a>',
+      'scale': 'Unlike Scale AI, we offer dedicated teams (not crowd workers) with personal project management. Same services — RLHF, annotation, evaluation — at significantly lower costs.',
+      'hello': 'Hello! 👋 Welcome to Evalis AI. How can I help you? We offer RLHF training data, data annotation, search evaluation, content moderation, localization, and AI development services!',
+      'hi': 'Hi there! 👋 Looking for RLHF data, data annotation, search evaluation, AI agents, or web development? Ask me anything!',
+      'kerala': 'We\'re based in Perinthalmanna, Kerala 🌴 — serving AI labs and enterprises across India and worldwide!',
+      'location': 'Our headquarters are in Perinthalmanna, Malappuram, Kerala, India. We serve clients globally — USA, UK, Europe, Middle East, and Asia Pacific!',
+      'language': 'We support 20+ languages: English, German, French, Spanish, Dutch, Italian, Portuguese, Swedish, Danish, Norwegian, Finnish, Polish, Arabic, Hindi, Japanese, Korean, Chinese, and more! 🌍',
     };
     for (const [key, val] of Object.entries(responses)) {
       if (l.includes(key)) return val;
     }
-    return "Thanks for reaching out! I can help with <strong>WhatsApp AI Chatbots</strong>, <strong>Custom AI Agents</strong>, <strong>Workflow Automation</strong>, <strong>Document Intelligence</strong>, <strong>Web/App Development</strong>, and more. What interests you?";
+    return "Thanks for reaching out! I can help with <strong>RLHF Training Data</strong>, <strong>Data Annotation</strong>, <strong>Search Evaluation</strong>, <strong>Content Moderation</strong>, <strong>Localization</strong>, <strong>AI Agents</strong>, <strong>Web/App Development</strong>, and more. What interests you?";
   }
 
   // ── Voice Input (Speech Recognition) ──
