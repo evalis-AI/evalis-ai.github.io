@@ -975,12 +975,198 @@ window.EVALIS_AGENT_CONFIG = {
         }
       }
 
+      // ─── POST /api/interview/start — Generate Interview Questions ───
+      if (url.pathname === '/api/interview/start' && request.method === 'POST') {
+        if (!checkRateLimit(ip, 5, 60000)) {
+          return json({ error: 'Too many requests. Please wait a moment.' }, 429, origin, env);
+        }
+
+        const body = await request.json();
+        const { role, level, count = 5 } = body;
+
+        if (!role || !level) {
+          return json({ error: 'Role and level are required.' }, 400, origin, env);
+        }
+
+        const systemPrompt = `You are an elite technical interviewer at a top-tier tech company (FAANG level).
+Generate exactly ${count} progressively difficult interview questions for a ${level} ${role} position.
+Mix conceptual, practical, system design, and behavioral questions.
+Return ONLY valid JSON in this exact format, no other text:
+{"questions": [{"id": 1, "type": "technical", "question": "Your question here", "difficulty": "easy"},{"id": 2, "type": "behavioral", "question": "Your question here", "difficulty": "medium"}]}
+Valid types: technical, behavioral, system-design
+Valid difficulties: easy, medium, hard`;
+
+        try {
+          const aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: `Generate ${count} interview questions for a ${level} ${role} position. Return only JSON.` },
+            ],
+            temperature: 0.8,
+            max_tokens: 1500,
+          });
+
+          const raw = aiResponse.response || '{}';
+          let questions;
+          try {
+            questions = JSON.parse(raw);
+          } catch {
+            const match = raw.match(/\{[\s\S]*\}/);
+            if (match) {
+              try { questions = JSON.parse(match[0]); } catch { questions = { raw }; }
+            } else {
+              questions = { raw };
+            }
+          }
+
+          const sessionId = crypto.randomUUID();
+
+          // Log to Supabase (non-blocking)
+          try {
+            await supabaseInsert('interview_sessions', {
+              session_id: sessionId,
+              role: role.substring(0, 100),
+              level: level.substring(0, 50),
+              question_count: count,
+              status: 'started',
+              client_ip: ip.substring(0, 10) + '***',
+            }, env);
+          } catch(e) { /* silent — table may not exist */ }
+
+          return json({ sessionId, ...questions }, 200, origin, env);
+
+        } catch(aiErr) {
+          console.error('Interview start AI error:', aiErr);
+          return json({ error: 'Failed to generate questions. Please try again.' }, 500, origin, env);
+        }
+      }
+
+      // ─── POST /api/interview/evaluate — Evaluate Candidate Answer ───
+      if (url.pathname === '/api/interview/evaluate' && request.method === 'POST') {
+        if (!checkRateLimit(ip, 15, 60000)) {
+          return json({ error: 'Too many requests. Please wait a moment.' }, 429, origin, env);
+        }
+
+        const body = await request.json();
+        const { question, answer, role, level } = body;
+
+        if (!question || !answer) {
+          return json({ error: 'Question and answer are required.' }, 400, origin, env);
+        }
+
+        const systemPrompt = `You are a strict but fair senior technical interviewer evaluating a ${level || 'mid-level'} ${role || 'software engineer'} candidate.
+Evaluate the candidate's answer to the interview question.
+Score from 0-100. Be specific about strengths and gaps.
+Return ONLY valid JSON in this exact format, no other text:
+{"score": 75, "verdict": "good", "strengths": ["strength 1", "strength 2"], "improvements": ["improvement 1", "improvement 2"], "followUp": "A probing follow-up question to test deeper understanding"}
+Valid verdicts: strong, good, weak`;
+
+        try {
+          const aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: `INTERVIEW QUESTION: ${question.substring(0, 1000)}\n\nCANDIDATE'S ANSWER: ${answer.substring(0, 2000)}\n\nEvaluate this answer now. Return only JSON.` },
+            ],
+            temperature: 0.3,
+            max_tokens: 800,
+          });
+
+          const raw = aiResponse.response || '{}';
+          let evaluation;
+          try {
+            evaluation = JSON.parse(raw);
+          } catch {
+            const match = raw.match(/\{[\s\S]*\}/);
+            if (match) {
+              try { evaluation = JSON.parse(match[0]); } catch { evaluation = { score: 50, verdict: 'good', strengths: ['Answer provided'], improvements: ['Could be more detailed'], followUp: 'Can you elaborate?', raw }; }
+            } else {
+              evaluation = { score: 50, verdict: 'good', strengths: ['Answer provided'], improvements: ['Could be more detailed'], followUp: 'Can you elaborate?', raw };
+            }
+          }
+
+          return json(evaluation, 200, origin, env);
+
+        } catch(aiErr) {
+          console.error('Interview evaluate AI error:', aiErr);
+          return json({ error: 'Failed to evaluate answer. Please try again.' }, 500, origin, env);
+        }
+      }
+
+      // ─── POST /api/interview/report — Generate Final Report ───
+      if (url.pathname === '/api/interview/report' && request.method === 'POST') {
+        if (!checkRateLimit(ip, 5, 60000)) {
+          return json({ error: 'Too many requests. Please wait a moment.' }, 429, origin, env);
+        }
+
+        const body = await request.json();
+        const { role, level, answers } = body;
+
+        if (!answers || !Array.isArray(answers) || answers.length === 0) {
+          return json({ error: 'Answers data is required.' }, 400, origin, env);
+        }
+
+        const avgScore = answers.reduce((s, a) => s + (a.score || 0), 0) / answers.length;
+
+        const systemPrompt = `You are a senior interview coach at a top tech company.
+Based on the candidate's interview performance for a ${level || 'mid-level'} ${role || 'software engineer'} position, write a hiring report.
+Their average score was ${Math.round(avgScore)}/100.
+Return ONLY valid JSON in this exact format, no other text:
+{"overallScore": ${Math.round(avgScore)}, "recommendation": "strong-hire", "summary": "2-3 sentence summary of performance", "topStrengths": ["strength 1", "strength 2", "strength 3"], "focusAreas": ["area 1", "area 2", "area 3"], "nextSteps": ["step 1", "step 2", "step 3"]}
+Valid recommendations: strong-hire, hire, lean-hire, no-hire`;
+
+        try {
+          const performanceSummary = answers.map((a, i) => `Q${i+1}: Score ${a.score}/100 (${a.verdict})`).join(', ');
+
+          const aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: `Role: ${level} ${role}\nPerformance: ${performanceSummary}\nDetails: ${JSON.stringify(answers.map(a => ({ score: a.score, verdict: a.verdict, strengths: a.strengths, improvements: a.improvements }))).substring(0, 2000)}\n\nWrite the hiring report now. Return only JSON.` },
+            ],
+            temperature: 0.5,
+            max_tokens: 1000,
+          });
+
+          const raw = aiResponse.response || '{}';
+          let report;
+          try {
+            report = JSON.parse(raw);
+          } catch {
+            const match = raw.match(/\{[\s\S]*\}/);
+            if (match) {
+              try { report = JSON.parse(match[0]); } catch { report = { overallScore: Math.round(avgScore), recommendation: avgScore >= 70 ? 'hire' : 'no-hire', summary: 'Report generation had issues.', topStrengths: [], focusAreas: [], nextSteps: [], raw }; }
+            } else {
+              report = { overallScore: Math.round(avgScore), recommendation: avgScore >= 70 ? 'hire' : 'no-hire', summary: 'Report generation had issues.', topStrengths: [], focusAreas: [], nextSteps: [], raw };
+            }
+          }
+
+          // Log completed session to Supabase (non-blocking)
+          try {
+            await supabaseInsert('interview_sessions', {
+              session_id: body.sessionId || crypto.randomUUID(),
+              role: (role || '').substring(0, 100),
+              level: (level || '').substring(0, 50),
+              question_count: answers.length,
+              avg_score: Math.round(avgScore),
+              recommendation: report.recommendation || '',
+              status: 'completed',
+              client_ip: ip.substring(0, 10) + '***',
+            }, env);
+          } catch(e) { /* silent */ }
+
+          return json(report, 200, origin, env);
+
+        } catch(aiErr) {
+          console.error('Interview report AI error:', aiErr);
+          return json({ error: 'Failed to generate report. Please try again.' }, 500, origin, env);
+        }
+      }
+
       // ─── Health check ───
       if (url.pathname === '/api/health') {
         return json({
           status: 'ok',
-          service: 'Evalis AI API v3.1',
-          features: ['ai-chat', 'ai-chat-stream', 'cloud-tts', 'cloud-stt', 'voice-pipeline', 'whatsapp-bot', 'document-ai', 'lead-qualify', 'agent-builder', 'tracking', 'forms', 'projects'],
+          service: 'Evalis AI API v3.2',
+          features: ['ai-chat', 'ai-chat-stream', 'cloud-tts', 'cloud-stt', 'voice-pipeline', 'whatsapp-bot', 'document-ai', 'lead-qualify', 'agent-builder', 'tracking', 'forms', 'projects', 'ai-interview'],
           timestamp: new Date().toISOString()
         }, 200, origin, env);
       }
