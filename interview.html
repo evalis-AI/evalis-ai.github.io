@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interview Platform — Candidate Evaluation | Evalis AI</title>
+    <meta name="description" content="Evalis AI internal candidate evaluation platform. Conduct AI-powered technical interviews with automated scoring, detailed feedback, and hiring recommendations.">
+    <meta name="keywords" content="AI interview platform, candidate evaluation, technical interview, hiring tool, AI scoring, interview assessment">
+    <link rel="canonical" href="https://evalisai.com/interview.html">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Evalis AI">
+    <meta name="theme-color" content="#0a0a0f">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://evalisai.com/interview.html">
+    <meta property="og:title" content="AI Interview Platform — Evalis AI">
+    <meta property="og:description" content="Internal candidate evaluation with AI-powered scoring, detailed feedback, and hiring recommendations.">
+    <meta property="og:image" content="https://evalisai.com/cover.png">
+    <meta property="og:site_name" content="Evalis AI">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AI Interview Platform — Evalis AI">
+    <meta name="twitter:description" content="Internal candidate evaluation with AI-powered scoring and feedback.">
+    <meta name="twitter:image" content="https://evalisai.com/cover.png">
+
+    <link rel="icon" type="image/png" href="favicon-96x96.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Evalis AI Interview Platform",
+      "url": "https://evalisai.com/interview.html",
+      "description": "Internal AI-powered candidate evaluation platform with automated scoring and hiring recommendations",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Web Browser",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "creator": { "@type": "Organization", "name": "Evalis AI", "url": "https://evalisai.com" }
+    }
+    </script>
+
+    <style>
+        /* ═══════════════════════════════════════════
+           DESIGN SYSTEM — NeoInterview AI
+           ═══════════════════════════════════════════ */
+        :root {
+            --bg-primary: #06080f;
+            --bg-secondary: #0c1021;
+            --bg-card: #111627;
+            --bg-card-hover: #161d35;
+            --bg-input: #0a0e1c;
+            --bg-glass: rgba(17, 22, 39, 0.75);
+
+            --accent-indigo: #6366f1;
+            --accent-indigo-light: #818cf8;
+            --accent-cyan: #06b6d4;
+            --accent-cyan-light: #22d3ee;
+            --accent-violet: #8b5cf6;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+
+            --gradient-primary: linear-gradient(135deg, #6366f1, #06b6d4);
+            --gradient-warm: linear-gradient(135deg, #f59e0b, #f43f5e);
+            --gradient-cool: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            --gradient-success: linear-gradient(135deg, #10b981, #06b6d4);
+
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+
+            --border: rgba(99, 102, 241, 0.12);
+            --border-hover: rgba(99, 102, 241, 0.3);
+            --border-active: rgba(99, 102, 241, 0.5);
+
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+            --shadow-md: 0 8px 32px rgba(0,0,0,0.4);
+            --shadow-lg: 0 16px 64px rgba(0,0,0,0.5);
+            --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.15);
+
+            --transition-fast: 0.15s ease;
+            --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Animated background ── */
+        .bg-mesh {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background:
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(99,102,241,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 80% 90%, rgba(6,182,212,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 50% at 50% 50%, rgba(139,92,246,0.04) 0%, transparent 60%);
+        }
+
+        .bg-grid {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image:
+                linear-gradient(rgba(99,102,241,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99,102,241,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 20%, transparent 70%);
+        }
+
+        /* ── Navigation ── */
+        .nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(6, 8, 15, 0.85);
+            backdrop-filter: blur(20px) saturate(1.5);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+        }
+        .nav-inner {
+            max-width: 1200px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between;
+            height: 64px;
+        }
+        .nav-brand {
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none; color: var(--text-primary);
+        }
+        .nav-brand img { height: 32px; width: auto; }
+        .nav-brand-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700; font-size: 1.2rem;
+        }
+        .nav-brand .ai-tag {
+            background: var(--gradient-primary);
+            color: white; font-size: 0.65rem; font-weight: 700;
+            padding: 2px 7px; border-radius: 6px; margin-left: 2px;
+            letter-spacing: 0.5px;
+        }
+        .nav-links { display: flex; align-items: center; gap: 8px; }
+        .nav-links a {
+            color: var(--text-secondary); text-decoration: none;
+            font-size: 0.88rem; font-weight: 500;
+            padding: 6px 14px; border-radius: var(--radius-sm);
+            transition: var(--transition-fast);
+        }
+        .nav-links a:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
+        .nav-links a.active { color: var(--accent-indigo-light); }
+        .nav-cta {
+            background: var(--gradient-primary) !important;
+            color: white !important; font-weight: 600 !important;
+            padding: 8px 18px !important; border-radius: var(--radius-sm) !important;
+        }
+        .nav-cta:hover { opacity: 0.9; transform: translateY(-1px); }
+        .nav-mobile-toggle {
+            display: none; background: none; border: none;
+            color: var(--text-primary); font-size: 1.5rem; cursor: pointer;
+        }
+
+        /* ── Main content ── */
+        .main {
+            position: relative; z-index: 1;
+            max-width: 900px; margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        /* ── Screen transitions ── */
+        .screen {
+            display: none;
+            animation: screenIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .screen.active { display: block; }
+        @keyframes screenIn {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Hero / Header ── */
+        .page-hero {
+            text-align: center; padding: 3rem 0 2.5rem;
+        }
+        .page-hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2);
+            padding: 6px 16px; border-radius: 100px;
+            font-size: 0.8rem; font-weight: 600;
+            color: var(--accent-indigo-light);
+            margin-bottom: 1.2rem;
+        }
+        .page-hero-badge .pulse {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--accent-emerald);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
+            50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(16,185,129,0); }
+        }
+        .page-hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800; line-height: 1.15;
+            margin-bottom: 1rem;
+        }
+        .page-hero h1 .gradient {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .page-hero p {
+            color: var(--text-secondary); font-size: 1.1rem;
+            max-width: 600px; margin: 0 auto; line-height: 1.7;
+        }
+
+        /* ── Cards ── */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-normal);
+            position: relative; overflow: hidden;
+        }
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(99,102,241,0.3), transparent);
+        }
+        .card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-glow); }
+        .card + .card { margin-top: 1.5rem; }
+
+        .card-header {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+        .card-icon {
+            width: 44px; height: 44px; border-radius: var(--radius-md);
+            background: var(--gradient-primary);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; flex-shrink: 0;
+        }
+        .card-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700; font-size: 1.15rem;
+        }
+        .card-subtitle {
+            color: var(--text-muted); font-size: 0.82rem; margin-top: 2px;
+        }
+
+        /* ── Form elements ── */
+        .form-group { margin-bottom: 1.25rem; }
+        .form-label {
+            display: block; margin-bottom: 6px;
+            font-size: 0.85rem; font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: 0.3px;
+        }
+        .form-input, .form-select, .form-textarea {
+            width: 100%; padding: 12px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-family: inherit; font-size: 0.95rem;
+            transition: var(--transition-fast);
+            outline: none;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--accent-indigo);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+        }
+        .form-input::placeholder, .form-textarea::placeholder {
+            color: var(--text-muted);
+        }
+        .form-select {
+            appearance: none; cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
+        }
+        .form-select option {
+            background: var(--bg-card); color: var(--text-primary);
+        }
+        .form-textarea {
+            resize: vertical; min-height: 140px;
+            font-family: inherit; line-height: 1.6;
+        }
+        .form-row {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+        }
+
+        /* ── Buttons ── */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 13px 28px; border-radius: var(--radius-md);
+            font-family: inherit; font-size: 0.95rem; font-weight: 600;
+            cursor: pointer; border: none;
+            transition: var(--transition-normal);
+            text-decoration: none; letter-spacing: 0.2px;
+        }
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white; box-shadow: 0 4px 16px rgba(99,102,241,0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(99,102,241,0.4);
+        }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-primary:disabled {
+            opacity: 0.4; cursor: not-allowed; transform: none;
+            box-shadow: none;
+        }
+        .btn-secondary {
+            background: rgba(99,102,241,0.1);
+            border: 1px solid rgba(99,102,241,0.2);
+            color: var(--accent-indigo-light);
+        }
+        .btn-secondary:hover {
+            background: rgba(99,102,241,0.2);
+            border-color: rgba(99,102,241,0.4);
+        }
+        .btn-ghost {
+            background: transparent; color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+        .btn-full { width: 100%; }
+        .btn-lg { padding: 16px 32px; font-size: 1.05rem; border-radius: var(--radius-lg); }
+
+        .btn-group {
+            display: flex; gap: 0.75rem; margin-top: 1.5rem;
+        }
+        .btn-group .btn { flex: 1; }
+
+        /* ── Loading spinner ── */
+        .spinner {
+            width: 20px; height: 20px;
+            border: 2.5px solid rgba(255,255,255,0.2);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading-overlay {
+            position: absolute; inset: 0;
+            background: rgba(6, 8, 15, 0.8);
+            backdrop-filter: blur(4px);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 16px; border-radius: var(--radius-lg);
+            z-index: 10;
+        }
+        .loading-overlay .spinner { width: 36px; height: 36px; border-width: 3px; }
+        .loading-text {
+            color: var(--text-secondary); font-size: 0.9rem; font-weight: 500;
+        }
+
+        /* ── Progress bar ── */
+        .progress-container { margin-bottom: 2rem; }
+        .progress-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px;
+        }
+        .progress-label {
+            font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);
+        }
+        .progress-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem; color: var(--accent-cyan-light);
+            font-weight: 500;
+        }
+        .progress-track {
+            height: 6px; border-radius: 100px;
+            background: rgba(99,102,241,0.1);
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; border-radius: 100px;
+            background: var(--gradient-primary);
+            transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .progress-steps {
+            display: flex; gap: 6px; margin-top: 10px;
+        }
+        .progress-dot {
+            flex: 1; height: 4px; border-radius: 100px;
+            background: rgba(99,102,241,0.15);
+            transition: var(--transition-normal);
+        }
+        .progress-dot.done { background: var(--accent-indigo); }
+        .progress-dot.current { background: var(--accent-cyan); }
+
+        /* ── Timer ── */
+        .timer-bar {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 16px;
+            background: rgba(99,102,241,0.06);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            margin-bottom: 1.5rem;
+        }
+        .timer-icon { font-size: 1.1rem; }
+        .timer-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem; font-weight: 500;
+            color: var(--accent-cyan-light);
+        }
+        .timer-value.warning { color: var(--accent-amber); }
+        .timer-value.danger { color: var(--accent-rose); animation: timerBlink 1s infinite; }
+        @keyframes timerBlink {
+            0%, 100% { opacity: 1; } 50% { opacity: 0.4; }
+        }
+        .timer-label {
+            color: var(--text-muted); font-size: 0.8rem;
+            margin-left: auto;
+        }
+
+        /* ── Question display ── */
+        .question-meta {
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 12px; flex-wrap: wrap;
+        }
+        .question-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem; font-weight: 600;
+            color: var(--accent-cyan-light);
+            background: rgba(6,182,212,0.1);
+            border: 1px solid rgba(6,182,212,0.2);
+            padding: 4px 10px; border-radius: 100px;
+        }
+        .badge {
+            display: inline-flex; align-items: center;
+            padding: 4px 12px; border-radius: 100px;
+            font-size: 0.72rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .badge-easy { background: rgba(16,185,129,0.12); color: var(--accent-emerald); border: 1px solid rgba(16,185,129,0.2); }
+        .badge-medium { background: rgba(245,158,11,0.12); color: var(--accent-amber); border: 1px solid rgba(245,158,11,0.2); }
+        .badge-hard { background: rgba(244,63,94,0.12); color: var(--accent-rose); border: 1px solid rgba(244,63,94,0.2); }
+        .badge-type {
+            background: rgba(139,92,246,0.12); color: var(--accent-violet);
+            border: 1px solid rgba(139,92,246,0.2);
+        }
+        .question-text {
+            font-size: 1.2rem; line-height: 1.65;
+            font-weight: 500; margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        /* ── Score ring ── */
+        .score-display {
+            display: flex; flex-direction: column;
+            align-items: center; gap: 12px;
+            padding: 2rem 0;
+        }
+        .score-ring-container {
+            position: relative; width: 160px; height: 160px;
+        }
+        .score-ring-canvas {
+            width: 160px; height: 160px;
+        }
+        .score-ring-value {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+        .score-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.8rem; font-weight: 800;
+            line-height: 1;
+        }
+        .score-label {
+            font-size: 0.78rem; font-weight: 600;
+            color: var(--text-muted); text-transform: uppercase;
+            letter-spacing: 1px; margin-top: 4px;
+        }
+
+        /* ── Verdict badge ── */
+        .verdict {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 8px 20px; border-radius: 100px;
+            font-weight: 700; font-size: 0.85rem;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .verdict-strong { background: rgba(16,185,129,0.12); color: var(--accent-emerald); border: 1px solid rgba(16,185,129,0.25); }
+        .verdict-good { background: rgba(6,182,212,0.12); color: var(--accent-cyan-light); border: 1px solid rgba(6,182,212,0.25); }
+        .verdict-weak { background: rgba(244,63,94,0.12); color: var(--accent-rose); border: 1px solid rgba(244,63,94,0.25); }
+
+        /* ── Feedback lists ── */
+        .feedback-section { margin-top: 1.5rem; }
+        .feedback-section-title {
+            display: flex; align-items: center; gap: 8px;
+            font-weight: 700; font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        .feedback-section-title .icon {
+            width: 24px; height: 24px; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem;
+        }
+        .feedback-section-title .icon-green { background: rgba(16,185,129,0.15); color: var(--accent-emerald); }
+        .feedback-section-title .icon-amber { background: rgba(245,158,11,0.15); color: var(--accent-amber); }
+        .feedback-section-title .icon-cyan { background: rgba(6,182,212,0.15); color: var(--accent-cyan-light); }
+        .feedback-list {
+            list-style: none; display: flex; flex-direction: column; gap: 8px;
+        }
+        .feedback-item {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.02);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem; line-height: 1.5;
+            color: var(--text-secondary);
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+        .feedback-item .bullet {
+            flex-shrink: 0; margin-top: 4px;
+            width: 6px; height: 6px; border-radius: 50%;
+        }
+        .bullet-green { background: var(--accent-emerald); }
+        .bullet-amber { background: var(--accent-amber); }
+
+        .follow-up-box {
+            margin-top: 1.5rem; padding: 16px 20px;
+            background: rgba(139,92,246,0.06);
+            border: 1px solid rgba(139,92,246,0.15);
+            border-radius: var(--radius-md);
+        }
+        .follow-up-label {
+            font-size: 0.78rem; font-weight: 700;
+            color: var(--accent-violet);
+            text-transform: uppercase; letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .follow-up-text {
+            color: var(--text-secondary); font-size: 0.92rem;
+            line-height: 1.5; font-style: italic;
+        }
+
+        /* ── Report screen ── */
+        .report-header {
+            text-align: center; padding: 2rem 0;
+        }
+        .report-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem;
+        }
+        .report-header p {
+            color: var(--text-secondary); font-size: 0.95rem;
+        }
+
+        .recommendation-badge {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 12px 28px; border-radius: 100px;
+            font-weight: 800; font-size: 1rem;
+            text-transform: uppercase; letter-spacing: 1px;
+            margin: 1rem 0;
+        }
+        .rec-strong-hire { background: rgba(16,185,129,0.12); color: var(--accent-emerald); border: 2px solid rgba(16,185,129,0.3); }
+        .rec-hire { background: rgba(6,182,212,0.12); color: var(--accent-cyan-light); border: 2px solid rgba(6,182,212,0.3); }
+        .rec-lean-hire { background: rgba(245,158,11,0.12); color: var(--accent-amber); border: 2px solid rgba(245,158,11,0.3); }
+        .rec-no-hire { background: rgba(244,63,94,0.12); color: var(--accent-rose); border: 2px solid rgba(244,63,94,0.3); }
+
+        .report-summary {
+            font-size: 1.05rem; line-height: 1.7;
+            color: var(--text-secondary);
+            text-align: center; max-width: 640px;
+            margin: 0 auto 2rem;
+        }
+
+        .report-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 1.25rem; margin-top: 1.5rem;
+        }
+        .report-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+        }
+        .report-card-title {
+            display: flex; align-items: center; gap: 8px;
+            font-weight: 700; font-size: 0.88rem;
+            margin-bottom: 12px;
+        }
+        .report-card-list {
+            list-style: none; display: flex;
+            flex-direction: column; gap: 8px;
+        }
+        .report-card-list li {
+            display: flex; align-items: flex-start; gap: 8px;
+            font-size: 0.88rem; color: var(--text-secondary);
+            line-height: 1.4;
+        }
+        .report-card-list li .num {
+            flex-shrink: 0; width: 22px; height: 22px;
+            border-radius: 6px; display: flex;
+            align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: 700;
+            background: rgba(99,102,241,0.1);
+            color: var(--accent-indigo-light);
+        }
+
+        /* ── Question history timeline ── */
+        .question-timeline {
+            margin-top: 2rem;
+        }
+        .timeline-item {
+            display: flex; gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .timeline-item:last-child { border-bottom: none; }
+        .timeline-score {
+            flex-shrink: 0; width: 52px; height: 52px;
+            border-radius: var(--radius-md);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 800; font-size: 1.1rem;
+        }
+        .timeline-score.high { background: rgba(16,185,129,0.12); color: var(--accent-emerald); }
+        .timeline-score.mid { background: rgba(6,182,212,0.12); color: var(--accent-cyan-light); }
+        .timeline-score.low { background: rgba(244,63,94,0.12); color: var(--accent-rose); }
+        .timeline-content { flex: 1; }
+        .timeline-question {
+            font-size: 0.9rem; font-weight: 500;
+            margin-bottom: 4px; line-height: 1.4;
+        }
+        .timeline-verdict {
+            font-size: 0.78rem; color: var(--text-muted);
+        }
+
+        /* ── Role suggestion pills ── */
+        .role-suggestions {
+            display: flex; flex-wrap: wrap; gap: 8px;
+            margin-top: 8px;
+        }
+        .role-pill {
+            padding: 6px 14px; border-radius: 100px;
+            background: rgba(99,102,241,0.08);
+            border: 1px solid rgba(99,102,241,0.15);
+            color: var(--text-secondary);
+            font-size: 0.82rem; font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+        .role-pill:hover {
+            background: rgba(99,102,241,0.15);
+            border-color: rgba(99,102,241,0.3);
+            color: var(--accent-indigo-light);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .nav-mobile-toggle { display: block; }
+            .main { padding: 1.5rem 1rem 3rem; }
+            .form-row { grid-template-columns: 1fr; }
+            .page-hero { padding: 2rem 0 1.5rem; }
+            .page-hero h1 { font-size: 1.8rem; }
+            .report-grid { grid-template-columns: 1fr; }
+            .card { padding: 1.5rem; }
+            .btn-group { flex-direction: column; }
+            .question-text { font-size: 1.05rem; }
+        }
+
+        /* ── Utility ── */
+        .text-center { text-align: center; }
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mt-4 { margin-top: 2rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .hidden { display: none !important; }
+        .fade-in { animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* ── Error state ── */
+        .error-banner {
+            padding: 12px 18px;
+            background: rgba(244,63,94,0.08);
+            border: 1px solid rgba(244,63,94,0.2);
+            border-radius: var(--radius-md);
+            color: var(--accent-rose);
+            font-size: 0.88rem; font-weight: 500;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        .error-banner.show { display: flex; align-items: center; gap: 8px; }
+
+        /* ── Footer ── */
+        .page-footer {
+            text-align: center; padding: 2rem 1rem;
+            border-top: 1px solid var(--border);
+            margin-top: 3rem;
+        }
+        .page-footer p {
+            color: var(--text-muted); font-size: 0.82rem;
+        }
+        .page-footer a {
+            color: var(--accent-indigo-light);
+            text-decoration: none;
+        }
+        .page-footer a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="bg-mesh"></div>
+    <div class="bg-grid"></div>
+
+    <!-- NAVIGATION -->
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-brand">
+                <img src="logo.png" alt="Evalis AI" onerror="this.style.display='none'">
+                <span class="nav-brand-text">Evalis <span class="ai-tag">AI</span></span>
+            </a>
+            <button class="nav-mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('show')" aria-label="Toggle menu">☰</button>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="services.html">Services</a>
+                <a href="projects.html">Projects</a>
+                <a href="interview.html" class="active">Interview</a>
+                <a href="about.html">About</a>
+                <a href="contact.html" class="nav-cta">Contact →</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main">
+        <!-- ═══════════════════════════════════════
+             SCREEN 1: SETUP
+             ═══════════════════════════════════════ -->
+        <div id="screen-setup" class="screen active">
+            <div class="page-hero">
+                <div class="page-hero-badge">
+                    <span class="pulse"></span>
+                    Evalis AI — Internal Hiring Tool
+                </div>
+                <h1>AI-Powered<br><span class="gradient">Candidate Evaluation</span></h1>
+                <p>Conduct technical interviews with AI-assisted scoring. Generate detailed feedback, strengths analysis, and hiring recommendations for every candidate.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🎯</div>
+                    <div>
+                        <div class="card-title">Configure Your Interview</div>
+                        <div class="card-subtitle">Customize the role, difficulty, and scope</div>
+                    </div>
+                </div>
+
+                <div id="setup-error" class="error-banner">
+                    <span>⚠️</span>
+                    <span id="setup-error-text"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="role-input">Target Role</label>
+                    <input type="text" id="role-input" class="form-input" placeholder="e.g. Frontend Engineer, Data Scientist, Product Manager..." autocomplete="off">
+                    <div class="role-suggestions">
+                        <span class="role-pill" onclick="setRole('Frontend Engineer')">Frontend Engineer</span>
+                        <span class="role-pill" onclick="setRole('Backend Engineer')">Backend Engineer</span>
+                        <span class="role-pill" onclick="setRole('Full Stack Developer')">Full Stack</span>
+                        <span class="role-pill" onclick="setRole('Data Scientist')">Data Scientist</span>
+                        <span class="role-pill" onclick="setRole('DevOps Engineer')">DevOps</span>
+                        <span class="role-pill" onclick="setRole('Product Manager')">Product Manager</span>
+                        <span class="role-pill" onclick="setRole('ML Engineer')">ML Engineer</span>
+                        <span class="role-pill" onclick="setRole('iOS Developer')">iOS Dev</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="level-select">Experience Level</label>
+                        <select id="level-select" class="form-select">
+                            <option value="junior">Junior (0-2 years)</option>
+                            <option value="mid-level" selected>Mid-Level (2-5 years)</option>
+                            <option value="senior">Senior (5-10 years)</option>
+                            <option value="staff">Staff / Principal (10+ years)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="count-select">Number of Questions</label>
+                        <select id="count-select" class="form-select">
+                            <option value="3">3 Questions (Quick)</option>
+                            <option value="5" selected>5 Questions (Standard)</option>
+                            <option value="7">7 Questions (Thorough)</option>
+                            <option value="10">10 Questions (Full Loop)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button id="btn-start" class="btn btn-primary btn-full btn-lg" onclick="startInterview()">
+                    Start Interview →
+                </button>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════
+             SCREEN 2: INTERVIEW
+             ═══════════════════════════════════════ -->
+        <div id="screen-interview" class="screen">
+            <div class="progress-container">
+                <div class="progress-header">
+                    <span class="progress-label" id="progress-role">Frontend Engineer — Mid-Level</span>
+                    <span class="progress-count" id="progress-count">1 / 5</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="progress-fill" style="width: 20%"></div>
+                </div>
+                <div class="progress-steps" id="progress-dots"></div>
+            </div>
+
+            <div class="timer-bar">
+                <span class="timer-icon">⏱️</span>
+                <span class="timer-value" id="timer-value">05:00</span>
+                <span class="timer-label">Time remaining</span>
+            </div>
+
+            <div class="card" style="position: relative;">
+                <div id="interview-loading" class="loading-overlay hidden">
+                    <div class="spinner"></div>
+                    <span class="loading-text">AI is evaluating your answer...</span>
+                </div>
+
+                <div class="question-meta">
+                    <span class="question-number" id="q-number">Q1</span>
+                    <span class="badge badge-type" id="q-type">TECHNICAL</span>
+                    <span class="badge badge-medium" id="q-difficulty">MEDIUM</span>
+                </div>
+
+                <div class="question-text" id="q-text">
+                    Loading question...
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="answer-input">Your Answer</label>
+                    <textarea id="answer-input" class="form-textarea" placeholder="Type your answer here... Be thorough and specific." rows="6"></textarea>
+                </div>
+
+                <div class="btn-group">
+                    <button id="btn-skip" class="btn btn-ghost" onclick="skipQuestion()">
+                        Skip →
+                    </button>
+                    <button id="btn-submit-answer" class="btn btn-primary" onclick="submitAnswer()">
+                        Submit Answer
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════
+             SCREEN 3: FEEDBACK
+             ═══════════════════════════════════════ -->
+        <div id="screen-feedback" class="screen">
+            <div class="card">
+                <div class="score-display">
+                    <div class="score-ring-container">
+                        <canvas id="score-canvas" class="score-ring-canvas" width="320" height="320"></canvas>
+                        <div class="score-ring-value">
+                            <span class="score-number" id="fb-score">0</span>
+                            <span class="score-label">Score</span>
+                        </div>
+                    </div>
+                    <div class="verdict verdict-good" id="fb-verdict">
+                        <span id="fb-verdict-icon">✓</span>
+                        <span id="fb-verdict-text">GOOD</span>
+                    </div>
+                </div>
+
+                <div class="feedback-section">
+                    <div class="feedback-section-title">
+                        <span class="icon icon-green">✓</span>
+                        Strengths
+                    </div>
+                    <ul class="feedback-list" id="fb-strengths"></ul>
+                </div>
+
+                <div class="feedback-section">
+                    <div class="feedback-section-title">
+                        <span class="icon icon-amber">↑</span>
+                        Areas for Improvement
+                    </div>
+                    <ul class="feedback-list" id="fb-improvements"></ul>
+                </div>
+
+                <div class="follow-up-box" id="fb-followup-box">
+                    <div class="follow-up-label">💡 Follow-up Question</div>
+                    <div class="follow-up-text" id="fb-followup"></div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="viewQuestionAgain()">
+                        ← Review Question
+                    </button>
+                    <button id="btn-next-question" class="btn btn-primary" onclick="nextQuestion()">
+                        Next Question →
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════
+             SCREEN 4: REPORT
+             ═══════════════════════════════════════ -->
+        <div id="screen-report" class="screen">
+            <div class="card" style="position:relative;">
+                <div id="report-loading" class="loading-overlay hidden">
+                    <div class="spinner"></div>
+                    <span class="loading-text">Generating your hiring report...</span>
+                </div>
+
+                <div class="report-header">
+                    <h2>📋 Candidate Report</h2>
+                    <p id="report-role-info">Frontend Engineer — Mid-Level</p>
+                </div>
+
+                <div class="score-display">
+                    <div class="score-ring-container">
+                        <canvas id="report-score-canvas" class="score-ring-canvas" width="320" height="320"></canvas>
+                        <div class="score-ring-value">
+                            <span class="score-number" id="report-score">0</span>
+                            <span class="score-label">Overall</span>
+                        </div>
+                    </div>
+                    <div class="recommendation-badge rec-hire" id="report-rec-badge">
+                        <span id="report-rec-icon">✓</span>
+                        <span id="report-rec-text">HIRE</span>
+                    </div>
+                </div>
+
+                <p class="report-summary" id="report-summary">
+                    Loading summary...
+                </p>
+
+                <div class="report-grid">
+                    <div class="report-card">
+                        <div class="report-card-title">
+                            <span style="color: var(--accent-emerald)">💪</span>
+                            Top Strengths
+                        </div>
+                        <ul class="report-card-list" id="report-strengths"></ul>
+                    </div>
+                    <div class="report-card">
+                        <div class="report-card-title">
+                            <span style="color: var(--accent-amber)">🎯</span>
+                            Focus Areas
+                        </div>
+                        <ul class="report-card-list" id="report-focus"></ul>
+                    </div>
+                </div>
+
+                <div class="report-card mt-3">
+                    <div class="report-card-title">
+                        <span style="color: var(--accent-cyan-light)">🚀</span>
+                        Recommended Next Steps
+                    </div>
+                    <ul class="report-card-list" id="report-steps"></ul>
+                </div>
+
+                <div class="question-timeline" id="report-timeline">
+                    <div class="report-card-title mt-3">
+                        <span style="color: var(--accent-violet)">📊</span>
+                        Question-by-Question Breakdown
+                    </div>
+                </div>
+
+                <div class="btn-group mt-4">
+                    <button class="btn btn-ghost" onclick="restartInterview()">
+                        ← New Interview
+                    </button>
+                    <button class="btn btn-primary" onclick="downloadReport()">
+                        📥 Download Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="page-footer">
+        <p>Powered by <a href="https://evalisai.com">Evalis AI</a> · Workers AI · Internal Use Only</p>
+        <p class="mt-1" style="font-size:0.75rem;">© 2026 Evalis AI — Perinthalmanna, Kerala, India</p>
+    </footer>
+
+    <script>
+    /* ═══════════════════════════════════════════
+       NeoInterview AI — Application Logic
+       ═══════════════════════════════════════════ */
+
+    const API_BASE = 'https://evalis-api.zelvora-global.workers.dev';
+
+    // ── State ──
+    let state = {
+        sessionId: null,
+        role: '',
+        level: '',
+        questions: [],
+        currentIndex: 0,
+        answers: [],      // { questionId, question, answer, evaluation }
+        timer: null,
+        timerSeconds: 0,
+    };
+
+    // ── Screen management ──
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        const screen = document.getElementById(id);
+        if (screen) {
+            screen.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+
+    function showError(containerId, message) {
+        const banner = document.getElementById(containerId);
+        const text = document.getElementById(containerId + '-text');
+        if (banner && text) {
+            text.textContent = message;
+            banner.classList.add('show');
+            setTimeout(() => banner.classList.remove('show'), 6000);
+        }
+    }
+
+    // ── Role pill click ──
+    function setRole(role) {
+        document.getElementById('role-input').value = role;
+    }
+
+    // ── Timer ──
+    function startTimer() {
+        stopTimer();
+        state.timerSeconds = 300; // 5 minutes per question
+        updateTimerDisplay();
+        state.timer = setInterval(() => {
+            state.timerSeconds--;
+            updateTimerDisplay();
+            if (state.timerSeconds <= 0) {
+                stopTimer();
+            }
+        }, 1000);
+    }
+
+    function stopTimer() {
+        if (state.timer) {
+            clearInterval(state.timer);
+            state.timer = null;
+        }
+    }
+
+    function updateTimerDisplay() {
+        const el = document.getElementById('timer-value');
+        const mins = Math.floor(Math.max(0, state.timerSeconds) / 60);
+        const secs = Math.max(0, state.timerSeconds) % 60;
+        el.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        el.className = 'timer-value';
+        if (state.timerSeconds <= 30) el.classList.add('danger');
+        else if (state.timerSeconds <= 60) el.classList.add('warning');
+    }
+
+    // ── Progress ──
+    function updateProgress() {
+        const total = state.questions.length;
+        const current = state.currentIndex + 1;
+        document.getElementById('progress-count').textContent = `${current} / ${total}`;
+        document.getElementById('progress-fill').style.width = `${(current / total) * 100}%`;
+        document.getElementById('progress-role').textContent =
+            `${state.role} — ${state.level.charAt(0).toUpperCase() + state.level.slice(1)}`;
+
+        // Dots
+        const dotsContainer = document.getElementById('progress-dots');
+        dotsContainer.innerHTML = '';
+        for (let i = 0; i < total; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'progress-dot';
+            if (i < state.currentIndex) dot.classList.add('done');
+            else if (i === state.currentIndex) dot.classList.add('current');
+            dotsContainer.appendChild(dot);
+        }
+    }
+
+    // ── Score ring animation ──
+    function animateScoreRing(canvasId, score, color) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const dpr = window.devicePixelRatio || 1;
+        const size = 160;
+        canvas.width = size * dpr;
+        canvas.height = size * dpr;
+        canvas.style.width = size + 'px';
+        canvas.style.height = size + 'px';
+        ctx.scale(dpr, dpr);
+
+        const cx = size / 2, cy = size / 2, radius = 64, lineWidth = 10;
+        const startAngle = -Math.PI / 2;
+        const targetAngle = (score / 100) * 2 * Math.PI;
+
+        let currentAngle = 0;
+        const duration = 1200;
+        const startTime = performance.now();
+
+        // Color based on score
+        let strokeColor = color || '#6366f1';
+        if (!color) {
+            if (score >= 80) strokeColor = '#10b981';
+            else if (score >= 60) strokeColor = '#06b6d4';
+            else if (score >= 40) strokeColor = '#f59e0b';
+            else strokeColor = '#f43f5e';
+        }
+
+        function draw(now) {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+            currentAngle = targetAngle * eased;
+
+            ctx.clearRect(0, 0, size, size);
+
+            // Background ring
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+            ctx.strokeStyle = 'rgba(99,102,241,0.1)';
+            ctx.lineWidth = lineWidth;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            // Progress ring
+            if (currentAngle > 0) {
+                ctx.beginPath();
+                ctx.arc(cx, cy, radius, startAngle, startAngle + currentAngle);
+                ctx.strokeStyle = strokeColor;
+                ctx.lineWidth = lineWidth;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+
+                // Glow
+                ctx.shadowColor = strokeColor;
+                ctx.shadowBlur = 15;
+                ctx.beginPath();
+                ctx.arc(cx, cy, radius, startAngle + currentAngle - 0.05, startAngle + currentAngle);
+                ctx.strokeStyle = strokeColor;
+                ctx.lineWidth = lineWidth;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            }
+
+            if (progress < 1) requestAnimationFrame(draw);
+        }
+
+        requestAnimationFrame(draw);
+    }
+
+    // ── Animate number counter ──
+    function animateNumber(el, target, duration = 1200) {
+        const start = performance.now();
+        const initial = 0;
+        function update(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.round(initial + (target - initial) * eased);
+            if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+    }
+
+    // ── API Calls ──
+    async function apiCall(endpoint, body) {
+        const response = await fetch(`${API_BASE}${endpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+        if (!response.ok) {
+            const err = await response.json().catch(() => ({}));
+            throw new Error(err.error || `Request failed (${response.status})`);
+        }
+        return await response.json();
+    }
+
+    // ══════════════════════════════════════════
+    //  START INTERVIEW
+    // ══════════════════════════════════════════
+    async function startInterview() {
+        const role = document.getElementById('role-input').value.trim();
+        const level = document.getElementById('level-select').value;
+        const count = parseInt(document.getElementById('count-select').value);
+
+        if (!role) {
+            showError('setup-error', 'Please enter a target role.');
+            document.getElementById('role-input').focus();
+            return;
+        }
+
+        const btn = document.getElementById('btn-start');
+        btn.disabled = true;
+        btn.innerHTML = '<div class="spinner"></div> Generating Questions...';
+
+        try {
+            const data = await apiCall('/api/interview/start', { role, level, count });
+
+            if (!data.questions || !Array.isArray(data.questions) || data.questions.length === 0) {
+                throw new Error('No questions were generated. Please try again.');
+            }
+
+            state.sessionId = data.sessionId;
+            state.role = role;
+            state.level = level;
+            state.questions = data.questions;
+            state.currentIndex = 0;
+            state.answers = [];
+
+            loadQuestion(0);
+            showScreen('screen-interview');
+
+        } catch (err) {
+            showError('setup-error', err.message || 'Failed to start interview. Please try again.');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = 'Start Interview →';
+        }
+    }
+
+    // ══════════════════════════════════════════
+    //  LOAD QUESTION
+    // ══════════════════════════════════════════
+    function loadQuestion(index) {
+        const q = state.questions[index];
+        if (!q) return;
+
+        document.getElementById('q-number').textContent = `Q${index + 1}`;
+        document.getElementById('q-text').textContent = q.question;
+
+        // Type badge
+        const typeEl = document.getElementById('q-type');
+        typeEl.textContent = (q.type || 'technical').toUpperCase().replace('-', ' ');
+
+        // Difficulty badge
+        const diffEl = document.getElementById('q-difficulty');
+        const diff = (q.difficulty || 'medium').toLowerCase();
+        diffEl.textContent = diff.toUpperCase();
+        diffEl.className = `badge badge-${diff}`;
+
+        // Clear answer
+        document.getElementById('answer-input').value = '';
+        document.getElementById('answer-input').focus();
+
+        // Update progress
+        updateProgress();
+        startTimer();
+
+        // Update next button text on last question
+        const isLast = index === state.questions.length - 1;
+        document.getElementById('btn-submit-answer').textContent = isLast ? 'Submit Final Answer' : 'Submit Answer';
+        document.getElementById('btn-skip').textContent = isLast ? 'Skip & Finish' : 'Skip →';
+    }
+
+    // ══════════════════════════════════════════
+    //  SUBMIT ANSWER
+    // ══════════════════════════════════════════
+    async function submitAnswer() {
+        const answer = document.getElementById('answer-input').value.trim();
+        const q = state.questions[state.currentIndex];
+
+        if (!answer) {
+            document.getElementById('answer-input').focus();
+            document.getElementById('answer-input').style.borderColor = 'var(--accent-rose)';
+            setTimeout(() => {
+                document.getElementById('answer-input').style.borderColor = '';
+            }, 2000);
+            return;
+        }
+
+        stopTimer();
+        document.getElementById('interview-loading').classList.remove('hidden');
+        document.getElementById('btn-submit-answer').disabled = true;
+        document.getElementById('btn-skip').disabled = true;
+
+        try {
+            const evaluation = await apiCall('/api/interview/evaluate', {
+                question: q.question,
+                answer,
+                role: state.role,
+                level: state.level,
+            });
+
+            state.answers.push({
+                questionId: q.id,
+                question: q.question,
+                type: q.type,
+                difficulty: q.difficulty,
+                answer,
+                score: evaluation.score || 0,
+                verdict: evaluation.verdict || 'good',
+                strengths: evaluation.strengths || [],
+                improvements: evaluation.improvements || [],
+                followUp: evaluation.followUp || '',
+            });
+
+            showFeedback(evaluation);
+
+        } catch (err) {
+            // Fallback: store with default evaluation and move on
+            state.answers.push({
+                questionId: q.id,
+                question: q.question,
+                type: q.type,
+                difficulty: q.difficulty,
+                answer,
+                score: 50,
+                verdict: 'good',
+                strengths: ['Answer was provided'],
+                improvements: ['Evaluation unavailable — try again later'],
+                followUp: '',
+            });
+            showFeedback({
+                score: 50, verdict: 'good',
+                strengths: ['Answer was provided'],
+                improvements: ['AI evaluation was unavailable. Score is estimated.'],
+                followUp: '',
+            });
+        } finally {
+            document.getElementById('interview-loading').classList.add('hidden');
+            document.getElementById('btn-submit-answer').disabled = false;
+            document.getElementById('btn-skip').disabled = false;
+        }
+    }
+
+    // ══════════════════════════════════════════
+    //  SKIP QUESTION
+    // ══════════════════════════════════════════
+    function skipQuestion() {
+        const q = state.questions[state.currentIndex];
+        state.answers.push({
+            questionId: q.id,
+            question: q.question,
+            type: q.type,
+            difficulty: q.difficulty,
+            answer: '(skipped)',
+            score: 0,
+            verdict: 'weak',
+            strengths: [],
+            improvements: ['Question was skipped'],
+            followUp: '',
+        });
+        stopTimer();
+        nextQuestion();
+    }
+
+    // ══════════════════════════════════════════
+    //  SHOW FEEDBACK
+    // ══════════════════════════════════════════
+    function showFeedback(evaluation) {
+        showScreen('screen-feedback');
+
+        const score = evaluation.score || 0;
+
+        // Score ring
+        animateScoreRing('score-canvas', score);
+        animateNumber(document.getElementById('fb-score'), score);
+
+        // Verdict
+        const verdict = (evaluation.verdict || 'good').toLowerCase();
+        const verdictEl = document.getElementById('fb-verdict');
+        const verdictText = document.getElementById('fb-verdict-text');
+        const verdictIcon = document.getElementById('fb-verdict-icon');
+
+        verdictEl.className = `verdict verdict-${verdict}`;
+        verdictText.textContent = verdict.toUpperCase();
+        verdictIcon.textContent = verdict === 'strong' ? '★' : verdict === 'good' ? '✓' : '!';
+
+        // Strengths
+        const strengthsList = document.getElementById('fb-strengths');
+        strengthsList.innerHTML = '';
+        (evaluation.strengths || []).forEach(s => {
+            const li = document.createElement('li');
+            li.className = 'feedback-item';
+            li.innerHTML = `<span class="bullet bullet-green"></span>${escapeHtml(s)}`;
+            strengthsList.appendChild(li);
+        });
+
+        // Improvements
+        const improvementsList = document.getElementById('fb-improvements');
+        improvementsList.innerHTML = '';
+        (evaluation.improvements || []).forEach(s => {
+            const li = document.createElement('li');
+            li.className = 'feedback-item';
+            li.innerHTML = `<span class="bullet bullet-amber"></span>${escapeHtml(s)}`;
+            improvementsList.appendChild(li);
+        });
+
+        // Follow-up
+        const followUpBox = document.getElementById('fb-followup-box');
+        const followUpText = document.getElementById('fb-followup');
+        if (evaluation.followUp) {
+            followUpBox.style.display = '';
+            followUpText.textContent = evaluation.followUp;
+        } else {
+            followUpBox.style.display = 'none';
+        }
+
+        // Update next button
+        const isLast = state.currentIndex >= state.questions.length - 1;
+        document.getElementById('btn-next-question').textContent = isLast ? 'View Report →' : 'Next Question →';
+    }
+
+    // ══════════════════════════════════════════
+    //  NEXT QUESTION / GO TO REPORT
+    // ══════════════════════════════════════════
+    function nextQuestion() {
+        state.currentIndex++;
+        if (state.currentIndex >= state.questions.length) {
+            generateReport();
+        } else {
+            showScreen('screen-interview');
+            loadQuestion(state.currentIndex);
+        }
+    }
+
+    function viewQuestionAgain() {
+        // Show the last question & answer (read-only view for reference)
+        showScreen('screen-interview');
+        const lastAnswer = state.answers[state.answers.length - 1];
+        if (lastAnswer) {
+            document.getElementById('answer-input').value = lastAnswer.answer;
+        }
+    }
+
+    // ══════════════════════════════════════════
+    //  GENERATE REPORT
+    // ══════════════════════════════════════════
+    async function generateReport() {
+        showScreen('screen-report');
+        document.getElementById('report-loading').classList.remove('hidden');
+
+        document.getElementById('report-role-info').textContent =
+            `${state.role} — ${state.level.charAt(0).toUpperCase() + state.level.slice(1)}`;
+
+        try {
+            const report = await apiCall('/api/interview/report', {
+                sessionId: state.sessionId,
+                role: state.role,
+                level: state.level,
+                answers: state.answers.map(a => ({
+                    score: a.score,
+                    verdict: a.verdict,
+                    strengths: a.strengths,
+                    improvements: a.improvements,
+                })),
+            });
+
+            renderReport(report);
+
+        } catch (err) {
+            // Fallback: generate client-side basic report
+            const avgScore = Math.round(
+                state.answers.reduce((s, a) => s + a.score, 0) / state.answers.length
+            );
+            renderReport({
+                overallScore: avgScore,
+                recommendation: avgScore >= 75 ? 'hire' : avgScore >= 50 ? 'lean-hire' : 'no-hire',
+                summary: `You completed ${state.answers.length} questions with an average score of ${avgScore}/100.`,
+                topStrengths: ['Completed the interview'],
+                focusAreas: ['Review AI feedback for each question'],
+                nextSteps: ['Practice more questions', 'Review weak areas'],
+            });
+        } finally {
+            document.getElementById('report-loading').classList.add('hidden');
+        }
+    }
+
+    function renderReport(report) {
+        const score = report.overallScore || 0;
+
+        // Score ring
+        animateScoreRing('report-score-canvas', score);
+        animateNumber(document.getElementById('report-score'), score);
+
+        // Recommendation badge
+        const rec = (report.recommendation || 'hire').toLowerCase();
+        const recBadge = document.getElementById('report-rec-badge');
+        const recText = document.getElementById('report-rec-text');
+        const recIcon = document.getElementById('report-rec-icon');
+        recBadge.className = `recommendation-badge rec-${rec}`;
+        recText.textContent = rec.replace('-', ' ').toUpperCase();
+        recIcon.textContent = rec.includes('strong') ? '🌟' : rec.includes('no') ? '✗' : '✓';
+
+        // Summary
+        document.getElementById('report-summary').textContent = report.summary || '';
+
+        // Lists
+        renderReportList('report-strengths', report.topStrengths || []);
+        renderReportList('report-focus', report.focusAreas || []);
+        renderReportList('report-steps', report.nextSteps || []);
+
+        // Timeline
+        renderTimeline();
+    }
+
+    function renderReportList(containerId, items) {
+        const ul = document.getElementById(containerId);
+        ul.innerHTML = '';
+        items.forEach((item, i) => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span class="num">${i + 1}</span>${escapeHtml(item)}`;
+            ul.appendChild(li);
+        });
+    }
+
+    function renderTimeline() {
+        const container = document.getElementById('report-timeline');
+        // Remove existing timeline items
+        container.querySelectorAll('.timeline-item').forEach(el => el.remove());
+
+        state.answers.forEach((a, i) => {
+            const scoreClass = a.score >= 70 ? 'high' : a.score >= 40 ? 'mid' : 'low';
+            const div = document.createElement('div');
+            div.className = 'timeline-item';
+            div.innerHTML = `
+                <div class="timeline-score ${scoreClass}">${a.score}</div>
+                <div class="timeline-content">
+                    <div class="timeline-question">Q${i+1}: ${escapeHtml(a.question)}</div>
+                    <div class="timeline-verdict">${(a.verdict || '').toUpperCase()} · ${(a.type || '').replace('-', ' ')} · ${(a.difficulty || '').toUpperCase()}</div>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    // ══════════════════════════════════════════
+    //  DOWNLOAD REPORT
+    // ══════════════════════════════════════════
+    function downloadReport() {
+        const lines = [];
+        lines.push('═══════════════════════════════════════');
+        lines.push('  Evalis AI — Candidate Evaluation Report');
+        lines.push('═══════════════════════════════════════');
+        lines.push('');
+        lines.push(`Role: ${state.role}`);
+        lines.push(`Level: ${state.level}`);
+        lines.push(`Date: ${new Date().toLocaleDateString()}`);
+        lines.push(`Questions: ${state.questions.length}`);
+        lines.push('');
+
+        const avgScore = Math.round(state.answers.reduce((s, a) => s + a.score, 0) / state.answers.length);
+        lines.push(`Overall Score: ${avgScore}/100`);
+        lines.push('');
+
+        lines.push('───── Question Breakdown ─────');
+        state.answers.forEach((a, i) => {
+            lines.push('');
+            lines.push(`Q${i+1}: ${a.question}`);
+            lines.push(`   Score: ${a.score}/100 (${a.verdict})`);
+            lines.push(`   Answer: ${a.answer}`);
+            if (a.strengths.length) lines.push(`   Strengths: ${a.strengths.join(', ')}`);
+            if (a.improvements.length) lines.push(`   Improve: ${a.improvements.join(', ')}`);
+        });
+
+        lines.push('');
+        lines.push('───────────────────────────────');
+        lines.push('Generated by Evalis AI Interview Platform · evalisai.com');
+
+        const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `interview-report-${state.role.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}.txt`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    // ══════════════════════════════════════════
+    //  RESTART
+    // ══════════════════════════════════════════
+    function restartInterview() {
+        stopTimer();
+        state = {
+            sessionId: null, role: '', level: '',
+            questions: [], currentIndex: 0, answers: [],
+            timer: null, timerSeconds: 0,
+        };
+        showScreen('screen-setup');
+    }
+
+    // ── Helpers ──
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text || '';
+        return div.innerHTML;
+    }
+    </script>
+</body>
+</html>

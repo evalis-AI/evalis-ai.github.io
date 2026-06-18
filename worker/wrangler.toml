@@ -1,7 +1,7 @@
 name = "evalis-api"
 main = "worker.js"
 compatibility_date = "2024-01-01"
-account_id = "af2b6a86573b4c2c30047de120e893e0"
+account_id = "df6f8748734ca4a3c0695ba6083d915f"
 
 [ai]
 binding = "AI"
