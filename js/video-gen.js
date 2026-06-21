@@ -1,5 +1,6 @@
 /* ============================================
    EVALIS AI — VIDEO GENERATION TOOL — LOGIC
+   Powered by Hugging Face Inference Providers
    ============================================ */
 
 (function () {
@@ -8,8 +9,8 @@
     // ─── Configuration ───
     const CONFIG = {
         API_BASE: 'https://evalis-api.zelvora-global.workers.dev',
-        API_PATH: '/api/nim/video',
-        MODEL: 'nvidia/cosmos-predict1-7b',
+        API_PATH: '/api/hf/video',
+        MODEL: 'Wan-AI/Wan2.1-T2V-14B',
         STORAGE_KEY: 'evalis_vg_history',
         SESSION_KEY: 'evalis_vg_api_key',
         MAX_HISTORY: 20,
@@ -17,10 +18,10 @@
         DEFAULTS: {
             width: 1280,
             height: 704,
-            framesCount: 121,
+            framesCount: 81,
             fps: 24,
             guidanceScale: 7.5,
-            steps: 50,
+            steps: 30,
             seed: -1,
             promptUpsampling: true
         }
@@ -64,14 +65,14 @@
         const input = $('#vg-api-key');
         const key = input.value.trim();
         if (!key) {
-            showStatus('Please enter a valid NVIDIA NIM API key.', 'error');
+            showStatus('Please enter a valid Hugging Face API token.', 'error');
             return;
         }
         state.apiKey = key;
         state.isAuthenticated = true;
         sessionStorage.setItem(CONFIG.SESSION_KEY, key);
         updateApiKeyUI(true);
-        showStatus('API key saved for this session.', 'success');
+        showStatus('API token saved for this session.', 'success');
     }
 
     function clearApiKey() {
@@ -197,7 +198,7 @@
 
         // Validate
         if (!state.isAuthenticated) {
-            showStatus('Please connect your NVIDIA NIM API key first.', 'error');
+            showStatus('Please connect your Hugging Face API token first.', 'error');
             return;
         }
 
@@ -221,30 +222,27 @@
         const progressInterval = simulateProgress();
 
         try {
+            // Build request body for Hugging Face / fal.ai provider
             const requestBody = {
-                prompt: params.prompt,
-                negative_prompt: params.negativePrompt || undefined,
-                prompt_upsampling: params.promptUpsampling,
-                guidance_scale: params.guidanceScale,
-                steps: params.steps,
-                video_params: {
-                    height: params.height,
+                inputs: params.prompt,
+                parameters: {
+                    num_inference_steps: params.steps,
+                    guidance_scale: params.guidanceScale,
+                    num_frames: params.framesCount,
                     width: params.width,
-                    frames_count: params.framesCount,
-                    frames_per_sec: params.fps
+                    height: params.height
                 }
             };
 
-            if (params.seed >= 0) {
-                requestBody.seed = params.seed;
+            if (params.negativePrompt) {
+                requestBody.parameters.negative_prompt = params.negativePrompt;
             }
 
-            // Clean undefined values
-            Object.keys(requestBody).forEach(key => {
-                if (requestBody[key] === undefined) delete requestBody[key];
-            });
+            if (params.seed >= 0) {
+                requestBody.parameters.seed = params.seed;
+            }
 
-            showStatus('Sending request to AI video generation model...', 'generating');
+            showStatus('Sending request to AI video generation model... This may take 1-3 minutes.', 'generating');
             updateProgress(15);
 
             const response = await fetch(`${CONFIG.API_BASE}${CONFIG.API_PATH}`, {
@@ -252,7 +250,7 @@
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    'X-NIM-API-Key': state.apiKey
+                    'X-HF-Token': state.apiKey
                 },
                 body: JSON.stringify(requestBody)
             });
@@ -268,28 +266,59 @@
             updateProgress(80);
             showStatus('Processing video data...', 'generating');
 
-            const data = await response.json();
+            const contentType = response.headers.get('Content-Type') || '';
 
-            if (!data.b64_video) {
-                throw new Error('No video data in response. The model may not support this configuration.');
+            let videoUrl;
+
+            if (contentType.includes('video/') || contentType.includes('octet-stream')) {
+                // Direct binary video response
+                const videoBlob = await response.blob();
+                videoUrl = URL.createObjectURL(videoBlob);
+                state.currentVideo = {
+                    url: videoUrl,
+                    blob: videoBlob,
+                    prompt: params.prompt,
+                    negativePrompt: params.negativePrompt,
+                    resolution: `${params.width}×${params.height}`,
+                    frames: params.framesCount,
+                    fps: params.fps,
+                    timestamp: new Date().toISOString()
+                };
+            } else {
+                // JSON response with video URL or base64
+                const data = await response.json();
+
+                if (data.video_url) {
+                    // fal.ai style: returns a URL
+                    videoUrl = data.video_url;
+                    state.currentVideo = {
+                        url: videoUrl,
+                        prompt: params.prompt,
+                        negativePrompt: params.negativePrompt,
+                        resolution: `${params.width}×${params.height}`,
+                        frames: params.framesCount,
+                        fps: params.fps,
+                        timestamp: new Date().toISOString()
+                    };
+                } else if (data.b64_video || data[0]?.blob) {
+                    // Base64 encoded video
+                    const b64 = data.b64_video || data[0]?.blob;
+                    const videoBlob = b64ToBlob(b64, 'video/mp4');
+                    videoUrl = URL.createObjectURL(videoBlob);
+                    state.currentVideo = {
+                        url: videoUrl,
+                        blob: videoBlob,
+                        prompt: params.prompt,
+                        negativePrompt: params.negativePrompt,
+                        resolution: `${params.width}×${params.height}`,
+                        frames: params.framesCount,
+                        fps: params.fps,
+                        timestamp: new Date().toISOString()
+                    };
+                } else {
+                    throw new Error('Unexpected response format. No video data found in the API response.');
+                }
             }
-
-            updateProgress(95);
-
-            // Decode base64 video
-            const videoBlob = b64ToBlob(data.b64_video, 'video/mp4');
-            const videoUrl = URL.createObjectURL(videoBlob);
-
-            state.currentVideo = {
-                url: videoUrl,
-                blob: videoBlob,
-                prompt: params.prompt,
-                negativePrompt: params.negativePrompt,
-                resolution: `${params.width}×${params.height}`,
-                frames: params.framesCount,
-                fps: params.fps,
-                timestamp: new Date().toISOString()
-            };
 
             updateProgress(100);
             displayVideo(videoUrl);
@@ -302,13 +331,15 @@
 
             let errorMsg = err.message;
             if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
-                errorMsg = 'Network error. This may be a CORS issue — the API may need a server-side proxy. Check the console for details.';
+                errorMsg = 'Network error. Check your internet connection and try again.';
             } else if (err.message.includes('401') || err.message.includes('Unauthorized')) {
-                errorMsg = 'Invalid API key. Please check your NVIDIA NIM API key and try again.';
+                errorMsg = 'Invalid API token. Please check your Hugging Face token and try again.';
             } else if (err.message.includes('429')) {
                 errorMsg = 'Rate limit exceeded. Please wait a moment and try again.';
-            } else if (err.message.includes('402') || err.message.includes('insufficient')) {
-                errorMsg = 'Insufficient credits. Please check your NVIDIA NIM account.';
+            } else if (err.message.includes('402') || err.message.includes('insufficient') || err.message.includes('payment')) {
+                errorMsg = 'Insufficient credits. Please check your Hugging Face account billing.';
+            } else if (err.message.includes('503') || err.message.includes('loading')) {
+                errorMsg = 'Model is loading. Please wait 1-2 minutes and try again.';
             }
 
             showStatus(errorMsg, 'error');
@@ -324,10 +355,10 @@
         let progress = 5;
         return setInterval(() => {
             if (progress < 75) {
-                progress += Math.random() * 3;
+                progress += Math.random() * 2;
                 updateProgress(progress);
             }
-        }, 1000);
+        }, 2000);
     }
 
     // ─── Base64 to Blob ───
@@ -354,7 +385,7 @@
         const previewContainer = $('.vg-preview');
 
         previewBody.innerHTML = `
-            <video controls autoplay loop id="vg-video-player">
+            <video controls autoplay loop id="vg-video-player" crossorigin="anonymous">
                 <source src="${url}" type="video/mp4">
                 Your browser does not support video playback.
             </video>
@@ -412,7 +443,6 @@
 
     function saveHistory() {
         try {
-            // Don't store blob URLs in localStorage (they are session-only)
             const serializable = state.history.map(item => ({
                 prompt: item.prompt,
                 negativePrompt: item.negativePrompt,

@@ -7,7 +7,7 @@
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, X-NIM-API-Key, X-API-Key, Authorization',
+  'Access-Control-Allow-Headers': 'Content-Type, X-NIM-API-Key, X-HF-Token, X-API-Key, Authorization',
   'Access-Control-Max-Age': '86400',
 };
 
@@ -1161,7 +1161,75 @@ Valid recommendations: strong-hire, hire, lean-hire, no-hire`;
         }
       }
 
-      // ─── POST /api/nim/video — NVIDIA NIM Video Generation Proxy ───
+      // ─── POST /api/hf/video — Hugging Face Video Generation Proxy ───
+      if (url.pathname === '/api/hf/video' && request.method === 'POST') {
+        // Rate limit: 3 requests per 5 minutes per IP (video gen is expensive)
+        if (!checkRateLimit('hf-video:' + ip, 3, 300000)) {
+          return json({ error: 'Rate limit exceeded. Max 3 video generations per 5 minutes.' }, 429, origin, env);
+        }
+
+        // Require the user's own Hugging Face API token
+        const hfToken = request.headers.get('X-HF-Token');
+        if (!hfToken) {
+          return json({ error: 'Hugging Face API token is required.' }, 401, origin, env);
+        }
+
+        try {
+          const body = await request.json();
+
+          // Validate required prompt
+          const prompt = body.inputs || body.prompt;
+          if (!prompt || typeof prompt !== 'string' || prompt.trim().length < 3) {
+            return json({ error: 'A valid prompt is required (min 3 characters).' }, 400, origin, env);
+          }
+
+          // Try Hugging Face Inference Providers (fal-ai router)
+          const hfUrl = 'https://router.huggingface.co/fal-ai/models/Wan-AI/Wan2.1-T2V-14B';
+
+          const hfResponse = await fetch(hfUrl, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${hfToken}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+          });
+
+          // Forward the response to the client with CORS headers
+          const responseHeaders = {
+            ...corsHeaders(origin, env),
+          };
+
+          // Preserve content type from HF
+          const hfContentType = hfResponse.headers.get('Content-Type');
+          if (hfContentType) {
+            responseHeaders['Content-Type'] = hfContentType;
+          }
+
+          // If response is a video binary, stream it back
+          if (hfContentType && (hfContentType.includes('video/') || hfContentType.includes('octet-stream'))) {
+            return new Response(hfResponse.body, {
+              status: hfResponse.status,
+              headers: responseHeaders,
+            });
+          }
+
+          // Otherwise return JSON (could be error, URL, or queued response)
+          const hfData = await hfResponse.text();
+          responseHeaders['Content-Type'] = 'application/json';
+
+          return new Response(hfData, {
+            status: hfResponse.status,
+            headers: responseHeaders,
+          });
+
+        } catch (hfErr) {
+          console.error('HF video proxy error:', hfErr);
+          return json({ error: 'Failed to proxy request to Hugging Face. ' + hfErr.message }, 502, origin, env);
+        }
+      }
+
+      // ─── POST /api/nim/video — NVIDIA NIM Video Generation Proxy (Legacy) ───
       if (url.pathname === '/api/nim/video' && request.method === 'POST') {
         // Rate limit: 3 requests per 5 minutes per IP (video gen is expensive)
         if (!checkRateLimit('nim-video:' + ip, 3, 300000)) {
@@ -1214,7 +1282,7 @@ Valid recommendations: strong-hire, hire, lean-hire, no-hire`;
         return json({
           status: 'ok',
           service: 'Evalis AI API v3.3',
-          features: ['ai-chat', 'ai-chat-stream', 'cloud-tts', 'cloud-stt', 'voice-pipeline', 'whatsapp-bot', 'document-ai', 'lead-qualify', 'agent-builder', 'tracking', 'forms', 'projects', 'ai-interview', 'nim-video-proxy'],
+          features: ['ai-chat', 'ai-chat-stream', 'cloud-tts', 'cloud-stt', 'voice-pipeline', 'whatsapp-bot', 'document-ai', 'lead-qualify', 'agent-builder', 'tracking', 'forms', 'projects', 'ai-interview', 'hf-video-proxy', 'nim-video-proxy'],
           timestamp: new Date().toISOString()
         }, 200, origin, env);
       }
