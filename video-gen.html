@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Video Generator — Evalis AI Internal Tool</title>
+    <meta name="description" content="Internal AI video generation tool powered by NVIDIA NIM Cosmos. Generate high-quality AI videos from text prompts.">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#0a0a0f">
+
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link rel="icon" type="image/png" href="favicon-96x96.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/video-gen.css">
+</head>
+<body>
+    <div class="mesh-bg"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <a href="index.html" class="logo-container">
+            <img src="logo.png" alt="Evalis AI" class="logo-img" onerror="this.style.display='none'">
+            <span class="logo-text">Evalis <span class="ai-badge">AI</span></span>
+        </a>
+        <span class="internal-badge">🔒 Internal Tool</span>
+        <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">☰</button>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="services.html">Services</a>
+            <a href="projects.html">Projects</a>
+            <a href="marketplace.html">Marketplace</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="careers.html" class="btn-nav">Join Us →</a>
+        </div>
+    </nav>
+
+    <!-- MAIN APP -->
+    <div class="vg-app">
+
+        <!-- Header -->
+        <div class="vg-header">
+            <h1>AI Video <span class="gradient-text">Generator</span></h1>
+            <p>Generate stunning AI videos from text prompts. Internal tool for the Evalis AI team.</p>
+        </div>
+
+        <!-- Main Panel -->
+        <div class="vg-main">
+
+            <!-- API Key Section -->
+            <div class="vg-api-key-section" id="vg-api-key-section">
+                <div class="vg-api-key-header">
+                    <h3>🔑 NVIDIA NIM API Key</h3>
+                    <span class="vg-api-status disconnected">○ Not Connected</span>
+                </div>
+                <div class="vg-api-key-input-wrap">
+                    <input type="password" id="vg-api-key" placeholder="nvapi-xxxxxxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false">
+                    <button class="btn-key-toggle" title="Show/Hide key">👁️</button>
+                    <button class="btn-key-save">Connect</button>
+                </div>
+            </div>
+
+            <!-- Prompt Section -->
+            <div class="vg-prompt-section">
+                <div class="vg-prompt-label">
+                    <label for="vg-prompt">Video Description</label>
+                    <span class="vg-char-count">0 / 2000</span>
+                </div>
+                <textarea id="vg-prompt" placeholder="Describe the video you want to generate. Be specific about the scene, camera movement, lighting, and style. e.g., 'A cinematic drone shot flying over a lush green valley at golden hour, mist rising from the river below, warm sunlight filtering through the clouds...'"></textarea>
+
+                <!-- Preset Prompts -->
+                <div class="vg-presets">
+                    <span class="vg-preset-chip" data-prompt="A cinematic drone shot flying over a vast mountain landscape at sunset, with golden light illuminating snow-capped peaks, wisps of clouds drifting below, and a winding river reflecting the warm colors of the sky.">🏔️ Mountain Sunset</span>
+                    <span class="vg-preset-chip" data-prompt="First person view from a camera in a car driving down a coastal highway, viewed from the dashcam as we drive along cliffs overlooking the ocean. The sun is setting, casting golden light on the water. Palm trees line the road.">🚗 Coastal Drive</span>
+                    <span class="vg-preset-chip" data-prompt="A futuristic city at night with neon signs, flying vehicles, rain-slicked streets reflecting colorful lights, holographic advertisements floating in the air, cyberpunk aesthetic, cinematic composition.">🌃 Cyberpunk City</span>
+                    <span class="vg-preset-chip" data-prompt="A serene underwater scene with coral reefs, tropical fish swimming in crystal-clear blue water, sunlight filtering through the surface creating dancing patterns of light on the sandy ocean floor.">🐠 Underwater Reef</span>
+                    <span class="vg-preset-chip" data-prompt="A timelapse of a flower blooming in a garden, petals slowly unfurling, morning dew droplets glistening in soft sunlight, shallow depth of field, macro photography style.">🌸 Flower Bloom</span>
+                    <span class="vg-preset-chip" data-prompt="An astronaut floating in space with Earth visible in the background, the International Space Station nearby, stars twinkling, sun creating a lens flare at the edge of the planet, photorealistic.">🚀 Space Scene</span>
+                </div>
+
+                <!-- Negative Prompt -->
+                <div class="vg-negative-prompt">
+                    <label for="vg-negative-prompt">Negative Prompt <span style="opacity: 0.5;">(optional)</span></label>
+                    <textarea id="vg-negative-prompt" placeholder="What to avoid: blurry, low quality, artifacts, distortion, text overlays..."></textarea>
+                </div>
+            </div>
+
+            <!-- Advanced Settings -->
+            <div class="vg-settings" id="vg-settings">
+                <div class="vg-settings-toggle">
+                    <h3>⚙️ Advanced Settings</h3>
+                    <span class="vg-settings-chevron">▼</span>
+                </div>
+                <div class="vg-settings-body">
+                    <div class="vg-settings-grid">
+
+                        <!-- Resolution -->
+                        <div class="vg-setting-item">
+                            <label for="vg-width">Width</label>
+                            <select id="vg-width">
+                                <option value="1280" selected>1280px</option>
+                                <option value="1024">1024px</option>
+                                <option value="854">854px</option>
+                                <option value="640">640px</option>
+                                <option value="480">480px</option>
+                            </select>
+                        </div>
+                        <div class="vg-setting-item">
+                            <label for="vg-height">Height</label>
+                            <select id="vg-height">
+                                <option value="704" selected>704px</option>
+                                <option value="576">576px</option>
+                                <option value="480">480px</option>
+                                <option value="384">384px</option>
+                                <option value="320">320px</option>
+                            </select>
+                        </div>
+
+                        <!-- Frames -->
+                        <div class="vg-setting-item">
+                            <label for="vg-frames">Frame Count</label>
+                            <input type="range" id="vg-frames" min="25" max="121" step="8" value="121">
+                            <span class="vg-range-value" id="vg-frames-val">121</span>
+                        </div>
+
+                        <!-- FPS -->
+                        <div class="vg-setting-item">
+                            <label for="vg-fps">Frames Per Second</label>
+                            <select id="vg-fps">
+                                <option value="12">12 FPS</option>
+                                <option value="24" selected>24 FPS</option>
+                                <option value="30">30 FPS</option>
+                            </select>
+                        </div>
+
+                        <!-- Guidance Scale -->
+                        <div class="vg-setting-item">
+                            <label for="vg-guidance">Guidance Scale</label>
+                            <input type="range" id="vg-guidance" min="1" max="20" step="0.5" value="7.5">
+                            <span class="vg-range-value" id="vg-guidance-val">7.5</span>
+                        </div>
+
+                        <!-- Steps -->
+                        <div class="vg-setting-item">
+                            <label for="vg-steps">Inference Steps</label>
+                            <input type="range" id="vg-steps" min="10" max="100" step="5" value="50">
+                            <span class="vg-range-value" id="vg-steps-val">50</span>
+                        </div>
+
+                        <!-- Seed -->
+                        <div class="vg-setting-item">
+                            <label for="vg-seed">Seed (-1 = Random)</label>
+                            <input type="number" id="vg-seed" value="-1" min="-1" max="999999999" placeholder="-1 for random">
+                        </div>
+
+                        <!-- Prompt Upsampling -->
+                        <div class="vg-setting-item">
+                            <label>Prompt Upsampling</label>
+                            <div class="vg-toggle-wrap">
+                                <button type="button" class="vg-toggle vg-toggle-upsample active" aria-label="Toggle prompt upsampling"></button>
+                                <span class="vg-toggle-label">Enhance prompt quality</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generate Button -->
+            <div class="vg-generate-wrap">
+                <button class="vg-btn-generate" id="vg-btn-generate" disabled>
+                    <span class="spinner"></span>
+                    <span class="btn-text">⚡ Generate Video</span>
+                    <span class="btn-loading-text">Generating video...</span>
+                </button>
+            </div>
+
+            <!-- Status -->
+            <div class="vg-status" id="vg-status"></div>
+            <div class="vg-progress" id="vg-progress">
+                <div class="vg-progress-bar" id="vg-progress-bar"></div>
+            </div>
+
+            <!-- Video Preview -->
+            <div class="vg-preview" id="vg-preview">
+                <div class="vg-preview-header">
+                    <h3>🎬 Video Preview</h3>
+                    <div class="vg-preview-actions">
+                        <button id="vg-btn-copy" title="Copy prompt">📋 Copy Prompt</button>
+                        <button id="vg-btn-download" title="Download video">⬇️ Download MP4</button>
+                    </div>
+                </div>
+                <div class="vg-preview-body">
+                    <div class="vg-preview-placeholder">
+                        <div class="placeholder-icon">🎥</div>
+                        <p>Your generated video will appear here. Enter a prompt and click <strong>"Generate Video"</strong> to get started.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Sidebar -->
+        <div class="vg-sidebar">
+
+            <!-- Tips -->
+            <div class="vg-tips">
+                <h4>💡 Quick Tips</h4>
+                <ul>
+                    <li>Use detailed, descriptive prompts for best results</li>
+                    <li>Specify camera movement: drone, tracking, panning</li>
+                    <li>Include lighting details: golden hour, overcast, neon</li>
+                    <li>Add style keywords: cinematic, photorealistic, anime</li>
+                    <li>Use negative prompts to exclude unwanted elements</li>
+                    <li>Higher steps = better quality but slower generation</li>
+                    <li>Press <strong>Ctrl+Enter</strong> to generate quickly</li>
+                </ul>
+            </div>
+
+            <!-- History -->
+            <div class="vg-history">
+                <div class="vg-history-header">
+                    <h3>📜 History <span class="vg-history-count">0</span></h3>
+                    <button class="vg-history-clear" title="Clear all history">Clear All</button>
+                </div>
+                <div class="vg-history-list">
+                    <div class="vg-history-empty">
+                        <div class="empty-icon">📂</div>
+                        <p>No generations yet.<br>Create your first video!</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-bottom">
+            &copy; 2026 Evalis AI — Internal AI Video Generation Tool
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/video-gen.js"></script>
+
+    <!-- Enable generate button once API key is connected -->
+    <script>
+        // Watch for API key connection to enable/disable generate button
+        const observer = new MutationObserver(() => {
+            const section = document.querySelector('.vg-api-key-section');
+            const btn = document.querySelector('.vg-btn-generate');
+            if (section && btn) {
+                btn.disabled = !section.classList.contains('authenticated');
+            }
+        });
+        observer.observe(document.querySelector('.vg-api-key-section'), {
+            attributes: true,
+            attributeFilter: ['class']
+        });
+    </script>
+</body>
+</html>

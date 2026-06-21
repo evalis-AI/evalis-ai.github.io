@@ -7,16 +7,16 @@
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Headers': 'Content-Type, X-NIM-API-Key, X-API-Key, Authorization',
   'Access-Control-Max-Age': '86400',
 };
 
 function corsHeaders(origin, env) {
-  const allowed = [env.ALLOWED_ORIGIN, 'http://localhost', 'http://127.0.0.1'];
-  const isAllowed = allowed.some(a => origin?.startsWith(a));
+  const allowed = [env.ALLOWED_ORIGIN, 'http://localhost', 'http://127.0.0.1', 'file://'];
+  const isAllowed = !origin || origin === 'null' || allowed.some(a => origin?.startsWith(a));
   return {
     ...CORS_HEADERS,
-    'Access-Control-Allow-Origin': isAllowed ? origin : env.ALLOWED_ORIGIN,
+    'Access-Control-Allow-Origin': isAllowed ? (origin || '*') : env.ALLOWED_ORIGIN,
   };
 }
 
@@ -1161,12 +1161,60 @@ Valid recommendations: strong-hire, hire, lean-hire, no-hire`;
         }
       }
 
+      // ─── POST /api/nim/video — NVIDIA NIM Video Generation Proxy ───
+      if (url.pathname === '/api/nim/video' && request.method === 'POST') {
+        // Rate limit: 3 requests per 5 minutes per IP (video gen is expensive)
+        if (!checkRateLimit('nim-video:' + ip, 3, 300000)) {
+          return json({ error: 'Rate limit exceeded. Max 3 video generations per 5 minutes.' }, 429, origin, env);
+        }
+
+        // Require the user's own NVIDIA API key (passed from frontend)
+        const nimApiKey = request.headers.get('X-NIM-API-Key');
+        if (!nimApiKey) {
+          return json({ error: 'NVIDIA NIM API key is required.' }, 401, origin, env);
+        }
+
+        try {
+          const body = await request.json();
+
+          // Validate required prompt
+          if (!body.prompt || typeof body.prompt !== 'string' || body.prompt.trim().length < 3) {
+            return json({ error: 'A valid prompt is required (min 3 characters).' }, 400, origin, env);
+          }
+
+          // Forward to NVIDIA NIM API
+          const nimResponse = await fetch('https://integrate.api.nvidia.com/v1/infer', {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${nimApiKey}`,
+            },
+            body: JSON.stringify(body),
+          });
+
+          // Stream the response back to the client with CORS headers
+          const nimData = await nimResponse.text();
+          return new Response(nimData, {
+            status: nimResponse.status,
+            headers: {
+              'Content-Type': nimResponse.headers.get('Content-Type') || 'application/json',
+              ...corsHeaders(origin, env),
+            },
+          });
+
+        } catch (nimErr) {
+          console.error('NIM proxy error:', nimErr);
+          return json({ error: 'Failed to proxy request to NVIDIA NIM. ' + nimErr.message }, 502, origin, env);
+        }
+      }
+
       // ─── Health check ───
       if (url.pathname === '/api/health') {
         return json({
           status: 'ok',
-          service: 'Evalis AI API v3.2',
-          features: ['ai-chat', 'ai-chat-stream', 'cloud-tts', 'cloud-stt', 'voice-pipeline', 'whatsapp-bot', 'document-ai', 'lead-qualify', 'agent-builder', 'tracking', 'forms', 'projects', 'ai-interview'],
+          service: 'Evalis AI API v3.3',
+          features: ['ai-chat', 'ai-chat-stream', 'cloud-tts', 'cloud-stt', 'voice-pipeline', 'whatsapp-bot', 'document-ai', 'lead-qualify', 'agent-builder', 'tracking', 'forms', 'projects', 'ai-interview', 'nim-video-proxy'],
           timestamp: new Date().toISOString()
         }, 200, origin, env);
       }
