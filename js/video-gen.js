@@ -7,7 +7,7 @@
 
     // ─── Configuration ───
     const CONFIG = {
-        API_BASE: 'https://evalis-api.evalisglobal.workers.dev',
+        API_BASE: 'https://evalis-api.zelvora-global.workers.dev',
         API_PATH: '/api/nim/video',
         MODEL: 'nvidia/cosmos-predict1-7b',
         STORAGE_KEY: 'evalis_vg_history',
