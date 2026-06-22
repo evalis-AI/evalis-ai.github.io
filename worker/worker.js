@@ -1161,17 +1161,17 @@ Valid recommendations: strong-hire, hire, lean-hire, no-hire`;
         }
       }
 
-      // ─── POST /api/hf/video — Hugging Face Video Generation Proxy ───
+      // ─── POST /api/hf/video — HF Inference API Video Generation Proxy (Free) ───
       if (url.pathname === '/api/hf/video' && request.method === 'POST') {
         // Rate limit: 3 requests per 5 minutes per IP (video gen is expensive)
         if (!checkRateLimit('hf-video:' + ip, 3, 300000)) {
           return json({ error: 'Rate limit exceeded. Max 3 video generations per 5 minutes.' }, 429, origin, env);
         }
 
-        // Require the user's own Hugging Face API token
+        // Require the user's own Hugging Face API token (free)
         const hfToken = request.headers.get('X-HF-Token');
         if (!hfToken) {
-          return json({ error: 'Hugging Face API token is required.' }, 401, origin, env);
+          return json({ error: 'Hugging Face API token is required. Get a free one at huggingface.co/settings/tokens' }, 401, origin, env);
         }
 
         try {
@@ -1183,8 +1183,27 @@ Valid recommendations: strong-hire, hire, lean-hire, no-hire`;
             return json({ error: 'A valid prompt is required (min 3 characters).' }, 400, origin, env);
           }
 
-          // Try Hugging Face Inference Providers (fal-ai router)
-          const hfUrl = 'https://router.huggingface.co/fal-ai/models/Wan-AI/Wan2.1-T2V-14B';
+          // Build HF Inference API request body
+          const hfBody = {
+            inputs: prompt.trim(),
+            parameters: {
+              num_inference_steps: body.parameters?.num_inference_steps || 30,
+              guidance_scale: body.parameters?.guidance_scale || 7.5,
+              num_frames: body.parameters?.num_frames || 81,
+              width: body.parameters?.width || 1280,
+              height: body.parameters?.height || 704,
+            }
+          };
+
+          if (body.parameters?.negative_prompt) {
+            hfBody.parameters.negative_prompt = body.parameters.negative_prompt;
+          }
+          if (body.parameters?.seed !== undefined && body.parameters.seed >= 0) {
+            hfBody.parameters.seed = body.parameters.seed;
+          }
+
+          // Use HF Inference API with wavespeed provider (free tier)
+          const hfUrl = 'https://router.huggingface.co/wavespeed/models/Wan-AI/Wan2.1-T2V-14B';
 
           const hfResponse = await fetch(hfUrl, {
             method: 'POST',
@@ -1192,7 +1211,7 @@ Valid recommendations: strong-hire, hire, lean-hire, no-hire`;
               'Authorization': `Bearer ${hfToken}`,
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(body),
+            body: JSON.stringify(hfBody),
           });
 
           // Forward the response to the client with CORS headers

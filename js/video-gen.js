@@ -65,14 +65,14 @@
         const input = $('#vg-api-key');
         const key = input.value.trim();
         if (!key) {
-            showStatus('Please enter a valid Hugging Face API token.', 'error');
+            showStatus('Please enter a valid Hugging Face API token. Get one free at huggingface.co/settings/tokens', 'error');
             return;
         }
         state.apiKey = key;
         state.isAuthenticated = true;
         sessionStorage.setItem(CONFIG.SESSION_KEY, key);
         updateApiKeyUI(true);
-        showStatus('API token saved for this session.', 'success');
+        showStatus('API token connected for this session.', 'success');
     }
 
     function clearApiKey() {
@@ -198,7 +198,7 @@
 
         // Validate
         if (!state.isAuthenticated) {
-            showStatus('Please connect your Hugging Face API token first.', 'error');
+            showStatus('Please connect your Hugging Face API token first. It\'s free!', 'error');
             return;
         }
 
@@ -288,9 +288,9 @@
                 // JSON response with video URL or base64
                 const data = await response.json();
 
-                if (data.video_url) {
-                    // fal.ai style: returns a URL
-                    videoUrl = data.video_url;
+                if (data.video?.url || data.video_url) {
+                    // Provider may return video URL in different formats
+                    videoUrl = data.video?.url || data.video_url;
                     state.currentVideo = {
                         url: videoUrl,
                         prompt: params.prompt,
@@ -337,7 +337,7 @@
             } else if (err.message.includes('429')) {
                 errorMsg = 'Rate limit exceeded. Please wait a moment and try again.';
             } else if (err.message.includes('402') || err.message.includes('insufficient') || err.message.includes('payment')) {
-                errorMsg = 'Insufficient credits. Please check your Hugging Face account billing.';
+                errorMsg = 'Insufficient credits. Please check your Hugging Face account.';
             } else if (err.message.includes('503') || err.message.includes('loading')) {
                 errorMsg = 'Model is loading. Please wait 1-2 minutes and try again.';
             }
