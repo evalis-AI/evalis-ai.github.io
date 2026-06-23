@@ -1022,6 +1022,46 @@
         .subtitles-overlay.subtle-subtitles .subtitles-body {
             opacity: 0.6;
         }
+
+        /* ── VAD (Voice Activity Detection) indicator ── */
+        .vad-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0.8rem auto;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.02);
+            padding: 5px 14px;
+            border-radius: 100px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+        .vad-indicator .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            display: inline-block;
+        }
+        .vad-indicator.speaking {
+            color: var(--accent-emerald);
+            border-color: rgba(16, 185, 129, 0.15);
+            background: rgba(16, 185, 129, 0.04);
+        }
+        .vad-indicator.silence-warning {
+            color: var(--accent-amber);
+            border-color: rgba(245, 158, 11, 0.15);
+            background: rgba(245, 158, 11, 0.04);
+            animation: vadBlink 1.2s infinite;
+        }
+        @keyframes vadBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
     </style>
 </head>
 <body>
@@ -1212,6 +1252,12 @@
                         AI is speaking the question. Listen carefully.
                     </div>
 
+                    <!-- Hands-Free VAD status indicator -->
+                    <div id="vad-indicator" class="vad-indicator" style="display: none;">
+                        <span class="status-dot"></span>
+                        <span id="vad-text">Listening...</span>
+                    </div>
+
                     <!-- Subtitles overlay -->
                     <div id="subtitles-overlay" class="subtitles-overlay">
                         <div class="subtitles-header" onclick="revealHiddenSubtitles()">
@@ -1393,6 +1439,12 @@
         recognition: null,
         recognitionActive: false,
         userSpeechTranscript: '',
+        vadTimer: null,
+        vadCountdown: 0,
+        vadInterval: null,
+        inFollowUp: false,
+        originalAnswer: '',
+        currentFollowUpQuestion: '',
     };
 
     // ── Premium Voice Mode Helpers ──
@@ -1440,6 +1492,69 @@
         synth.speak(utterance);
     }
 
+    function resetVad() {
+        if (state.vadTimer) {
+            clearTimeout(state.vadTimer);
+            state.vadTimer = null;
+        }
+        if (state.vadInterval) {
+            clearInterval(state.vadInterval);
+            state.vadInterval = null;
+        }
+        const vadIndicator = document.getElementById('vad-indicator');
+        if (vadIndicator) {
+            vadIndicator.style.display = 'none';
+            vadIndicator.className = 'vad-indicator';
+        }
+    }
+
+    function resetAndStartVadTimer() {
+        if (!state.voiceMode) return;
+        
+        // Clear existing VAD timers
+        if (state.vadTimer) clearTimeout(state.vadTimer);
+        if (state.vadInterval) clearInterval(state.vadInterval);
+        
+        const vadIndicator = document.getElementById('vad-indicator');
+        const vadText = document.getElementById('vad-text');
+        
+        if (vadIndicator && vadText) {
+            vadIndicator.style.display = 'inline-flex';
+            vadIndicator.className = 'vad-indicator speaking';
+            vadText.textContent = 'Active speech detected';
+        }
+        
+        // Set a timer to trigger a silence warning after 2.2 seconds of no speech
+        state.vadTimer = setTimeout(() => {
+            const currentText = document.getElementById('subtitles-text').textContent.trim();
+            if (!currentText || currentText === 'Listening...' || currentText === 'Waiting for AI to finish speaking...' || currentText === 'Listening for speech...') {
+                // Keep waiting for user to start speaking
+                if (vadText) vadText.textContent = 'Listening for response...';
+                if (vadIndicator) vadIndicator.className = 'vad-indicator';
+                return;
+            }
+            
+            // User did speak but is now silent, show warning countdown
+            if (vadIndicator && vadText) {
+                vadIndicator.className = 'vad-indicator silence-warning';
+                state.vadCountdown = 2;
+                vadText.textContent = `Silence detected. Submitting in ${state.vadCountdown}s...`;
+                
+                state.vadInterval = setInterval(() => {
+                    state.vadCountdown--;
+                    if (state.vadCountdown <= 0) {
+                        clearInterval(state.vadInterval);
+                        state.vadInterval = null;
+                        vadIndicator.style.display = 'none';
+                        finishVoiceSpeaking();
+                    } else {
+                        vadText.textContent = `Silence detected. Submitting in ${state.vadCountdown}s...`;
+                    }
+                }, 1000);
+            }
+        }, 2200);
+    }
+
     function initSpeechRecognition() {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (!SpeechRecognition) {
@@ -1454,6 +1569,13 @@
         
         rec.onstart = function() {
             state.recognitionActive = true;
+            const vadIndicator = document.getElementById('vad-indicator');
+            const vadText = document.getElementById('vad-text');
+            if (vadIndicator && vadText) {
+                vadIndicator.style.display = 'inline-flex';
+                vadIndicator.className = 'vad-indicator';
+                vadText.textContent = 'Listening for response...';
+            }
         };
         
         rec.onresult = function(event) {
@@ -1476,6 +1598,7 @@
             }
             
             pulseWaveBars();
+            resetAndStartVadTimer();
         };
         
         rec.onerror = function(event) {
@@ -1836,6 +1959,11 @@
         const q = state.questions[index];
         if (!q) return;
 
+        // Reset follow-up state for new main question
+        state.inFollowUp = false;
+        state.originalAnswer = '';
+        state.currentFollowUpQuestion = '';
+
         document.getElementById('q-number').textContent = `Q${index + 1}`;
         document.getElementById('q-text').textContent = q.question;
 
@@ -1867,6 +1995,9 @@
             if (state.recognition) {
                 try { state.recognition.stop(); } catch(e) {}
             }
+            
+            // Clean up VAD timers
+            resetVad();
             
             state.userSpeechTranscript = '';
             document.getElementById('subtitles-text').textContent = 'Waiting for AI to finish speaking...';
@@ -1974,6 +2105,9 @@
     }
 
     async function finishVoiceSpeaking() {
+        // Clean up VAD timers immediately
+        resetVad();
+
         if (state.recognition) {
             try { state.recognition.stop(); } catch(e) {}
         }
@@ -2019,42 +2153,78 @@
         stopTimer();
         const q = state.questions[state.currentIndex];
         
+        // Save original answer if we are not in follow-up
+        if (!state.inFollowUp) {
+            state.originalAnswer = finalAnswer;
+        }
+        
+        // Construct combined answer representation
+        const combinedAnswer = state.inFollowUp 
+            ? `[Initial Answer]: ${state.originalAnswer}\n\n[Interviewer Follow-up]: ${state.currentFollowUpQuestion}\n[Follow-up Answer]: ${finalAnswer}`
+            : finalAnswer;
+        
         try {
+            // Evaluate the specific prompt asked (either follow-up or main question)
             const evaluation = await apiCall('/api/interview/evaluate', {
-                question: q.question,
+                question: state.inFollowUp ? state.currentFollowUpQuestion : q.question,
                 answer: finalAnswer,
                 role: state.role,
                 level: state.level,
             });
             
-            state.answers.push({
-                questionId: q.id,
-                question: q.question,
-                type: q.type,
-                difficulty: q.difficulty,
-                answer: finalAnswer,
-                score: evaluation.score || 0,
-                verdict: evaluation.verdict || 'good',
-                strengths: evaluation.strengths || [],
-                improvements: evaluation.improvements || [],
-                followUp: evaluation.followUp || '',
-            });
+            if (state.inFollowUp) {
+                // Update the last answer record with the combined answers and new evaluation
+                const lastIndex = state.answers.length - 1;
+                if (lastIndex >= 0) {
+                    state.answers[lastIndex].answer = combinedAnswer;
+                    state.answers[lastIndex].score = evaluation.score || 0;
+                    state.answers[lastIndex].verdict = evaluation.verdict || 'good';
+                    state.answers[lastIndex].strengths = evaluation.strengths || [];
+                    state.answers[lastIndex].improvements = evaluation.improvements || [];
+                }
+            } else {
+                // Push a new answer record
+                state.answers.push({
+                    questionId: q.id,
+                    question: q.question,
+                    type: q.type,
+                    difficulty: q.difficulty,
+                    answer: finalAnswer,
+                    score: evaluation.score || 0,
+                    verdict: evaluation.verdict || 'good',
+                    strengths: evaluation.strengths || [],
+                    improvements: evaluation.improvements || [],
+                    followUp: evaluation.followUp || '',
+                });
+            }
             
             showFeedback(evaluation);
             
         } catch (err) {
-            state.answers.push({
-                questionId: q.id,
-                question: q.question,
-                type: q.type,
-                difficulty: q.difficulty,
-                answer: finalAnswer,
-                score: 50,
-                verdict: 'good',
-                strengths: ['Answer was provided'],
-                improvements: ['Evaluation unavailable — using estimate'],
-                followUp: '',
-            });
+            console.error('Failed to evaluate answer:', err);
+            if (state.inFollowUp) {
+                const lastIndex = state.answers.length - 1;
+                if (lastIndex >= 0) {
+                    state.answers[lastIndex].answer = combinedAnswer;
+                    state.answers[lastIndex].score = 50;
+                    state.answers[lastIndex].verdict = 'good';
+                    state.answers[lastIndex].strengths = ['Follow-up answer was provided'];
+                    state.answers[lastIndex].improvements = ['Evaluation unavailable — using estimate'];
+                }
+            } else {
+                state.answers.push({
+                    questionId: q.id,
+                    question: q.question,
+                    type: q.type,
+                    difficulty: q.difficulty,
+                    answer: finalAnswer,
+                    score: 50,
+                    verdict: 'good',
+                    strengths: ['Answer was provided'],
+                    improvements: ['Evaluation unavailable — using estimate'],
+                    followUp: '',
+                });
+            }
             showFeedback({
                 score: 50, verdict: 'good',
                 strengths: ['Answer was provided'],
@@ -2143,12 +2313,71 @@
 
         if (state.voiceMode) {
             let feedbackVoiceText = `Answer evaluated. You scored ${score} out of 100. `;
-            if (evaluation.followUp) {
-                feedbackVoiceText += `Here is a follow up question: ${evaluation.followUp}`;
+            
+            if (state.inFollowUp) {
+                // If we just evaluated the follow-up, let's proceed to next question
+                feedbackVoiceText = `Follow-up evaluated. Your final score for this question is ${score} out of 100. `;
+                const isLast = state.currentIndex >= state.questions.length - 1;
+                if (isLast) {
+                    feedbackVoiceText += `The interview is now complete. Generating your hiring report.`;
+                } else {
+                    feedbackVoiceText += `Moving to the next question.`;
+                }
+                speakText(feedbackVoiceText, function() {
+                    nextQuestion();
+                });
+            } else if (evaluation.followUp) {
+                // We have a follow-up question, let's read it and switch back to cockpit
+                feedbackVoiceText += `Here is a follow-up question: ${evaluation.followUp}`;
+                speakText(feedbackVoiceText, function() {
+                    // Update state to follow-up mode
+                    state.inFollowUp = true;
+                    state.currentFollowUpQuestion = evaluation.followUp;
+                    
+                    // Navigate back to interview cockpit screen
+                    showScreen('screen-interview');
+                    
+                    // Show the follow-up question text in place of the main question
+                    document.getElementById('q-text').textContent = `Follow-up: ${evaluation.followUp}`;
+                    
+                    // Reset VAD state & clean transcript
+                    if (state.recognition) {
+                        try { state.recognition.stop(); } catch(e) {}
+                    }
+                    resetVad();
+                    
+                    state.userSpeechTranscript = '';
+                    document.getElementById('subtitles-text').textContent = 'Listening...';
+                    document.getElementById('btn-voice-finish').disabled = false;
+                    
+                    // Update visualizer state to listening
+                    const visualizer = document.getElementById('visualizer-container');
+                    visualizer.className = 'visualizer-container listening';
+                    document.getElementById('visualizer-icon').textContent = '🎙️';
+                    document.getElementById('voice-status-dot').className = 'status-dot pulse-green';
+                    document.getElementById('voice-status-text').textContent = 'LISTENING TO YOU';
+                    document.getElementById('voice-instruction').textContent = 'Speak your follow-up answer now. Click the ring when done.';
+                    
+                    // Restart speech recognition
+                    if (!state.recognition) {
+                        state.recognition = initSpeechRecognition();
+                    }
+                    if (state.recognition && !state.recognitionActive) {
+                        try { state.recognition.start(); } catch(e) {}
+                    }
+                });
             } else {
-                feedbackVoiceText += `Click Next Question to continue.`;
+                // No follow-up question, move to the next question
+                const isLast = state.currentIndex >= state.questions.length - 1;
+                if (isLast) {
+                    feedbackVoiceText += `The interview is now complete. Generating your hiring report.`;
+                } else {
+                    feedbackVoiceText += `Moving to the next question.`;
+                }
+                speakText(feedbackVoiceText, function() {
+                    nextQuestion();
+                });
             }
-            speakText(feedbackVoiceText);
         }
     }
 
@@ -2328,6 +2557,7 @@
         if (window.speechSynthesis) {
             window.speechSynthesis.cancel();
         }
+        resetVad();
         state = {
             sessionId: null, role: '', level: '',
             questions: [], currentIndex: 0, answers: [],
@@ -2339,6 +2569,12 @@
             recognition: null,
             recognitionActive: false,
             userSpeechTranscript: '',
+            vadTimer: null,
+            vadCountdown: 0,
+            vadInterval: null,
+            inFollowUp: false,
+            originalAnswer: '',
+            currentFollowUpQuestion: '',
         };
         const muteBtn = document.getElementById('btn-voice-mute');
         if (muteBtn) muteBtn.textContent = '🔇 Mute AI';
