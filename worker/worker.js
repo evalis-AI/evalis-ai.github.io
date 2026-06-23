@@ -180,6 +180,77 @@ export default {
       // ── Validate API key for B2B clients (optional — enhances limits) ──
       const apiClient = await validateApiKey(request, env);
 
+      // ── WebSocket Live Proxy for Gemini Live API ──
+      if (url.pathname === '/api/interview/live-websocket') {
+        if (request.headers.get('Upgrade') !== 'websocket') {
+          return new Response('Expected Upgrade: websocket', { status: 426 });
+        }
+
+        const [client, server] = new WebSocketPair();
+        const geminiWsUrl = `wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key=${env.GEMINI_API_KEY}`;
+        
+        try {
+          const response = await fetch(geminiWsUrl, {
+            headers: { 'Upgrade': 'websocket' }
+          });
+          
+          const geminiWs = response.webSocket;
+          if (!geminiWs) {
+            server.accept();
+            server.close(1011, 'Failed to connect to Gemini Live API');
+            return new Response('Failed to connect to Gemini Live API', { status: 500 });
+          }
+
+          // Proxy browser -> Gemini
+          server.addEventListener('message', event => {
+            try {
+              geminiWs.send(event.data);
+            } catch (e) {
+              server.close(1011, 'Error forwarding to Gemini');
+            }
+          });
+          
+          server.addEventListener('close', event => {
+            geminiWs.close(event.code, event.reason);
+          });
+          
+          server.addEventListener('error', () => {
+            geminiWs.close(1011, 'Client error');
+          });
+
+          // Proxy Gemini -> browser
+          geminiWs.addEventListener('message', event => {
+            try {
+              server.send(event.data);
+            } catch (e) {
+              geminiWs.close(1011, 'Error forwarding to Client');
+            }
+          });
+          
+          geminiWs.addEventListener('close', event => {
+            server.close(event.code, event.reason);
+          });
+          
+          geminiWs.addEventListener('error', () => {
+            server.close(1011, 'Gemini error');
+          });
+
+          // Accept server connection after registering listeners
+          server.accept();
+
+          return new Response(null, {
+            status: 101,
+            webSocket: client,
+            headers: corsHeaders(origin, env)
+          });
+
+        } catch (err) {
+          server.accept();
+          server.close(1011, 'Error proxying WebSocket: ' + err.message);
+          return new Response('WebSocket proxy error: ' + err.message, { status: 500 });
+        }
+      }
+
       // ─── POST /api/ai/chat ───
       if (url.pathname === '/api/ai/chat' && request.method === 'POST') {
         const body = await request.json();
@@ -1182,6 +1253,93 @@ Valid recommendations: strong-hire, hire, lean-hire, no-hire`;
         } catch(aiErr) {
           console.error('Interview report Gemini error:', aiErr);
           return json({ error: 'Failed to generate report. Please try again.' }, 500, origin, env);
+        }
+      }
+
+      // ─── POST /api/interview/report-from-transcript — Evaluate Live Interview Transcript (Gemini AI) ───
+      if (url.pathname === '/api/interview/report-from-transcript' && request.method === 'POST') {
+        if (!checkRateLimit(ip, 5, 60000)) {
+          return json({ error: 'Too many requests. Please wait a moment.' }, 429, origin, env);
+        }
+
+        const body = await request.json();
+        const { role, level, transcript } = body;
+
+        if (!transcript || !Array.isArray(transcript) || transcript.length === 0) {
+          return json({ error: 'Transcript data is required.' }, 400, origin, env);
+        }
+
+        const systemPrompt = `You are a senior technical interviewer and coach evaluating a candidate who participated in a live audio interview.
+Based on the transcript of the interview, analyze the candidate's performance for a ${level || 'mid-level'} ${role || 'software engineer'} position.
+Rate the candidate's answers and generate a structured hiring report.
+
+You MUST extract each technical question asked by the interviewer and the candidate's response to it, evaluating each question individually.
+Provide a final overall score (0-100), overall recommendation, strengths, focus areas, and next steps.
+Return ONLY valid JSON in this exact format:
+{
+  "overallScore": 80,
+  "recommendation": "hire",
+  "summary": "...",
+  "topStrengths": ["...", "..."],
+  "focusAreas": ["...", "..."],
+  "nextSteps": ["...", "..."],
+  "answers": [
+    {
+      "question": "The question asked by the interviewer",
+      "answer": "The candidate's response",
+      "score": 85,
+      "verdict": "good",
+      "strengths": ["..."],
+      "improvements": ["..."],
+      "type": "technical",
+      "difficulty": "medium"
+    }
+  ]
+}
+
+Valid overall recommendations: strong-hire, hire, lean-hire, no-hire.
+Valid individual verdicts: strong, good, weak.
+Do not output markdown, HTML, or any text other than the JSON object.`;
+
+        try {
+          const raw = await geminiGenerate(
+            systemPrompt,
+            `Role: ${level} ${role}\n\nTranscript of the Interview:\n${JSON.stringify(transcript)}\n\nGenerate the complete hiring report now.`,
+            env,
+            { temperature: 0.3, maxTokens: 4096, model: 'gemini-2.5-flash' }
+          );
+
+          let report;
+          try {
+            report = JSON.parse(raw);
+          } catch {
+            const match = raw.match(/\{[\s\S]*\}/);
+            if (match) {
+              try { report = JSON.parse(match[0]); } catch { throw new Error("Could not parse Gemini response"); }
+            } else {
+              throw new Error("Could not find JSON object in Gemini response");
+            }
+          }
+
+          // Log completed session to Supabase (non-blocking)
+          try {
+            await supabaseInsert('interview_sessions', {
+              session_id: body.sessionId || crypto.randomUUID(),
+              role: (role || '').substring(0, 100),
+              level: (level || '').substring(0, 50),
+              question_count: report.answers ? report.answers.length : 0,
+              avg_score: report.overallScore || 50,
+              recommendation: report.recommendation || '',
+              status: 'completed',
+              client_ip: ip.substring(0, 10) + '***',
+            }, env);
+          } catch(e) { /* silent */ }
+
+          return json(report, 200, origin, env);
+
+        } catch(aiErr) {
+          console.error('Interview report from transcript error:', aiErr);
+          return json({ error: 'Failed to generate report from transcript. Please try again.' }, 500, origin, env);
         }
       }
 

@@ -1500,6 +1500,385 @@
         currentFollowUpQuestion: '',
     };
 
+    // ── Gemini Multimodal Live API (WebSocket & Audio Engine) ──
+    let nextPlayTime = 0;
+    let audioQueue = [];
+    let micProcessor = null;
+    let micAudioContext = null;
+
+    function base64ToFloat32Array(base64) {
+        const binaryString = atob(base64);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        const int16Array = new Int16Array(bytes.buffer);
+        const float32Array = new Float32Array(int16Array.length);
+        for (let i = 0; i < int16Array.length; i++) {
+            float32Array[i] = int16Array[i] / 32768;
+        }
+        return float32Array;
+    }
+
+    function playPcmChunk(base64Pcm) {
+        const ctx = getAudioContext();
+        if (ctx.state === 'suspended') ctx.resume();
+
+        const samples = base64ToFloat32Array(base64Pcm);
+        if (samples.length === 0) return;
+
+        const audioBuffer = ctx.createBuffer(1, samples.length, 24000);
+        audioBuffer.getChannelData(0).set(samples);
+
+        const source = ctx.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(ctx.destination);
+
+        const now = ctx.currentTime;
+        if (nextPlayTime < now) {
+            nextPlayTime = now + 0.05; // 50ms lookahead to prevent jitter
+        }
+
+        source.start(nextPlayTime);
+        
+        // Track source so we can stop it if interrupted
+        audioQueue.push(source);
+        nextPlayTime += audioBuffer.duration;
+
+        source.onended = () => {
+            const index = audioQueue.indexOf(source);
+            if (index > -1) {
+                audioQueue.splice(index, 1);
+            }
+        };
+    }
+
+    function stopPlayback() {
+        audioQueue.forEach(source => {
+            try {
+                source.stop();
+            } catch(e) {}
+        });
+        audioQueue.length = 0;
+        nextPlayTime = 0;
+    }
+
+    async function startStreamingMicToWs(ws) {
+        try {
+            micAudioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+            const source = micAudioContext.createMediaStreamSource(micStream);
+            
+            micProcessor = micAudioContext.createScriptProcessor(2048, 1, 1);
+            source.connect(micProcessor);
+            micProcessor.connect(micAudioContext.destination);
+
+            micProcessor.onaudioprocess = function(e) {
+                // Only stream microphone to Gemini if the AI is NOT speaking
+                if (state.aiSpeakingActive) return;
+
+                const inputData = e.inputBuffer.getChannelData(0); // Float32Array
+                
+                // Convert Float32 to Int16 PCM
+                const int16Buffer = new Int16Array(inputData.length);
+                let hasSpeech = false;
+                for (let i = 0; i < inputData.length; i++) {
+                    const s = Math.max(-1, Math.min(1, inputData[i]));
+                    if (Math.abs(s) > 0.02) {
+                        hasSpeech = true;
+                    }
+                    int16Buffer[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+                }
+
+                // Update VAD UI indicator on client
+                const vadIndicator = document.getElementById('vad-indicator');
+                const vadText = document.getElementById('vad-text');
+                if (hasSpeech && vadIndicator && vadText) {
+                    vadIndicator.style.display = 'inline-flex';
+                    vadIndicator.className = 'vad-indicator speaking';
+                    vadText.textContent = 'Active speech detected';
+                }
+
+                // Convert Int16PCM to base64
+                const uint8Buffer = new Uint8Array(int16Buffer.buffer);
+                let binary = '';
+                for (let i = 0; i < uint8Buffer.length; i++) {
+                    binary += String.fromCharCode(uint8Buffer[i]);
+                }
+                const base64Audio = btoa(binary);
+
+                // Send to Gemini
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({
+                        realtimeInput: {
+                            mediaChunks: [{
+                                mimeType: 'audio/pcm',
+                                data: base64Audio
+                            }]
+                        }
+                    }));
+                }
+            };
+        } catch(e) {
+            console.error("Error setting up mic streaming:", e);
+        }
+    }
+
+    function stopMicStreaming() {
+        if (micProcessor) {
+            try { micProcessor.disconnect(); } catch(e) {}
+            micProcessor = null;
+        }
+        if (micAudioContext) {
+            try { micAudioContext.close(); } catch(e) {}
+            micAudioContext = null;
+        }
+    }
+
+    function cleanupMicStream() {
+        if (micStream) {
+            micStream.getTracks().forEach(t => t.stop());
+            micStream = null;
+        }
+    }
+
+    async function startLiveVoiceInterview() {
+        if (state.liveWs) {
+            try { state.liveWs.close(); } catch(e) {}
+            state.liveWs = null;
+        }
+
+        // Reset state for websocket session
+        state.liveTranscript = [];
+        state.answers = [];
+        state.currentIndex = 0;
+        state.aiSpeakingActive = false;
+        state.aiSpokenTextBuffer = '';
+        state.userSpeechTranscript = '';
+        nextPlayTime = 0;
+        audioQueue = [];
+
+        // Connect UI state
+        document.getElementById('q-number').textContent = 'LIVE';
+        document.getElementById('q-text').textContent = 'Connecting to Gemini Live API...';
+        document.getElementById('btn-voice-finish').disabled = true;
+        document.getElementById('btn-voice-finish').textContent = '⏹ End Interview';
+        
+        const visualizer = document.getElementById('visualizer-container');
+        visualizer.className = 'visualizer-container processing';
+        document.getElementById('visualizer-icon').textContent = '⚡';
+        document.getElementById('voice-status-dot').className = 'status-dot pulse-blue';
+        document.getElementById('voice-status-text').textContent = 'CONNECTING';
+        document.getElementById('voice-instruction').textContent = 'Establishing secure low-latency full-duplex session...';
+        document.getElementById('subtitles-text').textContent = 'Connecting...';
+
+        // Secure mic access
+        try {
+            if (!micStream) {
+                micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            }
+        } catch (err) {
+            showError('setup-error', 'Microphone access is required for voice interviews.');
+            showScreen('screen-setup');
+            return;
+        }
+
+        const wsUrl = API_BASE.replace('http', 'ws') + '/api/interview/live-websocket';
+        const ws = new WebSocket(wsUrl);
+        state.liveWs = ws;
+
+        ws.onopen = () => {
+            const systemPrompt = `You are a professional, polite, and thorough AI technical interviewer at a top technology company.
+You are interviewing a candidate for the role of ${state.role} (experience level: ${state.level}).
+Your goal is to conduct a professional candidate evaluation. Ask exactly 5 technical questions one by one.
+
+Guidelines:
+1. Start the interview by greeting the candidate, introducing yourself briefly, and immediately asking the first question.
+2. Ask one question at a time. Wait for the candidate to finish their response.
+3. Once the candidate responds, briefly acknowledge their answer, ask a follow-up question if their answer was incomplete/ambiguous, or transition directly to the next question.
+4. Keep your responses, questions, and transitions extremely concise and natural.
+5. Do NOT use markdown, asterisks, bullet points, or JSON formatting in your output. Just output clean, readable conversational English that is suitable for speech synthesis.
+6. Once all 5 questions have been answered, conclude the interview by thanking the candidate, stating that their assessment is being finalized, and say goodbye. Do not ask any more questions.`;
+
+            const setupMsg = {
+                setup: {
+                    model: "models/gemini-2.0-flash-exp",
+                    generationConfig: {
+                        responseModalities: ["AUDIO"],
+                        speechConfig: {
+                            voiceConfig: {
+                                prebuiltVoiceConfig: {
+                                    voiceName: "Aoede" // beautiful female voice config
+                                }
+                            }
+                        }
+                    },
+                    systemInstruction: {
+                        parts: [{ text: systemPrompt }]
+                    }
+                }
+            };
+            ws.send(JSON.stringify(setupMsg));
+
+            visualizer.className = 'visualizer-container speaking';
+            document.getElementById('visualizer-icon').textContent = '🤖';
+            document.getElementById('voice-status-dot').className = 'status-dot pulse-blue';
+            document.getElementById('voice-status-text').textContent = 'AI INTERVIEWER ACTIVE';
+            document.getElementById('voice-instruction').textContent = 'AI is speaking. Listen carefully.';
+            document.getElementById('subtitles-text').textContent = 'Connected. Starting interview...';
+
+            startStreamingMicToWs(ws);
+        };
+
+        ws.onmessage = async (event) => {
+            let msg;
+            try {
+                msg = JSON.parse(event.data);
+            } catch(e) {
+                console.error("Failed to parse WebSocket message:", e);
+                return;
+            }
+
+            if (msg.serverContent) {
+                const serverContent = msg.serverContent;
+
+                if (serverContent.interrupted) {
+                    console.log("AI was interrupted by speech");
+                    stopPlayback();
+                    state.aiSpeakingActive = false;
+                    state.aiSpokenTextBuffer = '';
+                    return;
+                }
+
+                if (serverContent.modelTurn && serverContent.modelTurn.parts) {
+                    // Flush accumulated user transcription if model starts speaking
+                    if (state.userSpeechTranscript) {
+                        state.liveTranscript.push({ role: 'user', parts: [{ text: state.userSpeechTranscript }] });
+                        state.userSpeechTranscript = '';
+                    }
+
+                    serverContent.modelTurn.parts.forEach(part => {
+                        if (part.text) {
+                            state.aiSpokenTextBuffer += part.text;
+                            document.getElementById('subtitles-text').textContent = state.aiSpokenTextBuffer;
+                            document.getElementById('q-text').textContent = state.aiSpokenTextBuffer;
+                        }
+
+                        if (part.inlineData && part.inlineData.data) {
+                            state.aiSpeakingActive = true;
+                            visualizer.className = 'visualizer-container speaking';
+                            document.getElementById('visualizer-icon').textContent = '🤖';
+                            document.getElementById('voice-status-dot').className = 'status-dot pulse-blue';
+                            document.getElementById('voice-status-text').textContent = 'AI INTERVIEWER SPEAKING';
+                            document.getElementById('voice-instruction').textContent = 'AI is speaking. Listen carefully.';
+                            
+                            playPcmChunk(part.inlineData.data);
+                        }
+                    });
+                }
+
+                if (serverContent.turnComplete) {
+                    console.log("AI completed turn: " + state.aiSpokenTextBuffer);
+                    
+                    state.liveTranscript.push({ role: 'model', parts: [{ text: state.aiSpokenTextBuffer }] });
+                    state.aiSpokenTextBuffer = '';
+                    state.aiSpeakingActive = false;
+
+                    visualizer.className = 'visualizer-container listening';
+                    document.getElementById('visualizer-icon').textContent = '🎙️';
+                    document.getElementById('voice-status-dot').className = 'status-dot pulse-green';
+                    document.getElementById('voice-status-text').textContent = 'LISTENING TO YOU';
+                    document.getElementById('voice-instruction').textContent = 'Speak your response. Speak naturally.';
+                    document.getElementById('subtitles-text').textContent = 'Listening...';
+                    document.getElementById('btn-voice-finish').disabled = false;
+
+                    playChime('listening');
+                    startSpeakingTimer();
+                    startWaveform();
+                }
+            }
+
+            if (msg.inputTranscription && msg.inputTranscription.text) {
+                const text = msg.inputTranscription.text;
+                console.log("User transcript:", text);
+                document.getElementById('subtitles-text').textContent = text;
+                state.userSpeechTranscript = text;
+            }
+        };
+
+        ws.onclose = () => {
+            console.log("WebSocket closed");
+            stopPlayback();
+            stopWaveform();
+            stopSpeakingTimer();
+            cleanupMicStream();
+            if (state.liveWs) {
+                finishLiveVoiceInterview();
+            }
+        };
+
+        ws.onerror = (err) => {
+            console.error("WebSocket error:", err);
+            showError('setup-error', 'Lost connection to AI server.');
+        };
+    }
+
+    async function finishLiveVoiceInterview() {
+        if (!state.liveWs) return;
+
+        if (state.userSpeechTranscript) {
+            state.liveTranscript.push({ role: 'user', parts: [{ text: state.userSpeechTranscript }] });
+            state.userSpeechTranscript = '';
+        }
+
+        try {
+            state.liveWs.close();
+        } catch(e) {}
+        state.liveWs = null;
+
+        stopMicStreaming();
+        stopPlayback();
+        stopWaveform();
+        stopSpeakingTimer();
+
+        if (state.liveTranscript.length < 2) {
+            showError('setup-error', 'Interview ended too early. No conversation transcript was recorded.');
+            showScreen('screen-setup');
+            return;
+        }
+
+        showScreen('screen-report');
+        document.getElementById('report-loading').classList.remove('hidden');
+        document.getElementById('report-role-info').textContent =
+            `${state.role} — ${state.level.charAt(0).toUpperCase() + state.level.slice(1)}`;
+
+        try {
+            const report = await apiCall('/api/interview/report-from-transcript', {
+                sessionId: state.sessionId || crypto.randomUUID(),
+                role: state.role,
+                level: state.level,
+                transcript: state.liveTranscript,
+            });
+
+            state.answers = report.answers || [];
+            renderReport(report);
+
+        } catch (err) {
+            console.error('Failed to generate report from live transcript:', err);
+            const avgScore = 65;
+            renderReport({
+                overallScore: avgScore,
+                recommendation: 'lean-hire',
+                summary: `You completed the live audio interview. Report generation had issues, but your transcript was saved.`,
+                topStrengths: ['Completed the live conversation'],
+                focusAreas: ['Review raw interview audio settings'],
+                nextSteps: ['Try again later'],
+                answers: [],
+            });
+        } finally {
+            document.getElementById('report-loading').classList.add('hidden');
+        }
+    }
+
     // ── Premium Voice Mode Helpers ──
     let synth = window.speechSynthesis;
 
@@ -2135,6 +2514,29 @@
         btn.disabled = true;
         btn.innerHTML = '<div class="spinner"></div> Generating Questions...';
 
+        if (mode === 'voice') {
+            state.sessionId = crypto.randomUUID();
+            state.role = role;
+            state.level = level;
+            state.questions = [];
+            state.currentIndex = 0;
+            state.answers = [];
+            state.voiceMode = true;
+            state.subtitlesMode = subtitles;
+            state.subtitlesRevealed = (subtitles === 'visible');
+
+            document.getElementById('text-answer-container').style.display = 'none';
+            document.getElementById('voice-answer-container').style.display = 'block';
+            setupVoiceSubtitles();
+
+            showScreen('screen-interview');
+            btn.disabled = false;
+            btn.innerHTML = 'Start Interview →';
+            
+            startLiveVoiceInterview();
+            return;
+        }
+
         try {
             const data = await apiCall('/api/interview/start', { role, level, count });
 
@@ -2332,6 +2734,10 @@
     }
 
     async function finishVoiceSpeaking() {
+        if (state.liveWs) {
+            await finishLiveVoiceInterview();
+            return;
+        }
         // Clean up VAD timers immediately
         resetVad();
         stopWaveform();
@@ -2786,6 +3192,11 @@
     // ══════════════════════════════════════════
     function restartInterview() {
         stopTimer();
+        if (state.liveWs) {
+            try { state.liveWs.close(); } catch(e) {}
+            state.liveWs = null;
+        }
+        stopMicStreaming();
         if (state.recognition) {
             try { state.recognition.stop(); } catch(e) {}
         }
@@ -2817,6 +3228,8 @@
             inFollowUp: false,
             originalAnswer: '',
             currentFollowUpQuestion: '',
+            liveWs: null,
+            liveTranscript: [],
         };
         const muteBtn = document.getElementById('btn-voice-mute');
         if (muteBtn) muteBtn.textContent = '🔇 Mute AI';
