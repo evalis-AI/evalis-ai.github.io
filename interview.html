@@ -1062,6 +1062,50 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.6; }
         }
+
+        /* ── Real-time waveform canvas ── */
+        .waveform-canvas {
+            width: 100%;
+            max-width: 480px;
+            height: 48px;
+            margin: 0.5rem auto;
+            display: block;
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .waveform-canvas.active {
+            opacity: 1;
+        }
+
+        /* ── Elapsed speaking timer ── */
+        .speaking-timer {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin: 0.3rem auto 0;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--accent-emerald);
+            font-variant-numeric: tabular-nums;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.5px;
+        }
+        .speaking-timer.active {
+            display: inline-flex;
+        }
+        .speaking-timer .timer-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--accent-emerald);
+            animation: timerDotPulse 1s ease-in-out infinite;
+        }
+        @keyframes timerDotPulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -1246,6 +1290,15 @@
                             <div class="bar"></div><div class="bar"></div><div class="bar"></div>
                             <div class="bar"></div><div class="bar"></div><div class="bar"></div>
                         </div>
+                    </div>
+
+                    <!-- Real-time waveform -->
+                    <canvas id="waveform-canvas" class="waveform-canvas" height="48"></canvas>
+
+                    <!-- Elapsed speaking timer -->
+                    <div id="speaking-timer" class="speaking-timer">
+                        <span class="timer-dot"></span>
+                        <span id="speaking-timer-value">Speaking for 0s</span>
                     </div>
 
                     <div class="voice-instruction" id="voice-instruction">
@@ -1492,6 +1545,172 @@
         synth.speak(utterance);
     }
 
+    // ── Web Audio API — Real-time Waveform & Transition Chimes ──
+    let audioCtx = null;
+    let analyser = null;
+    let micStream = null;
+    let waveformAnimId = null;
+    let speakingStartTime = null;
+    let speakingTimerInterval = null;
+
+    function getAudioContext() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        return audioCtx;
+    }
+
+    async function startWaveform() {
+        try {
+            const ctx = getAudioContext();
+            if (ctx.state === 'suspended') await ctx.resume();
+
+            if (!micStream) {
+                micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            }
+
+            const source = ctx.createMediaStreamSource(micStream);
+            analyser = ctx.createAnalyser();
+            analyser.fftSize = 256;
+            analyser.smoothingTimeConstant = 0.7;
+            source.connect(analyser);
+
+            const canvas = document.getElementById('waveform-canvas');
+            if (canvas) {
+                canvas.classList.add('active');
+                drawWaveform(canvas, analyser);
+            }
+        } catch(e) {
+            console.warn('Waveform init failed:', e);
+        }
+    }
+
+    function stopWaveform() {
+        if (waveformAnimId) {
+            cancelAnimationFrame(waveformAnimId);
+            waveformAnimId = null;
+        }
+        const canvas = document.getElementById('waveform-canvas');
+        if (canvas) {
+            canvas.classList.remove('active');
+            const ctx2d = canvas.getContext('2d');
+            if (ctx2d) ctx2d.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        // Don't close micStream here — it's reused across questions
+    }
+
+    function drawWaveform(canvas, analyserNode) {
+        const ctx2d = canvas.getContext('2d');
+        const dpr = window.devicePixelRatio || 1;
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        ctx2d.scale(dpr, dpr);
+
+        const bufLen = analyserNode.frequencyBinCount;
+        const dataArray = new Uint8Array(bufLen);
+
+        function draw() {
+            waveformAnimId = requestAnimationFrame(draw);
+            analyserNode.getByteFrequencyData(dataArray);
+
+            ctx2d.clearRect(0, 0, w, h);
+
+            const barCount = Math.min(bufLen, 64);
+            const barWidth = (w / barCount) * 0.7;
+            const gap = (w / barCount) * 0.3;
+            const centerY = h / 2;
+
+            for (let i = 0; i < barCount; i++) {
+                const val = dataArray[i] / 255;
+                const barH = Math.max(2, val * centerY * 0.9);
+                const x = i * (barWidth + gap);
+
+                // Dynamic gradient from emerald to cyan based on amplitude
+                const hue = 150 + val * 30;
+                const alpha = 0.3 + val * 0.7;
+                ctx2d.fillStyle = `hsla(${hue}, 70%, 55%, ${alpha})`;
+
+                // Mirror bars from center
+                ctx2d.fillRect(x, centerY - barH, barWidth, barH);
+                ctx2d.fillRect(x, centerY, barWidth, barH * 0.6);
+            }
+        }
+        draw();
+    }
+
+    // ── Transition Chime System (Web Audio Oscillator) ──
+    function playChime(type) {
+        try {
+            const ctx = getAudioContext();
+            if (ctx.state === 'suspended') ctx.resume();
+
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            gain.gain.value = 0.08; // Subtle volume
+
+            if (type === 'listening') {
+                // Two-note rising chime: "ready to listen"
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523, ctx.currentTime);       // C5
+                osc.frequency.setValueAtTime(659, ctx.currentTime + 0.12); // E5
+                gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.3);
+            } else if (type === 'warning') {
+                // Quick double tap alert
+                osc.type = 'triangle';
+                osc.frequency.value = 440; // A4
+                gain.gain.setValueAtTime(0.06, ctx.currentTime);
+                gain.gain.setValueAtTime(0.001, ctx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.06, ctx.currentTime + 0.15);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.25);
+            } else if (type === 'submitted') {
+                // Descending confirmation tone
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(784, ctx.currentTime);       // G5
+                osc.frequency.setValueAtTime(659, ctx.currentTime + 0.1); // E5
+                osc.frequency.setValueAtTime(523, ctx.currentTime + 0.2); // C5
+                gain.gain.setValueAtTime(0.07, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.35);
+            }
+        } catch(e) {
+            // Graceful degrade — chimes are non-essential
+        }
+    }
+
+    // ── Elapsed Speaking Timer ──
+    function startSpeakingTimer() {
+        speakingStartTime = Date.now();
+        const timerEl = document.getElementById('speaking-timer');
+        const timerVal = document.getElementById('speaking-timer-value');
+        if (timerEl) timerEl.classList.add('active');
+        if (speakingTimerInterval) clearInterval(speakingTimerInterval);
+        speakingTimerInterval = setInterval(() => {
+            const elapsed = Math.floor((Date.now() - speakingStartTime) / 1000);
+            if (timerVal) timerVal.textContent = `Speaking for ${elapsed}s`;
+        }, 1000);
+    }
+
+    function stopSpeakingTimer() {
+        if (speakingTimerInterval) {
+            clearInterval(speakingTimerInterval);
+            speakingTimerInterval = null;
+        }
+        speakingStartTime = null;
+        const timerEl = document.getElementById('speaking-timer');
+        if (timerEl) timerEl.classList.remove('active');
+    }
+
     function resetVad() {
         if (state.vadTimer) {
             clearTimeout(state.vadTimer);
@@ -1539,6 +1758,7 @@
                 vadIndicator.className = 'vad-indicator silence-warning';
                 state.vadCountdown = 2;
                 vadText.textContent = `Silence detected. Submitting in ${state.vadCountdown}s...`;
+                playChime('warning');
                 
                 state.vadInterval = setInterval(() => {
                     state.vadCountdown--;
@@ -1998,6 +2218,8 @@
             
             // Clean up VAD timers
             resetVad();
+            stopWaveform();
+            stopSpeakingTimer();
             
             state.userSpeechTranscript = '';
             document.getElementById('subtitles-text').textContent = 'Waiting for AI to finish speaking...';
@@ -2018,9 +2240,14 @@
                 document.getElementById('visualizer-icon').textContent = '🎙️';
                 document.getElementById('voice-status-dot').className = 'status-dot pulse-green';
                 document.getElementById('voice-status-text').textContent = 'LISTENING TO YOU';
-                document.getElementById('voice-instruction').textContent = 'Speak your answer now. Click the ring when done.';
+                document.getElementById('voice-instruction').textContent = 'Speak your answer. Auto-submits when you stop.';
                 document.getElementById('subtitles-text').textContent = 'Listening...';
                 document.getElementById('btn-voice-finish').disabled = false;
+                
+                // Start real-time waveform, chime, and elapsed timer
+                playChime('listening');
+                startWaveform();
+                startSpeakingTimer();
                 
                 if (!state.recognition) {
                     state.recognition = initSpeechRecognition();
@@ -2107,6 +2334,9 @@
     async function finishVoiceSpeaking() {
         // Clean up VAD timers immediately
         resetVad();
+        stopWaveform();
+        stopSpeakingTimer();
+        playChime('submitted');
 
         if (state.recognition) {
             try { state.recognition.stop(); } catch(e) {}
@@ -2356,7 +2586,12 @@
                     document.getElementById('visualizer-icon').textContent = '🎙️';
                     document.getElementById('voice-status-dot').className = 'status-dot pulse-green';
                     document.getElementById('voice-status-text').textContent = 'LISTENING TO YOU';
-                    document.getElementById('voice-instruction').textContent = 'Speak your follow-up answer now. Click the ring when done.';
+                    document.getElementById('voice-instruction').textContent = 'Answer the follow-up. Auto-submits when you stop.';
+                    
+                    // Start audio systems for follow-up
+                    playChime('listening');
+                    startWaveform();
+                    startSpeakingTimer();
                     
                     // Restart speech recognition
                     if (!state.recognition) {
@@ -2558,6 +2793,13 @@
             window.speechSynthesis.cancel();
         }
         resetVad();
+        stopWaveform();
+        stopSpeakingTimer();
+        // Release mic stream on full restart
+        if (micStream) {
+            micStream.getTracks().forEach(t => t.stop());
+            micStream = null;
+        }
         state = {
             sessionId: null, role: '', level: '',
             questions: [], currentIndex: 0, answers: [],
