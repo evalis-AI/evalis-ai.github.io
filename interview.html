@@ -722,6 +722,306 @@
             text-decoration: none;
         }
         .page-footer a:hover { text-decoration: underline; }
+
+        /* ═══════════════════════════════════════════
+           PREMIUM DUPLEX VOICE MODE STYLES
+           ═══════════════════════════════════════════ */
+        .voice-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            padding: 8px 18px;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--accent-indigo-light);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+        }
+        .voice-status-badge .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-indigo);
+            transition: background-color 0.3s ease;
+        }
+        .voice-status-badge .status-dot.pulse-blue {
+            background: var(--accent-indigo);
+            animation: pulseBlue 1.5s infinite;
+        }
+        .voice-status-badge .status-dot.pulse-green {
+            background: var(--accent-emerald);
+            animation: pulseGreen 1.5s infinite;
+        }
+        .voice-status-badge .status-dot.pulse-amber {
+            background: var(--accent-amber);
+            animation: pulseAmber 1.5s infinite;
+        }
+        .voice-status-badge .status-dot.pulse-red {
+            background: var(--accent-rose);
+            animation: pulseRed 1.5s infinite;
+        }
+
+        @keyframes pulseBlue {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(99, 102, 241, 0); }
+        }
+        @keyframes pulseGreen {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+        }
+        @keyframes pulseAmber {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
+        }
+        @keyframes pulseRed {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(244, 63, 94, 0); }
+        }
+
+        /* Outer visualizer ring */
+        .visualizer-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .visualizer-outer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(99, 102, 241, 0.03);
+            border: 1px dashed rgba(99, 102, 241, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s ease;
+        }
+        .visualizer-inner {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--bg-card) 60%, var(--bg-input) 100%);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-lg), 0 0 30px rgba(99, 102, 241, 0.05);
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 2;
+        }
+        .visualizer-icon {
+            font-size: 2rem;
+            transition: transform 0.3s ease;
+        }
+        .visualizer-inner:hover {
+            transform: scale(1.05);
+            border-color: var(--accent-indigo-light);
+            box-shadow: 0 0 40px rgba(99, 102, 241, 0.2);
+        }
+        .visualizer-inner:hover .visualizer-icon {
+            transform: scale(1.1);
+        }
+
+        /* Active speaking state (AI talk) */
+        .visualizer-container.speaking .visualizer-outer {
+            animation: rotateOuter 15s linear infinite;
+            background: rgba(99, 102, 241, 0.05);
+            border: 1px dashed rgba(99, 102, 241, 0.3);
+            box-shadow: inset 0 0 30px rgba(99, 102, 241, 0.1);
+        }
+        .visualizer-container.speaking .visualizer-inner {
+            border-color: var(--accent-indigo-light);
+            box-shadow: 0 0 50px rgba(99, 102, 241, 0.3), inset 0 0 15px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Active listening state (Candidate talk) */
+        .visualizer-container.listening .visualizer-outer {
+            animation: pulseListeningOuter 1.5s ease-in-out infinite;
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .visualizer-container.listening .visualizer-inner {
+            border-color: var(--accent-emerald);
+            box-shadow: 0 0 50px rgba(16, 185, 129, 0.35), inset 0 0 15px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Processing state (Gemini thinking) */
+        .visualizer-container.processing .visualizer-outer {
+            animation: spinOuter 2s linear infinite;
+            border-color: var(--accent-amber);
+            border-style: double;
+            border-width: 3px;
+        }
+        .visualizer-container.processing .visualizer-inner {
+            border-color: var(--accent-amber);
+            box-shadow: 0 0 50px rgba(245, 158, 11, 0.25);
+        }
+
+        @keyframes rotateOuter {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes spinOuter {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes pulseListeningOuter {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 30px rgba(16, 185, 129, 0.2); }
+        }
+
+        /* Audio wave bars */
+        .wave-bars {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            height: 40px;
+            bottom: -15px;
+            z-index: 3;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .visualizer-container.speaking .wave-bars,
+        .visualizer-container.listening .wave-bars {
+            opacity: 1;
+        }
+        .wave-bars .bar {
+            width: 3px;
+            height: 6px;
+            border-radius: 10px;
+            background: var(--accent-indigo-light);
+            transition: height 0.1s ease;
+        }
+        .visualizer-container.listening .wave-bars .bar {
+            background: var(--accent-emerald);
+        }
+        
+        /* Simulated audio wave animation */
+        .visualizer-container.speaking .wave-bars .bar:nth-child(odd) { animation: wave 0.6s ease-in-out infinite alternate; }
+        .visualizer-container.speaking .wave-bars .bar:nth-child(even) { animation: wave 0.8s ease-in-out infinite alternate; }
+        .visualizer-container.listening .wave-bars .bar:nth-child(odd) { animation: waveActive 0.4s ease-in-out infinite alternate; }
+        .visualizer-container.listening .wave-bars .bar:nth-child(even) { animation: waveActive 0.5s ease-in-out infinite alternate; }
+        
+        .wave-bars .bar:nth-child(1) { animation-delay: 0.1s; }
+        .wave-bars .bar:nth-child(2) { animation-delay: 0.2s; }
+        .wave-bars .bar:nth-child(3) { animation-delay: 0.15s; }
+        .wave-bars .bar:nth-child(4) { animation-delay: 0.3s; }
+        .wave-bars .bar:nth-child(5) { animation-delay: 0.05s; }
+        .wave-bars .bar:nth-child(6) { animation-delay: 0.25s; }
+        .wave-bars .bar:nth-child(7) { animation-delay: 0.1s; }
+        .wave-bars .bar:nth-child(8) { animation-delay: 0.35s; }
+        .wave-bars .bar:nth-child(9) { animation-delay: 0.05s; }
+
+        @keyframes wave {
+            0% { height: 6px; }
+            100% { height: 26px; }
+        }
+        @keyframes waveActive {
+            0% { height: 8px; }
+            100% { height: 38px; }
+        }
+
+        .voice-instruction {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            max-width: 320px;
+            margin: 0.5rem auto 1rem;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        /* Subtitles panel */
+        .subtitles-overlay {
+            width: 100%;
+            max-width: 600px;
+            margin: 1.2rem auto 0;
+            background: rgba(10, 14, 28, 0.6);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+        .subtitles-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 6px;
+        }
+        .subtitles-toggle-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+        .subtitles-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+        .subtitles-body {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            min-height: 40px;
+            transition: opacity 0.3s ease;
+        }
+        
+        /* Hidden proctor mode */
+        .subtitles-overlay.hidden-subtitles {
+            border-color: rgba(255,255,255,0.02);
+            background: transparent;
+            margin-top: 0.5rem;
+            padding: 4px;
+        }
+        .subtitles-overlay.hidden-subtitles .subtitles-header {
+            border: none;
+            justify-content: center;
+            margin-bottom: 0;
+            padding-bottom: 0;
+            cursor: pointer;
+        }
+        .subtitles-overlay.hidden-subtitles .subtitles-toggle-btn {
+            display: none;
+        }
+        .subtitles-overlay.hidden-subtitles .subtitles-body {
+            display: none;
+        }
+        .subtitles-overlay.hidden-subtitles.revealed {
+            background: rgba(10, 14, 28, 0.95);
+            border: 1px dashed var(--accent-rose);
+            box-shadow: 0 4px 20px rgba(244, 63, 94, 0.15);
+            padding: 12px 16px;
+        }
+        .subtitles-overlay.hidden-subtitles.revealed .subtitles-body {
+            display: block;
+            color: var(--accent-rose);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+        }
+        .subtitles-overlay.subtle-subtitles .subtitles-body {
+            opacity: 0.6;
+        }
     </style>
 </head>
 <body>
@@ -811,6 +1111,24 @@
                     </div>
                 </div>
 
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="mode-select">Interview Mode</label>
+                        <select id="mode-select" class="form-select" onchange="toggleModeDetails()">
+                            <option value="text" selected>Text-based Assessment</option>
+                            <option value="voice">Premium Voice (Full Duplex)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="subtitles-container" style="display: none;">
+                        <label class="form-label" for="subtitles-select">Live Subtitles</label>
+                        <select id="subtitles-select" class="form-select">
+                            <option value="hidden" selected>Hidden Subtitles (Ultra Pro)</option>
+                            <option value="subtle">Subtle Overlay</option>
+                            <option value="visible">Always Visible</option>
+                        </select>
+                    </div>
+                </div>
+
                 <button id="btn-start" class="btn btn-primary btn-full btn-lg" onclick="startInterview()">
                     Start Interview →
                 </button>
@@ -854,18 +1172,65 @@
                     Loading question...
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label" for="answer-input">Your Answer</label>
-                    <textarea id="answer-input" class="form-textarea" placeholder="Type your answer here... Be thorough and specific." rows="6"></textarea>
+                <!-- Text Mode Answer Container -->
+                <div id="text-answer-container">
+                    <div class="form-group">
+                        <label class="form-label" for="answer-input">Your Answer</label>
+                        <textarea id="answer-input" class="form-textarea" placeholder="Type your answer here... Be thorough and specific." rows="6"></textarea>
+                    </div>
+
+                    <div class="btn-group">
+                        <button id="btn-skip" class="btn btn-ghost" onclick="skipQuestion()">
+                            Skip →
+                        </button>
+                        <button id="btn-submit-answer" class="btn btn-primary" onclick="submitAnswer()">
+                            Submit Answer
+                        </button>
+                    </div>
                 </div>
 
-                <div class="btn-group">
-                    <button id="btn-skip" class="btn btn-ghost" onclick="skipQuestion()">
-                        Skip →
-                    </button>
-                    <button id="btn-submit-answer" class="btn btn-primary" onclick="submitAnswer()">
-                        Submit Answer
-                    </button>
+                <!-- Voice Mode Answer Container -->
+                <div id="voice-answer-container" style="display: none; text-align: center; padding: 1rem 0 0;">
+                    <div class="voice-status-badge">
+                        <span id="voice-status-dot" class="status-dot pulse-blue"></span>
+                        <span id="voice-status-text">AI INTERVIEWER ACTIVE</span>
+                    </div>
+
+                    <div class="visualizer-container" id="visualizer-container" onclick="toggleSpeechRecordingManual()" ondblclick="revealHiddenSubtitles()">
+                        <div class="visualizer-outer"></div>
+                        <div class="visualizer-inner">
+                            <span class="visualizer-icon" id="visualizer-icon">🤖</span>
+                        </div>
+                        <div class="wave-bars">
+                            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                        </div>
+                    </div>
+
+                    <div class="voice-instruction" id="voice-instruction">
+                        AI is speaking the question. Listen carefully.
+                    </div>
+
+                    <!-- Subtitles overlay -->
+                    <div id="subtitles-overlay" class="subtitles-overlay">
+                        <div class="subtitles-header" onclick="revealHiddenSubtitles()">
+                            <span id="subtitles-header-label">📝 LIVE SUBTITLES</span>
+                            <button class="subtitles-toggle-btn" onclick="toggleSubtitlesVisibility(event)">Show/Hide</button>
+                        </div>
+                        <div class="subtitles-body" id="subtitles-text">
+                            Waiting for AI to finish speaking...
+                        </div>
+                    </div>
+
+                    <div class="btn-group" style="justify-content: center; max-width: 400px; margin: 1.5rem auto 0;">
+                        <button id="btn-voice-mute" class="btn btn-ghost" onclick="toggleVoiceMute()">
+                            🔇 Mute AI
+                        </button>
+                        <button id="btn-voice-finish" class="btn btn-primary" onclick="finishVoiceSpeaking()" disabled>
+                            🛑 Finish Speaking
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1021,7 +1386,213 @@
         answers: [],      // { questionId, question, answer, evaluation }
         timer: null,
         timerSeconds: 0,
+        voiceMode: false,
+        voiceMuted: false,
+        subtitlesMode: 'hidden',
+        subtitlesRevealed: false,
+        recognition: null,
+        recognitionActive: false,
+        userSpeechTranscript: '',
     };
+
+    // ── Premium Voice Mode Helpers ──
+    let synth = window.speechSynthesis;
+
+    function toggleModeDetails() {
+        const mode = document.getElementById('mode-select').value;
+        const subtitlesContainer = document.getElementById('subtitles-container');
+        if (mode === 'voice') {
+            subtitlesContainer.style.display = 'block';
+        } else {
+            subtitlesContainer.style.display = 'none';
+        }
+    }
+
+    function speakText(text, callback) {
+        if (state.voiceMuted) {
+            if (callback) callback();
+            return;
+        }
+        
+        synth.cancel(); // Cancel any active speech
+        
+        const utterance = new SpeechSynthesisUtterance(text);
+        
+        // Load best English voice
+        const voices = synth.getVoices();
+        const englishVoice = voices.find(v => v.lang.startsWith('en') && v.name.includes('Google')) || 
+                             voices.find(v => v.lang.startsWith('en') && v.name.includes('Natural')) ||
+                             voices.find(v => v.lang.startsWith('en'));
+        if (englishVoice) utterance.voice = englishVoice;
+        
+        utterance.rate = 1.05; // Slightly faster for responsiveness
+        utterance.pitch = 1.0;
+        
+        utterance.onend = function() {
+            if (callback) callback();
+        };
+        
+        utterance.onerror = function(e) {
+            console.error('Speech synthesis error:', e);
+            if (callback) callback();
+        };
+        
+        synth.speak(utterance);
+    }
+
+    function initSpeechRecognition() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            console.warn('Speech recognition not supported in this browser.');
+            return null;
+        }
+        
+        const rec = new SpeechRecognition();
+        rec.continuous = true;
+        rec.interimResults = true;
+        rec.lang = 'en-US';
+        
+        rec.onstart = function() {
+            state.recognitionActive = true;
+        };
+        
+        rec.onresult = function(event) {
+            let interimTranscript = '';
+            let finalTranscript = '';
+            
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    finalTranscript += event.results[i][0].transcript;
+                } else {
+                    interimTranscript += event.results[i][0].transcript;
+                }
+            }
+            
+            const fullText = (state.userSpeechTranscript + ' ' + finalTranscript + ' ' + interimTranscript).trim();
+            document.getElementById('subtitles-text').textContent = fullText || 'Listening...';
+            
+            if (finalTranscript) {
+                state.userSpeechTranscript = (state.userSpeechTranscript + ' ' + finalTranscript).trim();
+            }
+            
+            pulseWaveBars();
+        };
+        
+        rec.onerror = function(event) {
+            console.error('Speech recognition error:', event.error);
+        };
+        
+        rec.onend = function() {
+            state.recognitionActive = false;
+            // Restart if we are still in listening state and user hasn't submitted yet
+            const visualizer = document.getElementById('visualizer-container');
+            if (state.voiceMode && visualizer && visualizer.classList.contains('listening')) {
+                try {
+                    rec.start();
+                } catch(e) {
+                    console.error('Failed to restart recognition:', e);
+                }
+            }
+        };
+        
+        return rec;
+    }
+
+    function pulseWaveBars() {
+        const container = document.getElementById('visualizer-container');
+        if (!container || !container.classList.contains('listening')) return;
+        
+        const bars = document.querySelectorAll('.wave-bars .bar');
+        bars.forEach(b => {
+            const h = Math.floor(Math.random() * 32) + 8;
+            b.style.height = h + 'px';
+        });
+        
+        setTimeout(() => {
+            bars.forEach(b => {
+                b.style.height = '';
+            });
+        }, 150);
+    }
+
+    function setupVoiceSubtitles() {
+        const overlay = document.getElementById('subtitles-overlay');
+        overlay.className = 'subtitles-overlay';
+        
+        if (state.subtitlesMode === 'hidden') {
+            overlay.classList.add('hidden-subtitles');
+            document.getElementById('subtitles-header-label').textContent = '📝 PROCTOR SUBTITLES (DBL-CLICK MIC TO REVEAL)';
+            document.getElementById('subtitles-text').style.display = 'none';
+        } else if (state.subtitlesMode === 'subtle') {
+            overlay.classList.add('subtle-subtitles');
+            document.getElementById('subtitles-header-label').textContent = '📝 LIVE SUBTITLES';
+            document.getElementById('subtitles-text').style.display = 'block';
+            document.getElementById('subtitles-text').style.opacity = '0.6';
+        } else {
+            document.getElementById('subtitles-header-label').textContent = '📝 LIVE SUBTITLES';
+            document.getElementById('subtitles-text').style.display = 'block';
+            document.getElementById('subtitles-text').style.opacity = '1';
+        }
+    }
+
+    function toggleSubtitlesVisibility(e) {
+        if (e) e.stopPropagation();
+        const overlay = document.getElementById('subtitles-overlay');
+        const body = document.getElementById('subtitles-text');
+        if (state.subtitlesMode === 'hidden') {
+            if (overlay.classList.contains('revealed')) {
+                overlay.classList.remove('revealed');
+            } else {
+                overlay.classList.add('revealed');
+            }
+        } else {
+            if (body.style.display === 'none') {
+                body.style.display = 'block';
+            } else {
+                body.style.display = 'none';
+            }
+        }
+    }
+    
+    function revealHiddenSubtitles() {
+        if (state.subtitlesMode === 'hidden') {
+            const overlay = document.getElementById('subtitles-overlay');
+            overlay.classList.toggle('revealed');
+            const body = document.getElementById('subtitles-text');
+            body.style.display = overlay.classList.contains('revealed') ? 'block' : 'none';
+        }
+    }
+
+    function toggleVoiceMute() {
+        state.voiceMuted = !state.voiceMuted;
+        const muteBtn = document.getElementById('btn-voice-mute');
+        if (state.voiceMuted) {
+            muteBtn.textContent = '🔊 Unmute AI';
+            synth.cancel();
+        } else {
+            muteBtn.textContent = '🔇 Mute AI';
+            const visualizer = document.getElementById('visualizer-container');
+            if (visualizer && visualizer.classList.contains('speaking')) {
+                const q = state.questions[state.currentIndex];
+                if (q) speakText(q.question);
+            }
+        }
+    }
+
+    function toggleSpeechRecordingManual() {
+        const visualizer = document.getElementById('visualizer-container');
+        if (!visualizer || !visualizer.classList.contains('listening')) return;
+        
+        // Pulsing animation trigger on click
+        visualizer.style.transform = 'scale(0.95)';
+        setTimeout(() => { visualizer.style.transform = ''; }, 100);
+        
+        // If recognition got stopped somehow, restart it on click
+        if (state.recognition && !state.recognitionActive) {
+            try { state.recognition.start(); } catch(e) {}
+        }
+    }
+
 
     // ── Screen management ──
     function showScreen(id) {
@@ -1208,6 +1779,8 @@
         const role = document.getElementById('role-input').value.trim();
         const level = document.getElementById('level-select').value;
         const count = parseInt(document.getElementById('count-select').value);
+        const mode = document.getElementById('mode-select').value;
+        const subtitles = document.getElementById('subtitles-select').value;
 
         if (!role) {
             showError('setup-error', 'Please enter a target role.');
@@ -1232,6 +1805,18 @@
             state.questions = data.questions;
             state.currentIndex = 0;
             state.answers = [];
+            state.voiceMode = (mode === 'voice');
+            state.subtitlesMode = subtitles;
+            state.subtitlesRevealed = (subtitles === 'visible');
+
+            if (state.voiceMode) {
+                document.getElementById('text-answer-container').style.display = 'none';
+                document.getElementById('voice-answer-container').style.display = 'block';
+                setupVoiceSubtitles();
+            } else {
+                document.getElementById('text-answer-container').style.display = 'block';
+                document.getElementById('voice-answer-container').style.display = 'none';
+            }
 
             loadQuestion(0);
             showScreen('screen-interview');
@@ -1276,6 +1861,45 @@
         const isLast = index === state.questions.length - 1;
         document.getElementById('btn-submit-answer').textContent = isLast ? 'Submit Final Answer' : 'Submit Answer';
         document.getElementById('btn-skip').textContent = isLast ? 'Skip & Finish' : 'Skip →';
+
+        if (state.voiceMode) {
+            // Stop speech recognition if active
+            if (state.recognition) {
+                try { state.recognition.stop(); } catch(e) {}
+            }
+            
+            state.userSpeechTranscript = '';
+            document.getElementById('subtitles-text').textContent = 'Waiting for AI to finish speaking...';
+            document.getElementById('btn-voice-finish').disabled = true;
+            
+            // Update visualizer to AI Speaking
+            const visualizer = document.getElementById('visualizer-container');
+            visualizer.className = 'visualizer-container speaking';
+            document.getElementById('visualizer-icon').textContent = '🤖';
+            document.getElementById('voice-status-dot').className = 'status-dot pulse-blue';
+            document.getElementById('voice-status-text').textContent = 'AI INTERVIEWER SPEAKING';
+            document.getElementById('voice-instruction').textContent = 'AI is reading the question. Listen carefully.';
+            
+            // Speak the question text
+            speakText(q.question, function() {
+                // AI finished speaking, start listening to user
+                visualizer.className = 'visualizer-container listening';
+                document.getElementById('visualizer-icon').textContent = '🎙️';
+                document.getElementById('voice-status-dot').className = 'status-dot pulse-green';
+                document.getElementById('voice-status-text').textContent = 'LISTENING TO YOU';
+                document.getElementById('voice-instruction').textContent = 'Speak your answer now. Click the ring when done.';
+                document.getElementById('subtitles-text').textContent = 'Listening...';
+                document.getElementById('btn-voice-finish').disabled = false;
+                
+                if (!state.recognition) {
+                    state.recognition = initSpeechRecognition();
+                }
+                
+                if (state.recognition && !state.recognitionActive) {
+                    try { state.recognition.start(); } catch(e) { console.error('Start recognition failed:', e); }
+                }
+            });
+        }
     }
 
     // ══════════════════════════════════════════
@@ -1346,6 +1970,97 @@
             document.getElementById('interview-loading').classList.add('hidden');
             document.getElementById('btn-submit-answer').disabled = false;
             document.getElementById('btn-skip').disabled = false;
+        }
+    }
+
+    async function finishVoiceSpeaking() {
+        if (state.recognition) {
+            try { state.recognition.stop(); } catch(e) {}
+        }
+        
+        synth.cancel(); // Stop AI speaking just in case
+        
+        // Capture final transcription
+        const finalAnswer = document.getElementById('subtitles-text').textContent.trim();
+        if (!finalAnswer || finalAnswer === 'Listening...' || finalAnswer === 'Waiting for AI to finish speaking...' || finalAnswer === 'Listening for speech...') {
+            // User didn't say anything
+            document.getElementById('voice-instruction').textContent = '⚠️ No answer detected. Please try speaking again.';
+            
+            // Pulse mic color briefly
+            const originalText = document.getElementById('voice-status-text').textContent;
+            document.getElementById('voice-status-text').textContent = 'NO AUDIO DETECTED';
+            document.getElementById('voice-status-dot').className = 'status-dot pulse-red';
+            
+            setTimeout(() => {
+                const visualizer = document.getElementById('visualizer-container');
+                if (state.voiceMode && visualizer && visualizer.classList.contains('listening')) {
+                    document.getElementById('voice-status-text').textContent = originalText;
+                    document.getElementById('voice-status-dot').className = 'status-dot pulse-green';
+                    document.getElementById('voice-instruction').textContent = 'Speak your answer now. Click the ring when done.';
+                    if (state.recognition && !state.recognitionActive) {
+                        try { state.recognition.start(); } catch(e) {}
+                    }
+                }
+            }, 2000);
+            return;
+        }
+        
+        // Disable buttons and show processing state
+        document.getElementById('btn-voice-finish').disabled = true;
+        const visualizer = document.getElementById('visualizer-container');
+        if (visualizer) {
+            visualizer.className = 'visualizer-container processing';
+            document.getElementById('visualizer-icon').textContent = '⚡';
+            document.getElementById('voice-status-dot').className = 'status-dot pulse-amber';
+            document.getElementById('voice-status-text').textContent = 'ANALYZING ANSWER';
+            document.getElementById('voice-instruction').textContent = 'Gemini is evaluating your response...';
+        }
+        
+        stopTimer();
+        const q = state.questions[state.currentIndex];
+        
+        try {
+            const evaluation = await apiCall('/api/interview/evaluate', {
+                question: q.question,
+                answer: finalAnswer,
+                role: state.role,
+                level: state.level,
+            });
+            
+            state.answers.push({
+                questionId: q.id,
+                question: q.question,
+                type: q.type,
+                difficulty: q.difficulty,
+                answer: finalAnswer,
+                score: evaluation.score || 0,
+                verdict: evaluation.verdict || 'good',
+                strengths: evaluation.strengths || [],
+                improvements: evaluation.improvements || [],
+                followUp: evaluation.followUp || '',
+            });
+            
+            showFeedback(evaluation);
+            
+        } catch (err) {
+            state.answers.push({
+                questionId: q.id,
+                question: q.question,
+                type: q.type,
+                difficulty: q.difficulty,
+                answer: finalAnswer,
+                score: 50,
+                verdict: 'good',
+                strengths: ['Answer was provided'],
+                improvements: ['Evaluation unavailable — using estimate'],
+                followUp: '',
+            });
+            showFeedback({
+                score: 50, verdict: 'good',
+                strengths: ['Answer was provided'],
+                improvements: ['AI evaluation was unavailable. Score is estimated.'],
+                followUp: '',
+            });
         }
     }
 
@@ -1425,6 +2140,16 @@
         // Update next button
         const isLast = state.currentIndex >= state.questions.length - 1;
         document.getElementById('btn-next-question').textContent = isLast ? 'View Report →' : 'Next Question →';
+
+        if (state.voiceMode) {
+            let feedbackVoiceText = `Answer evaluated. You scored ${score} out of 100. `;
+            if (evaluation.followUp) {
+                feedbackVoiceText += `Here is a follow up question: ${evaluation.followUp}`;
+            } else {
+                feedbackVoiceText += `Click Next Question to continue.`;
+            }
+            speakText(feedbackVoiceText);
+        }
     }
 
     // ══════════════════════════════════════════
@@ -1597,11 +2322,27 @@
     // ══════════════════════════════════════════
     function restartInterview() {
         stopTimer();
+        if (state.recognition) {
+            try { state.recognition.stop(); } catch(e) {}
+        }
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
         state = {
             sessionId: null, role: '', level: '',
             questions: [], currentIndex: 0, answers: [],
             timer: null, timerSeconds: 0,
+            voiceMode: false,
+            voiceMuted: false,
+            subtitlesMode: 'hidden',
+            subtitlesRevealed: false,
+            recognition: null,
+            recognitionActive: false,
+            userSpeechTranscript: '',
         };
+        const muteBtn = document.getElementById('btn-voice-mute');
+        if (muteBtn) muteBtn.textContent = '🔇 Mute AI';
+        
         showScreen('screen-setup');
     }
 
