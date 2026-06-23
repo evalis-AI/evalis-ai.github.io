@@ -975,7 +975,40 @@ window.EVALIS_AGENT_CONFIG = {
         }
       }
 
-      // ─── POST /api/interview/start — Generate Interview Questions ───
+      // ─── Gemini AI Helper (Google AI Studio — 1500 free req/day) ───
+      async function geminiGenerate(systemPrompt, userPrompt, env, opts = {}) {
+        const model = opts.model || 'gemini-2.0-flash';
+        const apiKey = env.GEMINI_API_KEY;
+        if (!apiKey) throw new Error('GEMINI_API_KEY not configured');
+
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
+              systemInstruction: { parts: [{ text: systemPrompt }] },
+              generationConfig: {
+                temperature: opts.temperature ?? 0.7,
+                maxOutputTokens: opts.maxTokens ?? 1024,
+                responseMimeType: 'application/json',
+              },
+            }),
+          }
+        );
+
+        if (!res.ok) {
+          const err = await res.text().catch(() => '');
+          throw new Error(`Gemini API error ${res.status}: ${err.substring(0, 200)}`);
+        }
+
+        const data = await res.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        return text;
+      }
+
+      // ─── POST /api/interview/start — Generate Interview Questions (Gemini AI) ───
       if (url.pathname === '/api/interview/start' && request.method === 'POST') {
         if (!checkRateLimit(ip, 5, 60000)) {
           return json({ error: 'Too many requests. Please wait a moment.' }, 429, origin, env);
@@ -991,22 +1024,19 @@ window.EVALIS_AGENT_CONFIG = {
         const systemPrompt = `You are an elite technical interviewer at a top-tier tech company (FAANG level).
 Generate exactly ${count} progressively difficult interview questions for a ${level} ${role} position.
 Mix conceptual, practical, system design, and behavioral questions.
-Return ONLY valid JSON in this exact format, no other text:
+Return ONLY valid JSON in this exact format:
 {"questions": [{"id": 1, "type": "technical", "question": "Your question here", "difficulty": "easy"},{"id": 2, "type": "behavioral", "question": "Your question here", "difficulty": "medium"}]}
 Valid types: technical, behavioral, system-design
 Valid difficulties: easy, medium, hard`;
 
         try {
-          const aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: `Generate ${count} interview questions for a ${level} ${role} position. Return only JSON.` },
-            ],
-            temperature: 0.8,
-            max_tokens: 1500,
-          });
+          const raw = await geminiGenerate(
+            systemPrompt,
+            `Generate ${count} interview questions for a ${level} ${role} position.`,
+            env,
+            { temperature: 0.8, maxTokens: 2048 }
+          );
 
-          const raw = aiResponse.response || '{}';
           let questions;
           try {
             questions = JSON.parse(raw);
@@ -1036,12 +1066,12 @@ Valid difficulties: easy, medium, hard`;
           return json({ sessionId, ...questions }, 200, origin, env);
 
         } catch(aiErr) {
-          console.error('Interview start AI error:', aiErr);
+          console.error('Interview start Gemini error:', aiErr);
           return json({ error: 'Failed to generate questions. Please try again.' }, 500, origin, env);
         }
       }
 
-      // ─── POST /api/interview/evaluate — Evaluate Candidate Answer ───
+      // ─── POST /api/interview/evaluate — Evaluate Candidate Answer (Gemini AI) ───
       if (url.pathname === '/api/interview/evaluate' && request.method === 'POST') {
         if (!checkRateLimit(ip, 15, 60000)) {
           return json({ error: 'Too many requests. Please wait a moment.' }, 429, origin, env);
@@ -1057,21 +1087,18 @@ Valid difficulties: easy, medium, hard`;
         const systemPrompt = `You are a strict but fair senior technical interviewer evaluating a ${level || 'mid-level'} ${role || 'software engineer'} candidate.
 Evaluate the candidate's answer to the interview question.
 Score from 0-100. Be specific about strengths and gaps.
-Return ONLY valid JSON in this exact format, no other text:
+Return ONLY valid JSON in this exact format:
 {"score": 75, "verdict": "good", "strengths": ["strength 1", "strength 2"], "improvements": ["improvement 1", "improvement 2"], "followUp": "A probing follow-up question to test deeper understanding"}
 Valid verdicts: strong, good, weak`;
 
         try {
-          const aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: `INTERVIEW QUESTION: ${question.substring(0, 1000)}\n\nCANDIDATE'S ANSWER: ${answer.substring(0, 2000)}\n\nEvaluate this answer now. Return only JSON.` },
-            ],
-            temperature: 0.3,
-            max_tokens: 800,
-          });
+          const raw = await geminiGenerate(
+            systemPrompt,
+            `INTERVIEW QUESTION: ${question.substring(0, 1000)}\n\nCANDIDATE'S ANSWER: ${answer.substring(0, 3000)}\n\nEvaluate this answer now.`,
+            env,
+            { temperature: 0.3, maxTokens: 1024 }
+          );
 
-          const raw = aiResponse.response || '{}';
           let evaluation;
           try {
             evaluation = JSON.parse(raw);
@@ -1087,12 +1114,12 @@ Valid verdicts: strong, good, weak`;
           return json(evaluation, 200, origin, env);
 
         } catch(aiErr) {
-          console.error('Interview evaluate AI error:', aiErr);
+          console.error('Interview evaluate Gemini error:', aiErr);
           return json({ error: 'Failed to evaluate answer. Please try again.' }, 500, origin, env);
         }
       }
 
-      // ─── POST /api/interview/report — Generate Final Report ───
+      // ─── POST /api/interview/report — Generate Final Report (Gemini AI) ───
       if (url.pathname === '/api/interview/report' && request.method === 'POST') {
         if (!checkRateLimit(ip, 5, 60000)) {
           return json({ error: 'Too many requests. Please wait a moment.' }, 429, origin, env);
@@ -1110,23 +1137,20 @@ Valid verdicts: strong, good, weak`;
         const systemPrompt = `You are a senior interview coach at a top tech company.
 Based on the candidate's interview performance for a ${level || 'mid-level'} ${role || 'software engineer'} position, write a hiring report.
 Their average score was ${Math.round(avgScore)}/100.
-Return ONLY valid JSON in this exact format, no other text:
+Return ONLY valid JSON in this exact format:
 {"overallScore": ${Math.round(avgScore)}, "recommendation": "strong-hire", "summary": "2-3 sentence summary of performance", "topStrengths": ["strength 1", "strength 2", "strength 3"], "focusAreas": ["area 1", "area 2", "area 3"], "nextSteps": ["step 1", "step 2", "step 3"]}
 Valid recommendations: strong-hire, hire, lean-hire, no-hire`;
 
         try {
           const performanceSummary = answers.map((a, i) => `Q${i+1}: Score ${a.score}/100 (${a.verdict})`).join(', ');
 
-          const aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: `Role: ${level} ${role}\nPerformance: ${performanceSummary}\nDetails: ${JSON.stringify(answers.map(a => ({ score: a.score, verdict: a.verdict, strengths: a.strengths, improvements: a.improvements }))).substring(0, 2000)}\n\nWrite the hiring report now. Return only JSON.` },
-            ],
-            temperature: 0.5,
-            max_tokens: 1000,
-          });
+          const raw = await geminiGenerate(
+            systemPrompt,
+            `Role: ${level} ${role}\nPerformance: ${performanceSummary}\nDetails: ${JSON.stringify(answers.map(a => ({ score: a.score, verdict: a.verdict, strengths: a.strengths, improvements: a.improvements }))).substring(0, 3000)}\n\nWrite the hiring report now.`,
+            env,
+            { temperature: 0.5, maxTokens: 1024 }
+          );
 
-          const raw = aiResponse.response || '{}';
           let report;
           try {
             report = JSON.parse(raw);
@@ -1156,7 +1180,7 @@ Valid recommendations: strong-hire, hire, lean-hire, no-hire`;
           return json(report, 200, origin, env);
 
         } catch(aiErr) {
-          console.error('Interview report AI error:', aiErr);
+          console.error('Interview report Gemini error:', aiErr);
           return json({ error: 'Failed to generate report. Please try again.' }, 500, origin, env);
         }
       }
@@ -1301,7 +1325,7 @@ Valid recommendations: strong-hire, hire, lean-hire, no-hire`;
         return json({
           status: 'ok',
           service: 'Evalis AI API v3.3',
-          features: ['ai-chat', 'ai-chat-stream', 'cloud-tts', 'cloud-stt', 'voice-pipeline', 'whatsapp-bot', 'document-ai', 'lead-qualify', 'agent-builder', 'tracking', 'forms', 'projects', 'ai-interview', 'hf-video-proxy', 'nim-video-proxy'],
+          features: ['ai-chat', 'ai-chat-stream', 'cloud-tts', 'cloud-stt', 'voice-pipeline', 'whatsapp-bot', 'document-ai', 'lead-qualify', 'agent-builder', 'tracking', 'forms', 'projects', 'ai-interview-gemini', 'hf-video-proxy', 'nim-video-proxy'],
           timestamp: new Date().toISOString()
         }, 200, origin, env);
       }
