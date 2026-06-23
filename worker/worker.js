@@ -977,7 +977,7 @@ window.EVALIS_AGENT_CONFIG = {
 
       // ─── Gemini AI Helper (Google AI Studio — 1500 free req/day) ───
       async function geminiGenerate(systemPrompt, userPrompt, env, opts = {}) {
-        const model = opts.model || 'gemini-2.0-flash';
+        const model = opts.model || 'gemini-2.5-flash-lite';
         const apiKey = env.GEMINI_API_KEY;
         if (!apiKey) throw new Error('GEMINI_API_KEY not configured');
 
