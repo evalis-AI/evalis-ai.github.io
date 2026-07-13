@@ -223,7 +223,10 @@ export default {
         
         try {
           const response = await fetch(geminiWsUrl, {
-            headers: { 'Upgrade': 'websocket' }
+            headers: { 
+              'Upgrade': 'websocket',
+              'Connection': 'Upgrade'
+            }
           });
           
           const geminiWs = response.webSocket;
