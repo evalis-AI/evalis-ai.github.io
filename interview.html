@@ -1106,11 +1106,56 @@
             0%, 100% { opacity: 0.4; }
             50% { opacity: 1; }
         }
+
+        /* ── WebGL Avatar Stage ── */
+        .avatar-stage {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .avatar-stage canvas {
+            width: 100% !important;
+            height: 100% !important;
+            border-radius: 50%;
+            filter: drop-shadow(0 0 30px rgba(99, 102, 241, 0.15));
+            transition: filter 0.5s ease;
+        }
+        .avatar-stage.speaking canvas {
+            filter: drop-shadow(0 0 50px rgba(99, 102, 241, 0.35));
+        }
+        .avatar-stage.listening canvas {
+            filter: drop-shadow(0 0 50px rgba(16, 185, 129, 0.35));
+        }
+        .avatar-stage.processing canvas {
+            filter: drop-shadow(0 0 50px rgba(245, 158, 11, 0.3));
+        }
+        #simli-avatar {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        #simli-avatar video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        @media (max-width: 768px) {
+            .avatar-stage { width: 200px; height: 200px; }
+        }
     </style>
 </head>
 <body>
     <div class="bg-mesh"></div>
     <div class="bg-grid"></div>
+    <script src="js/avatar-engine.js"></script>
+    <script src="js/simli-adapter.js"></script>
 
     <!-- NAVIGATION -->
     <nav class="nav">
@@ -1213,6 +1258,47 @@
                     </div>
                 </div>
 
+                <!-- BYOK Section -->
+                <div class="byok-section" style="margin-top:1rem;padding:1.2rem;background:rgba(99,102,241,0.04);border:1px solid rgba(99,102,241,0.1);border-radius:var(--radius-md);">
+                    <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="toggleByokPanel()">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <span style="font-size:1rem">🔑</span>
+                            <div>
+                                <div style="font-size:0.88rem;font-weight:700;color:#fff">Bring Your Own Key (Optional)</div>
+                                <div style="font-size:0.75rem;color:var(--text-muted)">Use your own AI API key for premium providers</div>
+                            </div>
+                        </div>
+                        <span id="byok-arrow" style="color:var(--text-muted);font-size:0.85rem;transition:transform 0.2s">▼</span>
+                    </div>
+                    <div id="byok-panel" style="display:none;margin-top:1rem;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="byok-provider">AI Provider</label>
+                                <select id="byok-provider" class="form-select" onchange="onByokProviderChange()">
+                                    <option value="">Default (Cloudflare AI — Free)</option>
+                                    <option value="gemini">Google Gemini (Voice + Text)</option>
+                                    <option value="nvidia">NVIDIA NIM</option>
+                                    <option value="huggingface">Hugging Face</option>
+                                    <option value="openai">OpenAI / Compatible</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="byok-key-group" style="display:none">
+                                <label class="form-label" for="byok-key">API Key</label>
+                                <input type="password" id="byok-key" class="form-input" placeholder="Paste your API key here...">
+                            </div>
+                        </div>
+                        <div id="byok-voice-hint" style="display:none;font-size:0.78rem;color:var(--accent-amber);margin-top:0.3rem;">
+                            ⚠️ Voice mode requires a Gemini API key. Select "Google Gemini" provider.
+                        </div>
+                        <div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.6rem;line-height:1.6;">
+                            Your key is used for this session only — never stored on our servers. 
+                            Get free keys: <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--accent-indigo-light)">Gemini</a> · 
+                            <a href="https://build.nvidia.com/" target="_blank" style="color:var(--accent-indigo-light)">NVIDIA</a> · 
+                            <a href="https://huggingface.co/settings/tokens" target="_blank" style="color:var(--accent-indigo-light)">HuggingFace</a>
+                        </div>
+                    </div>
+                </div>
+
                 <button id="btn-start" class="btn btn-primary btn-full btn-lg" onclick="startInterview()">
                     Start Interview →
                 </button>
@@ -1280,16 +1366,9 @@
                         <span id="voice-status-text">AI INTERVIEWER ACTIVE</span>
                     </div>
 
-                    <div class="visualizer-container" id="visualizer-container" onclick="toggleSpeechRecordingManual()" ondblclick="revealHiddenSubtitles()">
-                        <div class="visualizer-outer"></div>
-                        <div class="visualizer-inner">
-                            <span class="visualizer-icon" id="visualizer-icon">🤖</span>
-                        </div>
-                        <div class="wave-bars">
-                            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                        </div>
+                    <div class="avatar-stage" id="avatar-stage" onclick="toggleSpeechRecordingManual()" ondblclick="revealHiddenSubtitles()">
+                        <canvas id="ai-avatar-canvas"></canvas>
+                        <div id="simli-avatar" style="display:none"><video id="simli-video" autoplay playsinline></video></div>
                     </div>
 
                     <!-- Real-time waveform -->
@@ -1473,7 +1552,102 @@
        NeoInterview AI — Application Logic
        ═══════════════════════════════════════════ */
 
-    const API_BASE = 'https://evalis-api.zelvora-global.workers.dev';
+    const API_BASE = 'https://evalis-api.simpaticohrconsultancy.workers.dev';
+
+    // ── B2B Mode Detection ──
+    const _urlParams = new URLSearchParams(window.location.search);
+    const _isB2B = _urlParams.get('b2b') === '1';
+    const _b2bApiKey = _urlParams.get('api_key') || '';
+    const _b2bCompanySlug = _urlParams.get('company') || '';
+    let _b2bCompanyConfig = null;  // Fetched company config for branding + avatar mode
+    let _simliAdapter = null;      // SimliAdapter instance (premium avatar)
+
+    if (_isB2B) {
+        // Hide navigation and footer for white-label B2B experience
+        const nav = document.querySelector('.nav');
+        const footer = document.querySelector('.page-footer');
+        if (nav) nav.style.display = 'none';
+        if (footer) footer.style.display = 'none';
+        document.querySelector('.main-content')?.style.setProperty('padding-top', '1rem');
+        // Auto-fill from URL params when setup screen loads
+        window.addEventListener('DOMContentLoaded', () => {
+            const roleInput = document.getElementById('role-input');
+            const levelSelect = document.getElementById('level-select');
+            const modeSelect = document.getElementById('mode-select');
+            if (roleInput && _urlParams.get('role')) roleInput.value = decodeURIComponent(_urlParams.get('role'));
+            if (levelSelect && _urlParams.get('level')) levelSelect.value = _urlParams.get('level');
+            if (modeSelect && _urlParams.get('mode')) modeSelect.value = _urlParams.get('mode');
+        });
+
+        // Fetch B2B company config for branding and avatar mode
+        if (_b2bCompanySlug) {
+            fetch(`${API_BASE}/api/interview/company/${_b2bCompanySlug}`)
+                .then(r => r.ok ? r.json() : null)
+                .then(config => {
+                    if (config) {
+                        _b2bCompanyConfig = config;
+                        console.log('[B2B] Company config loaded:', config.company_name, 'avatar:', config.avatar_mode);
+                        // Apply brand color if provided
+                        if (config.brand_color) {
+                            document.documentElement.style.setProperty('--primary', config.brand_color);
+                        }
+                    }
+                })
+                .catch(e => console.warn('[B2B] Config fetch failed:', e.message));
+        }
+    }
+
+    /**
+     * Initialize Simli premium avatar if company config requires it.
+     * Called when voice session starts. Falls back to WebGL orb on failure.
+     */
+    async function initSimliIfNeeded() {
+        // Only init Simli if: B2B mode + company has simli avatar + SimliAdapter available
+        const shouldUseSimli = _b2bCompanyConfig?.avatar_mode === 'simli' && window.SimliAdapter;
+        if (!shouldUseSimli) return false;
+
+        try {
+            // Simli API key comes from company config (server-side) or localStorage for testing
+            const simliApiKey = localStorage.getItem('simli_api_key') || '';
+            const simliFaceId = localStorage.getItem('simli_face_id') || 'default_female_01';
+
+            if (!simliApiKey) {
+                console.log('[Simli] No API key configured. Using WebGL orb fallback.');
+                return false;
+            }
+
+            _simliAdapter = new SimliAdapter({ apiKey: simliApiKey, faceId: simliFaceId });
+            const videoEl = document.getElementById('simli-video');
+            const success = await _simliAdapter.init(videoEl);
+
+            if (success) {
+                console.log('[Simli] Premium avatar activated.');
+                document.getElementById('simli-avatar').style.display = 'block';
+                const canvas = document.getElementById('ai-avatar-canvas');
+                if (canvas) canvas.style.display = 'none';
+                return true;
+            } else {
+                console.log('[Simli] Init returned false. Falling back to WebGL orb.');
+                _simliAdapter = null;
+                return false;
+            }
+        } catch (e) {
+            console.warn('[Simli] Init failed:', e.message, '— falling back to WebGL orb.');
+            _simliAdapter = null;
+            return false;
+        }
+    }
+
+    /** Destroy Simli adapter and restore WebGL orb */
+    function destroySimli() {
+        if (_simliAdapter) {
+            try { _simliAdapter.destroy(); } catch(e) {}
+            _simliAdapter = null;
+        }
+        document.getElementById('simli-avatar').style.display = 'none';
+        const canvas = document.getElementById('ai-avatar-canvas');
+        if (canvas) canvas.style.display = 'block';
+    }
 
     // ── State ──
     let state = {
@@ -1499,6 +1673,40 @@
         originalAnswer: '',
         currentFollowUpQuestion: '',
     };
+
+    // ── BYOK (Bring Your Own Key) ──
+    function toggleByokPanel() {
+        const panel = document.getElementById('byok-panel');
+        const arrow = document.getElementById('byok-arrow');
+        const show = panel.style.display === 'none';
+        panel.style.display = show ? 'block' : 'none';
+        arrow.style.transform = show ? 'rotate(180deg)' : '';
+    }
+    function onByokProviderChange() {
+        const provider = document.getElementById('byok-provider').value;
+        const keyGroup = document.getElementById('byok-key-group');
+        const voiceHint = document.getElementById('byok-voice-hint');
+        const modeVal = document.getElementById('mode-select').value;
+
+        keyGroup.style.display = provider ? 'block' : 'none';
+
+        // Show voice mode warning if non-Gemini and voice selected
+        if (modeVal === 'voice' && provider && provider !== 'gemini') {
+            voiceHint.style.display = 'block';
+        } else {
+            voiceHint.style.display = 'none';
+        }
+    }
+    function getByokHeaders() {
+        const provider = document.getElementById('byok-provider')?.value || '';
+        const key = document.getElementById('byok-key')?.value?.trim() || '';
+        const headers = {};
+        if (provider && key) {
+            headers['X-AI-Provider'] = provider;
+            headers['X-AI-Key'] = key;
+        }
+        return headers;
+    }
 
     // ── Gemini Multimodal Live API (WebSocket & Audio Engine) ──
     let nextPlayTime = 0;
@@ -1561,6 +1769,10 @@
         });
         audioQueue.length = 0;
         nextPlayTime = 0;
+        // Clear Simli lip-sync buffer on interrupt
+        if (_simliAdapter && _simliAdapter.isActive()) {
+            _simliAdapter.clearBuffer();
+        }
     }
 
     async function startStreamingMicToWs(ws) {
@@ -1663,9 +1875,21 @@
         document.getElementById('btn-voice-finish').disabled = true;
         document.getElementById('btn-voice-finish').textContent = '⏹ End Interview';
         
-        const visualizer = document.getElementById('visualizer-container');
-        visualizer.className = 'visualizer-container processing';
-        document.getElementById('visualizer-icon').textContent = '⚡';
+        const avatarStage = document.getElementById('avatar-stage');
+        avatarStage.className = 'avatar-stage processing';
+        // Initialize WebGL avatar if not already
+        if (!window.aiAvatar) {
+            const canvas = document.getElementById('ai-avatar-canvas');
+            window.aiAvatar = new AvatarEngine(canvas, { size: 280 });
+        }
+        window.aiAvatar.setState('processing');
+
+        // Try to initialize Simli premium avatar (async, non-blocking)
+        initSimliIfNeeded().then(simliActive => {
+            if (simliActive) {
+                console.log('[Voice] Simli premium avatar is active for this session.');
+            }
+        });
         document.getElementById('voice-status-dot').className = 'status-dot pulse-blue';
         document.getElementById('voice-status-text').textContent = 'CONNECTING';
         document.getElementById('voice-instruction').textContent = 'Establishing secure low-latency full-duplex session...';
@@ -1682,7 +1906,18 @@
             return;
         }
 
-        const wsUrl = API_BASE.replace('http', 'ws') + '/api/interview/live-websocket';
+        // Validate BYOK for voice mode (requires Gemini key)
+        const byokH = getByokHeaders();
+        if (!byokH['X-AI-Provider'] || byokH['X-AI-Provider'] !== 'gemini') {
+            showError('setup-error', 'Voice mode requires a Gemini API key. Go to "Bring Your Own Key" and select Google Gemini.');
+            showScreen('screen-setup');
+            return;
+        }
+
+        const wsParams = new URLSearchParams();
+        if (byokH['X-AI-Provider']) wsParams.set('provider', byokH['X-AI-Provider']);
+        if (byokH['X-AI-Key']) wsParams.set('key', byokH['X-AI-Key']);
+        const wsUrl = API_BASE.replace('http', 'ws') + '/api/interview/live-websocket?' + wsParams.toString();
         const ws = new WebSocket(wsUrl);
         state.liveWs = ws;
 
@@ -1719,8 +1954,8 @@ Guidelines:
             };
             ws.send(JSON.stringify(setupMsg));
 
-            visualizer.className = 'visualizer-container speaking';
-            document.getElementById('visualizer-icon').textContent = '🤖';
+            avatarStage.className = 'avatar-stage speaking';
+            if (window.aiAvatar) window.aiAvatar.setState('speaking');
             document.getElementById('voice-status-dot').className = 'status-dot pulse-blue';
             document.getElementById('voice-status-text').textContent = 'AI INTERVIEWER ACTIVE';
             document.getElementById('voice-instruction').textContent = 'AI is speaking. Listen carefully.';
@@ -1765,13 +2000,25 @@ Guidelines:
 
                         if (part.inlineData && part.inlineData.data) {
                             state.aiSpeakingActive = true;
-                            visualizer.className = 'visualizer-container speaking';
-                            document.getElementById('visualizer-icon').textContent = '🤖';
+                            avatarStage.className = 'avatar-stage speaking';
+                            if (window.aiAvatar) {
+                                window.aiAvatar.setState('speaking');
+                                // Feed audio amplitude to avatar for real-time reactivity
+                                const samples = base64ToFloat32Array(part.inlineData.data);
+                                let rms = 0;
+                                for (let i = 0; i < samples.length; i++) rms += samples[i] * samples[i];
+                                rms = Math.sqrt(rms / samples.length);
+                                window.aiAvatar.setAmplitude(Math.min(1, rms * 4));
+                            }
                             document.getElementById('voice-status-dot').className = 'status-dot pulse-blue';
                             document.getElementById('voice-status-text').textContent = 'AI INTERVIEWER SPEAKING';
                             document.getElementById('voice-instruction').textContent = 'AI is speaking. Listen carefully.';
                             
                             playPcmChunk(part.inlineData.data);
+                            // Route audio to Simli for lip-sync (if active)
+                            if (_simliAdapter && _simliAdapter.isActive()) {
+                                _simliAdapter.sendAudio(part.inlineData.data);
+                            }
                         }
                     });
                 }
@@ -1783,8 +2030,11 @@ Guidelines:
                     state.aiSpokenTextBuffer = '';
                     state.aiSpeakingActive = false;
 
-                    visualizer.className = 'visualizer-container listening';
-                    document.getElementById('visualizer-icon').textContent = '🎙️';
+                    avatarStage.className = 'avatar-stage listening';
+                    if (window.aiAvatar) {
+                        window.aiAvatar.setState('listening');
+                        window.aiAvatar.setAmplitude(0);
+                    }
                     document.getElementById('voice-status-dot').className = 'status-dot pulse-green';
                     document.getElementById('voice-status-text').textContent = 'LISTENING TO YOU';
                     document.getElementById('voice-instruction').textContent = 'Speak your response. Speak naturally.';
@@ -3206,6 +3456,13 @@ Guidelines:
         resetVad();
         stopWaveform();
         stopSpeakingTimer();
+        // Cleanup WebGL avatar
+        if (window.aiAvatar) {
+            window.aiAvatar.destroy();
+            window.aiAvatar = null;
+        }
+        // Cleanup Simli premium avatar
+        destroySimli();
         // Release mic stream on full restart
         if (micStream) {
             micStream.getTracks().forEach(t => t.stop());

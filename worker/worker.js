@@ -103,6 +103,29 @@ async function validateApiKey(request, env) {
   return null;
 }
 
+// ── BYOK: Parse AI provider + key from request headers ──
+function parseBYOK(request) {
+  const provider = (request.headers.get('X-AI-Provider') || '').toLowerCase();
+  const key = request.headers.get('X-AI-Key') || '';
+  if (provider && key) {
+    return { provider, key, isByok: true };
+  }
+  return { provider: 'cloudflare', key: '', isByok: false };
+}
+
+async function getInterviewCompany(agentId, env) {
+  if (!agentId) return null;
+  try {
+    const results = await supabaseSelect('interview_companies',
+      `agent_id=eq.${encodeURIComponent(agentId)}&is_active=eq.true&limit=1`, env);
+    return results[0] || null;
+  } catch(e) { return null; }
+}
+
+function generateSlug(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').substring(0, 50);
+}
+
 
 // ─── AI System Prompt (Updated with all 13 services) ───
 const SYSTEM_PROMPT = `You are Eva, the friendly AI assistant for Evalis AI — a cutting-edge AI software company based in Perinthalmanna, Kerala, India.
@@ -180,14 +203,23 @@ export default {
       // ── Validate API key for B2B clients (optional — enhances limits) ──
       const apiClient = await validateApiKey(request, env);
 
-      // ── WebSocket Live Proxy for Gemini Live API ──
+      // ── WebSocket Live Proxy for Gemini Live API (requires Gemini BYOK key) ──
       if (url.pathname === '/api/interview/live-websocket') {
         if (request.headers.get('Upgrade') !== 'websocket') {
           return new Response('Expected Upgrade: websocket', { status: 426 });
         }
 
         const [client, server] = new WebSocketPair();
-        const geminiWsUrl = `wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key=${env.GEMINI_API_KEY}`;
+        // Voice mode requires Gemini BYOK key (read from URL params for WebSocket)
+        const wsProvider = url.searchParams.get('provider') || '';
+        const wsKey = url.searchParams.get('key') || '';
+        if (wsProvider !== 'gemini' || !wsKey) {
+          server.accept();
+          server.send(JSON.stringify({ error: 'Voice mode requires a Gemini API key. Please add your Gemini key in the BYOK settings.' }));
+          server.close(1008, 'Gemini BYOK key required for voice mode');
+          return new Response(null, { status: 101, webSocket: client });
+        }
+        const geminiWsUrl = `wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key=${wsKey}`;
         
         try {
           const response = await fetch(geminiWsUrl, {
@@ -1046,37 +1078,135 @@ window.EVALIS_AGENT_CONFIG = {
         }
       }
 
-      // ─── Gemini AI Helper (Google AI Studio — 1500 free req/day) ───
-      async function geminiGenerate(systemPrompt, userPrompt, env, opts = {}) {
-        const model = opts.model || 'gemini-2.5-flash-lite';
-        const apiKey = env.GEMINI_API_KEY;
-        if (!apiKey) throw new Error('GEMINI_API_KEY not configured');
+      // ─── Multi-Provider AI Generate (Cloudflare Workers AI default, BYOK optional) ───
+      async function aiGenerate(systemPrompt, userPrompt, env, opts = {}) {
+        const provider = opts.provider || 'cloudflare';
+        const byokKey = opts.byokKey || '';
+        const temperature = opts.temperature ?? 0.7;
+        const maxTokens = opts.maxTokens ?? 1024;
 
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
-              systemInstruction: { parts: [{ text: systemPrompt }] },
-              generationConfig: {
-                temperature: opts.temperature ?? 0.7,
-                maxOutputTokens: opts.maxTokens ?? 1024,
-                responseMimeType: 'application/json',
-              },
-            }),
-          }
-        );
-
-        if (!res.ok) {
-          const err = await res.text().catch(() => '');
-          throw new Error(`Gemini API error ${res.status}: ${err.substring(0, 200)}`);
+        // ── Provider: Cloudflare Workers AI (default, free) ──
+        if (provider === 'cloudflare' || !byokKey) {
+          const model = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
+          const aiResponse = await env.AI.run(model, {
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userPrompt },
+            ],
+            temperature: temperature,
+            max_tokens: maxTokens,
+          });
+          return aiResponse.response || '';
         }
 
-        const data = await res.json();
-        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        return text;
+        // ── Provider: Google Gemini ──
+        if (provider === 'gemini') {
+          const model = opts.model || 'gemini-2.5-flash-lite';
+          const res = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${byokKey}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: { temperature, maxOutputTokens: maxTokens, responseMimeType: 'application/json' },
+              }),
+            }
+          );
+          if (!res.ok) {
+            const err = await res.text().catch(() => '');
+            throw new Error(`Gemini API error ${res.status}: ${err.substring(0, 200)}`);
+          }
+          const data = await res.json();
+          return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        }
+
+        // ── Provider: NVIDIA NIM (OpenAI-compatible) ──
+        if (provider === 'nvidia') {
+          const model = opts.model || 'meta/llama-3.1-70b-instruct';
+          const res = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${byokKey}`,
+            },
+            body: JSON.stringify({
+              model, temperature, max_tokens: maxTokens,
+              messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: userPrompt },
+              ],
+            }),
+          });
+          if (!res.ok) {
+            const err = await res.text().catch(() => '');
+            throw new Error(`NVIDIA NIM error ${res.status}: ${err.substring(0, 200)}`);
+          }
+          const data = await res.json();
+          return data.choices?.[0]?.message?.content || '';
+        }
+
+        // ── Provider: Hugging Face Inference ──
+        if (provider === 'huggingface') {
+          const model = opts.model || 'meta-llama/Llama-3.1-70B-Instruct';
+          const res = await fetch(`https://api-inference.huggingface.co/models/${model}/v1/chat/completions`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${byokKey}`,
+            },
+            body: JSON.stringify({
+              model, temperature, max_tokens: maxTokens,
+              messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: userPrompt },
+              ],
+            }),
+          });
+          if (!res.ok) {
+            const err = await res.text().catch(() => '');
+            throw new Error(`HuggingFace error ${res.status}: ${err.substring(0, 200)}`);
+          }
+          const data = await res.json();
+          return data.choices?.[0]?.message?.content || '';
+        }
+
+        // ── Provider: OpenAI / OpenAI-compatible ──
+        if (provider === 'openai') {
+          const model = opts.model || 'gpt-4o-mini';
+          const baseUrl = opts.baseUrl || 'https://api.openai.com';
+          const res = await fetch(`${baseUrl}/v1/chat/completions`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${byokKey}`,
+            },
+            body: JSON.stringify({
+              model, temperature, max_tokens: maxTokens,
+              messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: userPrompt },
+              ],
+            }),
+          });
+          if (!res.ok) {
+            const err = await res.text().catch(() => '');
+            throw new Error(`OpenAI error ${res.status}: ${err.substring(0, 200)}`);
+          }
+          const data = await res.json();
+          return data.choices?.[0]?.message?.content || '';
+        }
+
+        // Fallback to Cloudflare
+        const aiResponse = await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt },
+          ],
+          temperature, max_tokens: maxTokens,
+        });
+        return aiResponse.response || '';
       }
 
       // ─── POST /api/interview/start — Generate Interview Questions (Gemini AI) ───
@@ -1092,6 +1222,9 @@ window.EVALIS_AGENT_CONFIG = {
           return json({ error: 'Role and level are required.' }, 400, origin, env);
         }
 
+        // BYOK: Parse provider + key from request headers
+        const byok = parseBYOK(request);
+
         const systemPrompt = `You are an elite technical interviewer at a top-tier tech company (FAANG level).
 Generate exactly ${count} progressively difficult interview questions for a ${level} ${role} position.
 Mix conceptual, practical, system design, and behavioral questions.
@@ -1101,11 +1234,11 @@ Valid types: technical, behavioral, system-design
 Valid difficulties: easy, medium, hard`;
 
         try {
-          const raw = await geminiGenerate(
+          const raw = await aiGenerate(
             systemPrompt,
             `Generate ${count} interview questions for a ${level} ${role} position.`,
             env,
-            { temperature: 0.8, maxTokens: 2048 }
+            { temperature: 0.8, maxTokens: 2048, provider: byok.provider, byokKey: byok.key }
           );
 
           let questions;
@@ -1162,12 +1295,15 @@ Return ONLY valid JSON in this exact format:
 {"score": 75, "verdict": "good", "strengths": ["strength 1", "strength 2"], "improvements": ["improvement 1", "improvement 2"], "followUp": "A probing follow-up question to test deeper understanding"}
 Valid verdicts: strong, good, weak`;
 
+        // BYOK: Parse provider + key from request headers
+        const byok = parseBYOK(request);
+
         try {
-          const raw = await geminiGenerate(
+          const raw = await aiGenerate(
             systemPrompt,
             `INTERVIEW QUESTION: ${question.substring(0, 1000)}\n\nCANDIDATE'S ANSWER: ${answer.substring(0, 3000)}\n\nEvaluate this answer now.`,
             env,
-            { temperature: 0.3, maxTokens: 1024 }
+            { temperature: 0.3, maxTokens: 1024, provider: byok.provider, byokKey: byok.key }
           );
 
           let evaluation;
@@ -1212,14 +1348,17 @@ Return ONLY valid JSON in this exact format:
 {"overallScore": ${Math.round(avgScore)}, "recommendation": "strong-hire", "summary": "2-3 sentence summary of performance", "topStrengths": ["strength 1", "strength 2", "strength 3"], "focusAreas": ["area 1", "area 2", "area 3"], "nextSteps": ["step 1", "step 2", "step 3"]}
 Valid recommendations: strong-hire, hire, lean-hire, no-hire`;
 
+        // BYOK: Parse provider + key from request headers
+        const byok = parseBYOK(request);
+
         try {
           const performanceSummary = answers.map((a, i) => `Q${i+1}: Score ${a.score}/100 (${a.verdict})`).join(', ');
 
-          const raw = await geminiGenerate(
+          const raw = await aiGenerate(
             systemPrompt,
             `Role: ${level} ${role}\nPerformance: ${performanceSummary}\nDetails: ${JSON.stringify(answers.map(a => ({ score: a.score, verdict: a.verdict, strengths: a.strengths, improvements: a.improvements }))).substring(0, 3000)}\n\nWrite the hiring report now.`,
             env,
-            { temperature: 0.5, maxTokens: 1024 }
+            { temperature: 0.5, maxTokens: 1024, provider: byok.provider, byokKey: byok.key }
           );
 
           let report;
@@ -1301,12 +1440,15 @@ Valid overall recommendations: strong-hire, hire, lean-hire, no-hire.
 Valid individual verdicts: strong, good, weak.
 Do not output markdown, HTML, or any text other than the JSON object.`;
 
+        // BYOK: Parse provider + key from request headers
+        const byok = parseBYOK(request);
+
         try {
-          const raw = await geminiGenerate(
+          const raw = await aiGenerate(
             systemPrompt,
             `Role: ${level} ${role}\n\nTranscript of the Interview:\n${JSON.stringify(transcript)}\n\nGenerate the complete hiring report now.`,
             env,
-            { temperature: 0.3, maxTokens: 4096, model: 'gemini-2.5-flash' }
+            { temperature: 0.3, maxTokens: 4096, provider: byok.provider, byokKey: byok.key }
           );
 
           let report;
@@ -1478,12 +1620,199 @@ Do not output markdown, HTML, or any text other than the JSON object.`;
         }
       }
 
+      // ═══════════════════════════════════════════════════
+      // INTERVIEW-ONLY B2B PLATFORM ENDPOINTS
+      // ═══════════════════════════════════════════════════
+
+      // ─── POST /api/interview/register — Register Interview-Only Company ───
+      if (url.pathname === '/api/interview/register' && request.method === 'POST') {
+        if (!checkRateLimit(ip, 3, 300000)) {
+          return json({ error: 'Too many registrations. Try again later.' }, 429, origin, env);
+        }
+
+        const body = await request.json();
+        const { company_name, contact_email, contact_phone, plan, gemini_api_key, brand_color } = body;
+
+        if (!company_name || !contact_email) {
+          return json({ error: 'Company name and contact email are required.' }, 400, origin, env);
+        }
+        if (!validateEmail(contact_email)) {
+          return json({ error: 'Invalid email address.' }, 400, origin, env);
+        }
+
+        // Generate unique identifiers
+        const agentId = 'iv_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 6);
+        const companySlug = generateSlug(company_name) + '-' + Math.random().toString(36).substr(2, 4);
+        const apiKeyValue = 'evk_' + crypto.randomUUID().replace(/-/g, '');
+
+        try {
+          // 1. Create agent config (reuses existing agent system)
+          await supabaseInsert('agent_configs', {
+            agent_id: agentId,
+            company_name: company_name.trim(),
+            agent_name: 'AI Interviewer',
+            company_description: `Interview platform for ${company_name.trim()}`,
+            contact_email: contact_email.trim(),
+            contact_phone: contact_phone || '',
+            brand_color: brand_color || '#6366f1',
+            is_active: true,
+          }, env);
+
+          // 2. Create interview company record
+          await supabaseInsert('interview_companies', {
+            agent_id: agentId,
+            company_name: company_name.trim(),
+            company_slug: companySlug,
+            contact_email: contact_email.trim(),
+            contact_phone: contact_phone || '',
+            plan: plan || 'starter',
+            gemini_api_key: gemini_api_key || null,
+            brand_name: company_name.trim(),
+            brand_color: brand_color || '#6366f1',
+            monthly_interview_limit: plan === 'enterprise' ? 9999 : plan === 'professional' ? 500 : 50,
+          }, env);
+
+          // 3. Create API key for authentication
+          await supabaseInsert('api_keys', {
+            key: apiKeyValue,
+            agent_id: agentId,
+            plan: plan || 'starter',
+            monthly_limit: plan === 'enterprise' ? 9999 : plan === 'professional' ? 500 : 50,
+          }, env);
+
+          // Build interview URLs
+          const interviewUrl = `https://evalisai.com/interview-b2b.html?company=${agentId}&key=${apiKeyValue}`;
+          const embedCode = `<!-- ${company_name} AI Interview - Powered by Evalis AI -->\n<iframe src="${interviewUrl}" width="100%" height="800" frameborder="0" allow="microphone"></iframe>`;
+
+          return json({
+            success: true,
+            company_id: agentId,
+            company_slug: companySlug,
+            api_key: apiKeyValue,
+            interview_url: interviewUrl,
+            embed_code: embedCode,
+            plan: plan || 'starter',
+            byok: !!gemini_api_key,
+            message: 'Interview platform registered successfully!',
+          }, 201, origin, env);
+
+        } catch(regErr) {
+          console.error('Interview registration error:', regErr);
+          const isDuplicate = regErr.message?.includes('duplicate') || regErr.message?.includes('unique');
+          if (isDuplicate) {
+            return json({ error: 'This company or email is already registered.' }, 409, origin, env);
+          }
+          return json({ error: 'Registration failed. Please try again.' }, 500, origin, env);
+        }
+      }
+
+      // ─── GET /api/interview/company/:id — Get Company Config (public safe fields) ───
+      if (url.pathname.startsWith('/api/interview/company/') && request.method === 'GET') {
+        const companyAgentId = url.pathname.split('/').pop();
+        if (!companyAgentId) {
+          return json({ error: 'Company ID required' }, 400, origin, env);
+        }
+
+        try {
+          // Use public view to exclude API keys
+          const results = await supabaseSelect('interview_companies_public',
+            `agent_id=eq.${encodeURIComponent(companyAgentId)}&is_active=eq.true&limit=1`, env);
+
+          if (results.length === 0) {
+            return json({ error: 'Company not found' }, 404, origin, env);
+          }
+
+          const c = results[0];
+          return json({
+            company_id: c.agent_id,
+            company_name: c.company_name,
+            brand_name: c.brand_name,
+            brand_color: c.brand_color,
+            brand_logo_url: c.brand_logo_url,
+            plan: c.plan,
+            avatar_mode: c.avatar_mode,
+            voice_enabled: c.voice_enabled,
+            text_enabled: c.text_enabled,
+            max_questions: c.max_questions,
+            allowed_roles: c.allowed_roles,
+          }, 200, origin, env);
+
+        } catch(e) {
+          return json({ error: 'Failed to load company config' }, 500, origin, env);
+        }
+      }
+
+      // ─── POST /api/interview/validate-key — Test a Gemini API Key ───
+      if (url.pathname === '/api/interview/validate-key' && request.method === 'POST') {
+        if (!checkRateLimit(ip, 5, 60000)) {
+          return json({ error: 'Rate limited' }, 429, origin, env);
+        }
+
+        const body = await request.json();
+        const testKey = body.gemini_api_key;
+        if (!testKey) {
+          return json({ error: 'Gemini API key is required' }, 400, origin, env);
+        }
+
+        try {
+          // Make a minimal test call to Gemini
+          const testRes = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${testKey}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ role: 'user', parts: [{ text: 'Say OK' }] }],
+                generationConfig: { maxOutputTokens: 10 },
+              }),
+            }
+          );
+
+          if (testRes.ok) {
+            return json({ valid: true, message: 'Gemini API key is valid and working!' }, 200, origin, env);
+          } else {
+            const errData = await testRes.json().catch(() => ({}));
+            return json({ valid: false, message: errData.error?.message || `Key validation failed (HTTP ${testRes.status})` }, 200, origin, env);
+          }
+        } catch(e) {
+          return json({ valid: false, message: 'Could not reach Gemini API: ' + e.message }, 200, origin, env);
+        }
+      }
+
+      // ─── GET /api/interview/sessions — List Sessions for a Company (auth required) ───
+      if (url.pathname === '/api/interview/sessions' && request.method === 'GET') {
+        if (!apiClient) {
+          return json({ error: 'API key required. Pass X-API-Key header.' }, 401, origin, env);
+        }
+
+        const company = await getInterviewCompany(apiClient.agent_id, env);
+        if (!company) {
+          return json({ error: 'Interview company not found for this API key.' }, 404, origin, env);
+        }
+
+        try {
+          const sessions = await supabaseSelect('interview_sessions',
+            `company_id=eq.${company.id}&order=created_at.desc&limit=50`, env);
+
+          return json({
+            company_name: company.company_name,
+            plan: company.plan,
+            interviews_used: company.interviews_used_this_month,
+            monthly_limit: company.monthly_interview_limit,
+            sessions: sessions,
+          }, 200, origin, env);
+
+        } catch(e) {
+          return json({ error: 'Failed to load sessions' }, 500, origin, env);
+        }
+      }
+
       // ─── Health check ───
       if (url.pathname === '/api/health') {
         return json({
           status: 'ok',
-          service: 'Evalis AI API v3.3',
-          features: ['ai-chat', 'ai-chat-stream', 'cloud-tts', 'cloud-stt', 'voice-pipeline', 'whatsapp-bot', 'document-ai', 'lead-qualify', 'agent-builder', 'tracking', 'forms', 'projects', 'ai-interview-gemini', 'hf-video-proxy', 'nim-video-proxy'],
+          service: 'Evalis AI API v4.0',
+          features: ['ai-chat', 'ai-chat-stream', 'cloud-tts', 'cloud-stt', 'voice-pipeline', 'whatsapp-bot', 'document-ai', 'lead-qualify', 'agent-builder', 'tracking', 'forms', 'projects', 'ai-interview-gemini', 'ai-interview-b2b', 'byok', 'hf-video-proxy', 'nim-video-proxy'],
           timestamp: new Date().toISOString()
         }, 200, origin, env);
       }
