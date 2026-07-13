@@ -220,21 +220,26 @@ export default {
           return new Response(null, { status: 101, webSocket: client });
         }
         const geminiWsUrl = `wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key=${wsKey}`;
-        
         try {
-          const response = await fetch(geminiWsUrl, {
-            headers: { 
-              'Upgrade': 'websocket',
-              'Connection': 'Upgrade'
-            }
-          });
+          const geminiWs = new WebSocket(geminiWsUrl);
           
-          const geminiWs = response.webSocket;
-          if (!geminiWs) {
-            server.accept();
-            server.close(1011, 'Failed to connect to Gemini Live API');
-            return new Response('Failed to connect to Gemini Live API', { status: 500 });
-          }
+          // Wait for the Gemini WebSocket connection to open
+          await new Promise((resolve, reject) => {
+            const onOpen = () => {
+              geminiWs.removeEventListener('open', onOpen);
+              geminiWs.removeEventListener('error', onError);
+              resolve();
+            };
+            const onError = (err) => {
+              geminiWs.removeEventListener('open', onOpen);
+              geminiWs.removeEventListener('error', onError);
+              reject(err);
+            };
+            geminiWs.addEventListener('open', onOpen);
+            geminiWs.addEventListener('error', onError);
+            // Bounded timeout
+            setTimeout(() => reject(new Error('Connection timeout')), 10000);
+          });
 
           // Proxy browser -> Gemini
           server.addEventListener('message', event => {
