@@ -12,7 +12,7 @@ const CORS_HEADERS = {
 };
 
 function corsHeaders(origin, env) {
-  const allowed = [env.ALLOWED_ORIGIN, 'http://localhost', 'http://127.0.0.1', 'file://'];
+  const allowed = [env.ALLOWED_ORIGIN, 'https://evalisai.com', 'https://simpaticohr.in', 'http://localhost', 'http://127.0.0.1', 'file://'];
   const isAllowed = !origin || origin === 'null' || allowed.some(a => origin?.startsWith(a));
   return {
     ...CORS_HEADERS,
