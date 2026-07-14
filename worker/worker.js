@@ -286,8 +286,9 @@ export default {
 
         } catch (err) {
           server.accept();
+          server.send(JSON.stringify({ error: 'Failed to connect to Gemini Live API: ' + err.message }));
           server.close(1011, 'Error proxying WebSocket: ' + err.message);
-          return new Response('WebSocket proxy error: ' + err.message, { status: 500 });
+          return new Response(null, { status: 101, webSocket: client });
         }
       }
 
@@ -1095,21 +1096,48 @@ window.EVALIS_AGENT_CONFIG = {
 
         // ── Provider: Cloudflare Workers AI (default, free) ──
         if (provider === 'cloudflare' || !byokKey) {
-          const model = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
-          const aiResponse = await env.AI.run(model, {
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: userPrompt },
-            ],
-            temperature: temperature,
-            max_tokens: maxTokens,
-          });
-          return aiResponse.response || '';
+          const models = [
+            '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
+            '@cf/meta/llama-3.1-8b-instruct',
+          ];
+          let lastErr = null;
+          for (const model of models) {
+            try {
+              const aiResponse = await env.AI.run(model, {
+                messages: [
+                  { role: 'system', content: systemPrompt },
+                  { role: 'user', content: userPrompt },
+                ],
+                temperature: temperature,
+                max_tokens: maxTokens,
+              });
+              let parsed = aiResponse;
+              if (typeof aiResponse === 'string') {
+                try {
+                  parsed = JSON.parse(aiResponse);
+                } catch {
+                  return aiResponse;
+                }
+              }
+              if (parsed && typeof parsed === 'object') {
+                if (typeof parsed.response === 'string') return parsed.response;
+                if (parsed.response && typeof parsed.response === 'object') {
+                  return JSON.stringify(parsed.response);
+                }
+                return JSON.stringify(parsed);
+              }
+              return typeof aiResponse === 'string' ? aiResponse : '';
+            } catch(modelErr) {
+              console.error(`CF AI model ${model} failed:`, modelErr.message || modelErr);
+              lastErr = modelErr;
+            }
+          }
+          throw new Error(`All Cloudflare AI models failed. Last error: ${lastErr?.message || lastErr}`);
         }
 
         // ── Provider: Google Gemini ──
         if (provider === 'gemini') {
-          const model = opts.model || 'gemini-2.5-flash-lite';
+          const model = opts.model || 'gemini-3.5-flash';
           const res = await fetch(
             `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${byokKey}`,
             {
@@ -1127,7 +1155,8 @@ window.EVALIS_AGENT_CONFIG = {
             throw new Error(`Gemini API error ${res.status}: ${err.substring(0, 200)}`);
           }
           const data = await res.json();
-          return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          return typeof text === 'string' ? text : (JSON.stringify(data) || '');
         }
 
         // ── Provider: NVIDIA NIM (OpenAI-compatible) ──
@@ -1152,7 +1181,8 @@ window.EVALIS_AGENT_CONFIG = {
             throw new Error(`NVIDIA NIM error ${res.status}: ${err.substring(0, 200)}`);
           }
           const data = await res.json();
-          return data.choices?.[0]?.message?.content || '';
+          const text = data.choices?.[0]?.message?.content;
+          return typeof text === 'string' ? text : (JSON.stringify(data) || '');
         }
 
         // ── Provider: Hugging Face Inference ──
@@ -1177,7 +1207,8 @@ window.EVALIS_AGENT_CONFIG = {
             throw new Error(`HuggingFace error ${res.status}: ${err.substring(0, 200)}`);
           }
           const data = await res.json();
-          return data.choices?.[0]?.message?.content || '';
+          const text = data.choices?.[0]?.message?.content;
+          return typeof text === 'string' ? text : (JSON.stringify(data) || '');
         }
 
         // ── Provider: OpenAI / OpenAI-compatible ──
@@ -1203,7 +1234,8 @@ window.EVALIS_AGENT_CONFIG = {
             throw new Error(`OpenAI error ${res.status}: ${err.substring(0, 200)}`);
           }
           const data = await res.json();
-          return data.choices?.[0]?.message?.content || '';
+          const text = data.choices?.[0]?.message?.content;
+          return typeof text === 'string' ? text : (JSON.stringify(data) || '');
         }
 
         // Fallback to Cloudflare
@@ -1214,7 +1246,22 @@ window.EVALIS_AGENT_CONFIG = {
           ],
           temperature, max_tokens: maxTokens,
         });
-        return aiResponse.response || '';
+        let parsed = aiResponse;
+        if (typeof aiResponse === 'string') {
+          try {
+            parsed = JSON.parse(aiResponse);
+          } catch {
+            return aiResponse;
+          }
+        }
+        if (parsed && typeof parsed === 'object') {
+          if (typeof parsed.response === 'string') return parsed.response;
+          if (parsed.response && typeof parsed.response === 'object') {
+            return JSON.stringify(parsed.response);
+          }
+          return JSON.stringify(parsed);
+        }
+        return typeof aiResponse === 'string' ? aiResponse : '';
       }
 
       // ─── POST /api/interview/start — Generate Interview Questions (Gemini AI) ───
@@ -1224,7 +1271,7 @@ window.EVALIS_AGENT_CONFIG = {
         }
 
         const body = await request.json();
-        const { role, level, count = 5 } = body;
+        const { role, level, count = 5, candidate_name, candidate_email, mode = 'text' } = body;
 
         if (!role || !level) {
           return json({ error: 'Role and level are required.' }, 400, origin, env);
@@ -1249,15 +1296,16 @@ Valid difficulties: easy, medium, hard`;
             { temperature: 0.8, maxTokens: 2048, provider: byok.provider, byokKey: byok.key }
           );
 
+          const rawStr = typeof raw === 'string' ? raw : (JSON.stringify(raw) || '');
           let questions;
           try {
-            questions = JSON.parse(raw);
+            questions = JSON.parse(rawStr);
           } catch {
-            const match = raw.match(/\{[\s\S]*\}/);
+            const match = rawStr.match(/\{[\s\S]*\}/);
             if (match) {
-              try { questions = JSON.parse(match[0]); } catch { questions = { raw }; }
+              try { questions = JSON.parse(match[0]); } catch { questions = { raw: rawStr }; }
             } else {
-              questions = { raw };
+              questions = { raw: rawStr };
             }
           }
 
@@ -1265,12 +1313,22 @@ Valid difficulties: easy, medium, hard`;
 
           // Log to Supabase (non-blocking)
           try {
+            let companyId = null;
+            if (apiClient) {
+              const company = await getInterviewCompany(apiClient.agent_id, env);
+              if (company) companyId = company.id;
+            }
+
             await supabaseInsert('interview_sessions', {
               session_id: sessionId,
               role: role.substring(0, 100),
               level: level.substring(0, 50),
               question_count: count,
               status: 'started',
+              candidate_name: candidate_name || null,
+              candidate_email: candidate_email || null,
+              company_id: companyId,
+              mode: mode,
               client_ip: ip.substring(0, 10) + '***',
             }, env);
           } catch(e) { /* silent — table may not exist */ }
@@ -1278,8 +1336,8 @@ Valid difficulties: easy, medium, hard`;
           return json({ sessionId, ...questions }, 200, origin, env);
 
         } catch(aiErr) {
-          console.error('Interview start Gemini error:', aiErr);
-          return json({ error: 'Failed to generate questions. Please try again.' }, 500, origin, env);
+          console.error('Interview start AI error:', aiErr?.message || aiErr, aiErr?.stack || '');
+          return json({ error: `Failed to generate questions: ${aiErr?.message || 'Unknown AI error'}. Please try again.` }, 500, origin, env);
         }
       }
 
@@ -1314,15 +1372,16 @@ Valid verdicts: strong, good, weak`;
             { temperature: 0.3, maxTokens: 1024, provider: byok.provider, byokKey: byok.key }
           );
 
+          const rawStr = typeof raw === 'string' ? raw : (JSON.stringify(raw) || '');
           let evaluation;
           try {
-            evaluation = JSON.parse(raw);
+            evaluation = JSON.parse(rawStr);
           } catch {
-            const match = raw.match(/\{[\s\S]*\}/);
+            const match = rawStr.match(/\{[\s\S]*\}/);
             if (match) {
-              try { evaluation = JSON.parse(match[0]); } catch { evaluation = { score: 50, verdict: 'good', strengths: ['Answer provided'], improvements: ['Could be more detailed'], followUp: 'Can you elaborate?', raw }; }
+              try { evaluation = JSON.parse(match[0]); } catch { evaluation = { score: 50, verdict: 'good', strengths: ['Answer provided'], improvements: ['Could be more detailed'], followUp: 'Can you elaborate?', raw: rawStr }; }
             } else {
-              evaluation = { score: 50, verdict: 'good', strengths: ['Answer provided'], improvements: ['Could be more detailed'], followUp: 'Can you elaborate?', raw };
+              evaluation = { score: 50, verdict: 'good', strengths: ['Answer provided'], improvements: ['Could be more detailed'], followUp: 'Can you elaborate?', raw: rawStr };
             }
           }
 
@@ -1341,7 +1400,7 @@ Valid verdicts: strong, good, weak`;
         }
 
         const body = await request.json();
-        const { role, level, answers } = body;
+        const { role, level, answers, candidate_name, candidate_email, mode = 'text' } = body;
 
         if (!answers || !Array.isArray(answers) || answers.length === 0) {
           return json({ error: 'Answers data is required.' }, 400, origin, env);
@@ -1369,20 +1428,27 @@ Valid recommendations: strong-hire, hire, lean-hire, no-hire`;
             { temperature: 0.5, maxTokens: 1024, provider: byok.provider, byokKey: byok.key }
           );
 
+          const rawStr = typeof raw === 'string' ? raw : (JSON.stringify(raw) || '');
           let report;
           try {
-            report = JSON.parse(raw);
+            report = JSON.parse(rawStr);
           } catch {
-            const match = raw.match(/\{[\s\S]*\}/);
+            const match = rawStr.match(/\{[\s\S]*\}/);
             if (match) {
-              try { report = JSON.parse(match[0]); } catch { report = { overallScore: Math.round(avgScore), recommendation: avgScore >= 70 ? 'hire' : 'no-hire', summary: 'Report generation had issues.', topStrengths: [], focusAreas: [], nextSteps: [], raw }; }
+              try { report = JSON.parse(match[0]); } catch { report = { overallScore: Math.round(avgScore), recommendation: avgScore >= 70 ? 'hire' : 'no-hire', summary: 'Report generation had issues.', topStrengths: [], focusAreas: [], nextSteps: [], raw: rawStr }; }
             } else {
-              report = { overallScore: Math.round(avgScore), recommendation: avgScore >= 70 ? 'hire' : 'no-hire', summary: 'Report generation had issues.', topStrengths: [], focusAreas: [], nextSteps: [], raw };
+              report = { overallScore: Math.round(avgScore), recommendation: avgScore >= 70 ? 'hire' : 'no-hire', summary: 'Report generation had issues.', topStrengths: [], focusAreas: [], nextSteps: [], raw: rawStr };
             }
           }
 
           // Log completed session to Supabase (non-blocking)
           try {
+            let companyId = null;
+            if (apiClient) {
+              const company = await getInterviewCompany(apiClient.agent_id, env);
+              if (company) companyId = company.id;
+            }
+
             await supabaseInsert('interview_sessions', {
               session_id: body.sessionId || crypto.randomUUID(),
               role: (role || '').substring(0, 100),
@@ -1391,6 +1457,12 @@ Valid recommendations: strong-hire, hire, lean-hire, no-hire`;
               avg_score: Math.round(avgScore),
               recommendation: report.recommendation || '',
               status: 'completed',
+              candidate_name: candidate_name || null,
+              candidate_email: candidate_email || null,
+              company_id: companyId,
+              mode: mode,
+              detailed_report: report,
+              chat_history: answers,
               client_ip: ip.substring(0, 10) + '***',
             }, env);
           } catch(e) { /* silent */ }
@@ -1459,11 +1531,12 @@ Do not output markdown, HTML, or any text other than the JSON object.`;
             { temperature: 0.3, maxTokens: 4096, provider: byok.provider, byokKey: byok.key }
           );
 
+          const rawStr = typeof raw === 'string' ? raw : (JSON.stringify(raw) || '');
           let report;
           try {
-            report = JSON.parse(raw);
+            report = JSON.parse(rawStr);
           } catch {
-            const match = raw.match(/\{[\s\S]*\}/);
+            const match = rawStr.match(/\{[\s\S]*\}/);
             if (match) {
               try { report = JSON.parse(match[0]); } catch { throw new Error("Could not parse Gemini response"); }
             } else {
@@ -1471,8 +1544,16 @@ Do not output markdown, HTML, or any text other than the JSON object.`;
             }
           }
 
+          const { candidate_name, candidate_email, mode = 'voice' } = body;
+
           // Log completed session to Supabase (non-blocking)
           try {
+            let companyId = null;
+            if (apiClient) {
+              const company = await getInterviewCompany(apiClient.agent_id, env);
+              if (company) companyId = company.id;
+            }
+
             await supabaseInsert('interview_sessions', {
               session_id: body.sessionId || crypto.randomUUID(),
               role: (role || '').substring(0, 100),
@@ -1481,6 +1562,12 @@ Do not output markdown, HTML, or any text other than the JSON object.`;
               avg_score: report.overallScore || 50,
               recommendation: report.recommendation || '',
               status: 'completed',
+              candidate_name: candidate_name || null,
+              candidate_email: candidate_email || null,
+              company_id: companyId,
+              mode: mode,
+              detailed_report: report,
+              chat_history: transcript,
               client_ip: ip.substring(0, 10) + '***',
             }, env);
           } catch(e) { /* silent */ }
@@ -1765,7 +1852,7 @@ Do not output markdown, HTML, or any text other than the JSON object.`;
         try {
           // Make a minimal test call to Gemini
           const testRes = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${testKey}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${testKey}`,
             {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },

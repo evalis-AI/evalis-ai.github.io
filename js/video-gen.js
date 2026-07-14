@@ -8,7 +8,7 @@
 
     // ─── Configuration ───
     const CONFIG = {
-        API_BASE: 'https://evalis-api.zelvora-global.workers.dev',
+        API_BASE: 'https://evalis-api.simpaticohrconsultancy.workers.dev',
         API_PATH: '/api/hf/video',
         MODEL: 'Wan-AI/Wan2.1-T2V-14B',
         STORAGE_KEY: 'evalis_vg_history',
