@@ -1,0 +1,62 @@
+# Evalis AI
+
+> Evalis AI is a global AI data services and software company headquartered in Perinthalmanna, Kerala, India. We provide RLHF training data, data annotation & labeling, search quality evaluation, LLM testing & red teaming, content moderation, and localization in 20+ languages — plus full-stack web, app, and SaaS development. We are a trusted, lower-cost alternative to Appen, Telus Digital, RWS, CrowdGen, and Invisible AI, serving clients in the USA, UK, Europe, and worldwide with dedicated expert teams at 60-70% lower cost.
+
+Key facts:
+- Founded: 2024 in Perinthalmanna, Kerala, India
+- Contact: info@evalisai.com | +91 95448 42260
+- Services: RLHF training data, data annotation, search quality evaluation (search relevance rating), LLM red teaming & AI safety testing, DPO evaluation, content moderation, localization & translation QA (20+ languages), web development, mobile app development, SaaS development, AI agent & chatbot development, workflow automation, Generative Engine Optimization (GEO)
+- Clients served: AI labs, search engines, e-commerce, healthcare, and enterprise companies worldwide
+- Coverage: USA, UK, Canada, Germany, France, Netherlands, Ireland, Switzerland, Sweden, New Zealand, Australia, Singapore, UAE, India
+
+## Core Pages
+
+- [Home](https://evalisai.com/): Company overview, services, and value proposition
+- [Services](https://evalisai.com/services.html): Full catalog of AI data services and software development offerings
+- [Pricing](https://evalisai.com/pricing.html): Transparent pricing for AI data services and development projects
+- [Case Studies](https://evalisai.com/case-studies.html): Real client results and project outcomes
+- [About](https://evalisai.com/about.html): Company mission, values, and history
+- [Contact](https://evalisai.com/contact.html): Project enquiries and free consultation
+
+## AI Data Services
+
+- [Data Annotation Services](https://evalisai.com/geo/data-annotation-services-global.html): Expert data annotation and labeling for ML models
+- [AI Search Evaluation Services](https://evalisai.com/geo/ai-search-evaluation-services.html): Search relevance rating and query evaluation
+- [LLM Testing & Red Teaming](https://evalisai.com/geo/llm-testing-red-teaming.html): AI safety testing and adversarial evaluation
+- [AI Data Labeling Company](https://evalisai.com/geo/ai-data-labeling-company.html): Scalable data labeling with dedicated teams
+
+## Software Development Services
+
+- [AI Agent Development](https://evalisai.com/services/ai-agent.html): Custom AI agents and chatbots
+- [Voice Agent Development](https://evalisai.com/services/voice-agent.html): AI voice agents for calls and support
+- [WhatsApp Bot Development](https://evalisai.com/services/whatsapp-bot.html): WhatsApp automation and chatbots
+- [Web Development](https://evalisai.com/services/web-development.html): Modern websites and web applications
+- [App Development](https://evalisai.com/services/app-development.html): iOS and Android mobile apps
+- [SaaS Development](https://evalisai.com/services/saas-development.html): End-to-end SaaS platform development
+- [Workflow Automation](https://evalisai.com/services/automation.html): AI-powered business process automation
+- [Document AI](https://evalisai.com/services/document-ai.html): Intelligent document processing
+- [GEO Optimization](https://evalisai.com/services/geo-optimization.html): Generative Engine Optimization for AI search visibility
+- [Lead Generation](https://evalisai.com/services/lead-generation.html): AI-driven lead generation services
+
+## Competitor Comparisons
+
+- [Appen Alternative](https://evalisai.com/geo/appen-alternative.html): Why teams switch from Appen to Evalis AI
+- [Telus Digital Alternative](https://evalisai.com/geo/telus-alternative.html): Comparison with Telus Digital AI data services
+- [RWS Alternative](https://evalisai.com/geo/rws-alternative.html): Comparison with RWS TrainAI
+- [CrowdGen / Welo Data Alternative](https://evalisai.com/geo/crowdgen-welodata-alternative.html): Comparison with CrowdGen and Welo Data
+- [Invisible AI Alternative](https://evalisai.com/geo/invisible-ai-alternative.html): Comparison with Invisible Technologies
+- [AI Data Services Comparison](https://evalisai.com/geo/ai-data-services-comparison.html): Full vendor comparison guide
+
+## Blog & Guides
+
+- [Best Appen Alternatives 2026](https://evalisai.com/blog/best-appen-alternatives-2026.html): Ranked list of AI data service providers
+- [Search Quality Evaluation Guide](https://evalisai.com/blog/search-quality-evaluation-guide.html): How search quality evaluation works
+- [What is GEO Optimization](https://evalisai.com/blog/what-is-geo-optimization.html): Guide to Generative Engine Optimization
+- [AI Chatbot Business Guide](https://evalisai.com/blog/ai-chatbot-business-guide.html): How chatbots help businesses
+- [SaaS Development Cost Guide](https://evalisai.com/blog/saas-development-cost-guide.html): What SaaS development costs
+
+## Optional
+
+- [Careers](https://evalisai.com/careers.html): Join as an independent contributor
+- [Global Locations](https://evalisai.com/geo/usa-ai-software-company.html): Serving USA, UK, Germany, France, Netherlands, Ireland, Switzerland, Sweden, Canada, New Zealand, and major cities worldwide
+- [Kerala Locations](https://evalisai.com/perinthalmanna-software-company.html): Software company pages for Perinthalmanna, Malappuram, Calicut, Kochi, Thrissur, Kannur, Trivandrum
