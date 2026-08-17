@@ -2,9 +2,9 @@
    EVALIS AI — SUPABASE + WORKER CLIENT v2.1
    ============================================ */
 
-// Configuration
-const SUPABASE_URL = 'https://mdbgdlawjuoyuvqxthar.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kYmdkbGF3anVveXV2cXh0aGFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1NDA1NDcsImV4cCI6MjA5NDExNjU0N30.IvVXnMXDiNIZHOrCrjsi84YT0IK11TikgPOxieyGUNE';
+// Configuration — aligned with worker/wrangler.toml for same database
+const SUPABASE_URL = 'https://cvkxtsvgnynxexmemfuy.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2a3h0c3ZnbnlueGV4bWVtZnV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc0MjE2NTEsImV4cCI6MjA4Mjk5NzY1MX0.2mys8Cc-ucJ1uLThEGJubeDEg1TvfIAkW-xFsR4ecq4';
 const WORKER_API = 'https://evalis-api.evalisglobal.workers.dev';
 
 // Lightweight Supabase REST client (no SDK needed)
@@ -106,12 +106,22 @@ async function submitEnquiry(form) {
 
 // Contributor Registration
 async function submitContributor(form) {
+    // Honeypot check — bots fill hidden fields
+    if (form.website && form.website.value) {
+        console.warn('Honeypot triggered');
+        return false;
+    }
+
     const data = {
         name: form.name.value.trim(),
         email: form.email.value.trim(),
+        phone: form.phone?.value?.trim() || '',
+        location: form.location?.value?.trim() || '',
         primary_skill: form.primary_skill?.value || '',
         experience: form.experience?.value || '',
         languages: form.languages?.value?.trim() || '',
+        cv_url: form.cv_url?.value?.trim() || '',
+        portfolio_url: form.portfolio_url?.value?.trim() || '',
         about: form.about?.value?.trim() || ''
     };
 
@@ -277,9 +287,9 @@ async function handleNotify(projectName) {
 // AUTO-WIRE FORMS ON PAGE LOAD
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
-    // Wire contact form
-    const contactForm = document.querySelector('form[action*="formspree"]');
-    if (contactForm && window.location.pathname.includes('contact')) {
+    // Wire contact form (by ID for reliable matching)
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
         contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = contactForm.querySelector('button[type="submit"]');
@@ -296,9 +306,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Wire careers form
-    const careersForm = document.querySelector('form[action*="formspree"]');
-    if (careersForm && window.location.pathname.includes('careers')) {
+    // Wire careers / contributor registration form (by ID)
+    const careersForm = document.getElementById('careers-form');
+    if (careersForm) {
         careersForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = careersForm.querySelector('button[type="submit"]');
@@ -307,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.disabled = true;
             const success = await submitContributor(careersForm);
             if (success) {
-                setTimeout(() => window.location.href = 'thank-you.html', 1500);
+                setTimeout(() => window.location.href = 'thank-you.html?source=careers', 1500);
             } else {
                 btn.textContent = origText;
                 btn.disabled = false;

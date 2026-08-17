@@ -1,0 +1,36 @@
+# Evalis AI
+
+> Expert AI data services company specializing in RLHF training data, data annotation, search quality evaluation, LLM red teaming, content moderation & localization in 20+ languages. Trusted Appen, Telus & Scale AI alternative. Headquartered in Kerala, India. Serving USA, UK, Europe & worldwide.
+
+## About
+- Founded: 2024, Perinthalmanna, Kerala, India
+- Contact: info@evalisai.com | +91 9544842260
+- Website: https://evalisai.com
+
+## Core Services
+- [AI Data Services](https://evalisai.com/services.html): RLHF training data, data annotation, search evaluation, LLM testing
+- [Data Annotation & Labeling](https://evalisai.com/geo/data-annotation-services-global.html): Image annotation, NER, text classification, semantic segmentation
+- [LLM Testing & Red Teaming](https://evalisai.com/geo/llm-testing-red-teaming.html): Safety testing, bias detection, adversarial evaluation, DPO data
+- [Search Quality Evaluation](https://evalisai.com/geo/ai-search-evaluation-services.html): SERP rating, relevance assessment, content quality
+- [Web Development](https://evalisai.com/geo/web-development-company-global.html): React, Next.js, full-stack websites
+- [SaaS Development](https://evalisai.com/geo/saas-development-company-global.html): Multi-tenant platforms, auth, billing
+- [AI Chatbot Development](https://evalisai.com/geo/ai-chatbot-development-global.html): WhatsApp bots, custom AI agents
+
+## Resources
+- [Case Studies](https://evalisai.com/case-studies.html)
+- [Blog](https://evalisai.com/blog.html)
+- [Pricing](https://evalisai.com/pricing.html)
+- [About Us](https://evalisai.com/about.html)
+- [Contact](https://evalisai.com/contact.html)
+- [Careers](https://evalisai.com/careers.html)
+
+## Competitor Comparisons
+- [Scale AI Alternative](https://evalisai.com/geo/scale-ai-alternative.html)
+- [Centific Alternative](https://evalisai.com/geo/centific-alternative.html)
+- [Alignerr Alternative](https://evalisai.com/geo/alignerr-alternative.html)
+- [Appen Alternative](https://evalisai.com/geo/appen-alternative.html)
+- [Telus Alternative](https://evalisai.com/geo/telus-alternative.html)
+- [RWS Alternative](https://evalisai.com/geo/rws-alternative.html)
+- [CrowdGen/WeLocalize Alternative](https://evalisai.com/geo/crowdgen-welodata-alternative.html)
+- [Invisible AI Alternative](https://evalisai.com/geo/invisible-ai-alternative.html)
+- [AI Data Services Comparison](https://evalisai.com/geo/ai-data-services-comparison.html)

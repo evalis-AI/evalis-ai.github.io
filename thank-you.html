@@ -60,11 +60,11 @@
     <div class="thank-you-container">
         <div class="thank-you-card" id="thankYouCard">
             <div class="success-icon">✅</div>
-            <h1 style="font-size:2rem;margin-bottom:1rem;">Thank You!</h1>
-            <p style="color:var(--text-secondary);font-size:1.1rem;line-height:1.8;margin-bottom:2rem;">
+            <h1 style="font-size:2rem;margin-bottom:1rem;" id="ty-title">Thank You!</h1>
+            <p style="color:var(--text-secondary);font-size:1.1rem;line-height:1.8;margin-bottom:2rem;" id="ty-message">
                 Your submission has been received successfully. Our team will review your information and get back to you within <strong style="color:var(--primary-light);">24 hours</strong>.
             </p>
-            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+            <div id="ty-actions" style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
                 <a href="index.html" class="btn btn-primary">← Back to Home</a>
                 <a href="services.html" class="btn btn-outline">Explore Services</a>
             </div>
@@ -89,6 +89,22 @@
             p.style.animationDelay = Math.random() * 1 + 's';
             p.style.animationDuration = (1.5 + Math.random()) + 's';
             card.appendChild(p);
+        }
+
+        // Careers-specific thank-you content
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('source') === 'careers') {
+            document.getElementById('ty-title').textContent = 'Registration Received!';
+            document.getElementById('ty-message').innerHTML = `
+                Your contributor registration has been submitted successfully. Our team will review your profile and match you with suitable projects.<br><br>
+                <strong style="color:var(--primary-light);">What's next?</strong><br>
+                We'll contact you via email or WhatsApp when a matching project is available. This typically takes <strong style="color:var(--primary-light);">1-3 business days</strong>.<br><br>
+                <span style="font-size:0.9rem;color:var(--text-muted);">Questions? Reach us at <a href="mailto:info@evalisai.com" style="color:var(--primary-light);text-decoration:none;">info@evalisai.com</a> or WhatsApp <a href="https://wa.me/919544842260" style="color:var(--primary-light);text-decoration:none;">+91 9544842260</a></span>
+            `;
+            document.getElementById('ty-actions').innerHTML = `
+                <a href="index.html" class="btn btn-primary">← Back to Home</a>
+                <a href="projects.html" class="btn btn-outline">View Open Projects</a>
+            `;
         }
     </script>
 </body>

@@ -8,6 +8,69 @@
     <meta name="robots" content="index, follow">
     <link rel="icon" type="image/png" href="favicon-96x96.png">
     <link rel="stylesheet" href="css/style.css">
+
+    <!-- JSON-LD: Careers & Contributor FAQ -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Careers & Contributors | Evalis AI",
+      "url": "https://evalisai.com/careers.html",
+      "description": "Join Evalis AI as an independent contributor. Work remotely on AI data evaluation, annotation, search quality, and software projects.",
+      "speakable": {
+        "@type": "SpeakableSpecification",
+        "cssSelector": [".hero h1", ".hero-subtitle", ".perks-grid h3"]
+      },
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://evalisai.com/"},
+          {"@type": "ListItem", "position": 2, "name": "Careers", "item": "https://evalisai.com/careers.html"}
+        ]
+      }
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What roles can I apply for at Evalis AI?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We welcome AI data evaluators, search quality raters, data annotation specialists, multilingual translators, LLM prompt engineers, full-stack web developers (React/Node), mobile app developers, and SaaS engineers."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is the work remote and flexible?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Contributor roles are 100% remote and task-based. You can work from anywhere in the world on a flexible schedule that fits your availability."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does payment work for contributors?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Compensation is paid on a per-task, hourly, or project-milestone basis depending on the assignment. Payouts are made directly via bank transfer, UPI, or international transfer services."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the onboarding process after submitting registration?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "After you submit your profile, our talent team reviews your skills and experience. When matching projects open up, you will receive project guidelines and an invitation to begin."
+          }
+        }
+      ]
+    }
+    </script>
     <style>
         .perks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
         .perk-card {
@@ -120,7 +183,11 @@
             <h2 style="text-align:center;font-size:1.6rem;margin-bottom:0.5rem;">Contributor Registration</h2>
             <p style="text-align:center;color:var(--text-muted);font-size:0.9rem;margin-bottom:2rem;">Submit your details once. We'll contact you when suitable projects are available.</p>
 
-            <form action="https://formspree.io/f/xvxaepze" method="POST" enctype="multipart/form-data">
+            <form id="careers-form">
+                <!-- Honeypot anti-spam -->
+                <div style="position:absolute;left:-9999px;" aria-hidden="true">
+                    <input type="text" name="website" tabindex="-1" autocomplete="off">
+                </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Full Name *</label>
@@ -129,6 +196,16 @@
                     <div class="form-group">
                         <label>Email Address *</label>
                         <input type="email" name="email" placeholder="you@email.com" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Phone / WhatsApp *</label>
+                        <input type="tel" name="phone" placeholder="+91 9544842260" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Location / Country *</label>
+                        <input type="text" name="location" placeholder="e.g. Kerala, India" required>
                     </div>
                 </div>
                 <div class="form-row">
@@ -162,19 +239,30 @@
                     <label>Languages Known</label>
                     <input type="text" name="languages" placeholder="e.g. English, Hindi, Malayalam, Arabic">
                 </div>
-                <div class="form-group">
-                    <label>Upload CV (PDF / DOC / DOCX)</label>
-                    <input type="file" name="cv" accept=".pdf,.doc,.docx" required style="padding:12px;">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>CV / Resume Link</label>
+                        <input type="url" name="cv_url" placeholder="Google Drive or Dropbox link to your CV">
+                    </div>
+                    <div class="form-group">
+                        <label>Portfolio / LinkedIn URL</label>
+                        <input type="url" name="portfolio_url" placeholder="https://linkedin.com/in/yourprofile">
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>About Your Experience *</label>
                     <textarea name="about" placeholder="Briefly describe your skills, relevant experience, and what type of projects interest you..." required></textarea>
                 </div>
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:0.85rem;color:var(--text-secondary);line-height:1.6;">
+                        <input type="checkbox" name="terms" required style="margin-top:3px;accent-color:#6366f1;flex-shrink:0;">
+                        I acknowledge that this is independent, project-based contributor work and not an employment offer. I consent to Evalis AI storing my submitted information for project matching.
+                    </label>
+                </div>
                 <button type="submit" class="btn-submit">Submit Registration →</button>
                 <p class="disclaimer">
-                    By submitting this form, you acknowledge that this is independent, project-based contributor work and not an employment offer.
+                    Questions? Contact us at <a href="mailto:info@evalisai.com" style="color:var(--primary-light);">info@evalisai.com</a> or WhatsApp <a href="https://wa.me/919544842260" style="color:var(--primary-light);">+91 9544842260</a>
                 </p>
-                <input type="hidden" name="_redirect" value="thank-you.html">
             </form>
         </div>
     </section>

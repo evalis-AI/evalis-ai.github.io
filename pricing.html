@@ -27,9 +27,13 @@
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
-      "name": "Evalis AI Pricing",
-      "description": "Transparent pricing for all Evalis AI software and AI services.",
+      "name": "Evalis AI Pricing — Transparent Service Costs",
+      "description": "Transparent pricing for all Evalis AI software, web development, and AI data services.",
       "url": "https://evalisai.com/pricing.html",
+      "speakable": {
+        "@type": "SpeakableSpecification",
+        "cssSelector": [".hero h1", ".hero-subtitle", ".pricing-card h3", ".pricing-price"]
+      },
       "breadcrumb": {
         "@type": "BreadcrumbList",
         "itemListElement": [
@@ -37,6 +41,47 @@
           {"@type": "ListItem", "position": 2, "name": "Pricing", "item": "https://evalisai.com/pricing.html"}
         ]
       }
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How does Evalis AI pricing compare to traditional development agencies and AI data vendors?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Evalis AI delivers 60% to 70% cost savings compared to US and European agencies. We provide fixed-price milestones for software development and transparent hourly or per-task pricing for AI data annotation and RLHF services with zero platform overhead."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How is AI data annotation and search evaluation priced?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "AI data services (data labeling, search evaluation, RLHF preference data, red teaming) are priced flexibly based on volume, dataset complexity, and language requirements. We offer per-unit, hourly, or dedicated monthly team contracts starting with minimal commitments."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are there hidden fees, setup costs, or platform subscriptions?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. All quotes are 100% transparent. Software projects include deployment and post-launch support windows. AI data projects include QA review, tooling access, and dedicated project manager oversight with no hidden platform fees."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What payment methods and currencies are supported for global clients?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We accept international wire transfers (SWIFT/IBAN), credit cards, Wise, Stripe, and domestic payments across USD, EUR, GBP, AUD, CAD, and INR."
+          }
+        }
+      ]
     }
     </script>
 

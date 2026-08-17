@@ -56,6 +56,24 @@ async function supabaseSelect(table, query, env) {
   return await res.json();
 }
 
+async function supabaseUpdate(table, query, data, env) {
+  const res = await fetch(`${env.SUPABASE_URL}/rest/v1/${table}?${query}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': env.SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${env.SUPABASE_ANON_KEY}`,
+      'Prefer': 'return=representation',
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || `Supabase PATCH error: ${res.status}`);
+  }
+  return await res.json();
+}
+
 // Simple in-memory rate limiter (resets on worker restart)
 const rateLimits = new Map();
 function checkRateLimit(key, limit = 5, windowMs = 60000) {
@@ -251,11 +269,17 @@ export default {
           });
           
           server.addEventListener('close', event => {
-            geminiWs.close(event.code, event.reason);
+            const code = event.code;
+            const validCode = (code >= 1000 && code <= 1015 && code !== 1004 && code !== 1005 && code !== 1006 && code !== 1015) || (code >= 3000 && code <= 4999) ? code : 1000;
+            try {
+              geminiWs.close(validCode, event.reason);
+            } catch (e) {
+              try { geminiWs.close(); } catch(err) {}
+            }
           });
           
           server.addEventListener('error', () => {
-            geminiWs.close(1011, 'Client error');
+            try { geminiWs.close(1011, 'Client error'); } catch(e) { try { geminiWs.close(); } catch(err) {} }
           });
 
           // Proxy Gemini -> browser
@@ -263,16 +287,22 @@ export default {
             try {
               server.send(event.data);
             } catch (e) {
-              geminiWs.close(1011, 'Error forwarding to Client');
+              try { geminiWs.close(1011, 'Error forwarding to Client'); } catch(err) {}
             }
           });
           
           geminiWs.addEventListener('close', event => {
-            server.close(event.code, event.reason);
+            const code = event.code;
+            const validCode = (code >= 1000 && code <= 1015 && code !== 1004 && code !== 1005 && code !== 1006 && code !== 1015) || (code >= 3000 && code <= 4999) ? code : 1000;
+            try {
+              server.close(validCode, event.reason);
+            } catch (e) {
+              try { server.close(); } catch(err) {}
+            }
           });
           
           geminiWs.addEventListener('error', () => {
-            server.close(1011, 'Gemini error');
+            try { server.close(1011, 'Gemini error'); } catch(e) { try { server.close(); } catch(err) {} }
           });
 
           // Accept server connection after registering listeners
@@ -759,9 +789,13 @@ window.EVALIS_AGENT_CONFIG = {
         const result = await supabaseInsert('contributors', {
           name: body.name.trim(),
           email: body.email.trim(),
+          phone: body.phone?.trim() || '',
+          location: body.location?.trim() || '',
           primary_skill: body.primary_skill,
           experience: body.experience || '',
           languages: body.languages?.trim() || '',
+          cv_url: body.cv_url?.trim() || '',
+          portfolio_url: body.portfolio_url?.trim() || '',
           about: body.about?.trim() || '',
         }, env);
         return json({ success: true, message: 'Registration received!' }, 201, origin, env);
@@ -1400,7 +1434,7 @@ Valid verdicts: strong, good, weak`;
         }
 
         const body = await request.json();
-        const { role, level, answers, candidate_name, candidate_email, mode = 'text' } = body;
+        const { role, level, answers, candidate_name, candidate_email, mode = 'text', proctoring_violations, resume_matching_report } = body;
 
         if (!answers || !Array.isArray(answers) || answers.length === 0) {
           return json({ error: 'Answers data is required.' }, 400, origin, env);
@@ -1464,6 +1498,8 @@ Valid recommendations: strong-hire, hire, lean-hire, no-hire`;
               detailed_report: report,
               chat_history: answers,
               client_ip: ip.substring(0, 10) + '***',
+              proctoring_violations: proctoring_violations || null,
+              resume_matching_report: resume_matching_report || null,
             }, env);
           } catch(e) { /* silent */ }
 
@@ -1482,7 +1518,7 @@ Valid recommendations: strong-hire, hire, lean-hire, no-hire`;
         }
 
         const body = await request.json();
-        const { role, level, transcript } = body;
+        const { role, level, transcript, candidate_name, candidate_email, mode = 'voice', proctoring_violations, resume_matching_report } = body;
 
         if (!transcript || !Array.isArray(transcript) || transcript.length === 0) {
           return json({ error: 'Transcript data is required.' }, 400, origin, env);
@@ -1544,8 +1580,6 @@ Do not output markdown, HTML, or any text other than the JSON object.`;
             }
           }
 
-          const { candidate_name, candidate_email, mode = 'voice' } = body;
-
           // Log completed session to Supabase (non-blocking)
           try {
             let companyId = null;
@@ -1569,6 +1603,8 @@ Do not output markdown, HTML, or any text other than the JSON object.`;
               detailed_report: report,
               chat_history: transcript,
               client_ip: ip.substring(0, 10) + '***',
+              proctoring_violations: proctoring_violations || null,
+              resume_matching_report: resume_matching_report || null,
             }, env);
           } catch(e) { /* silent */ }
 
@@ -1895,10 +1931,186 @@ Do not output markdown, HTML, or any text other than the JSON object.`;
             interviews_used: company.interviews_used_this_month,
             monthly_limit: company.monthly_interview_limit,
             sessions: sessions,
+            settings: typeof company.settings === 'string' ? JSON.parse(company.settings) : (company.settings || {})
           }, 200, origin, env);
 
         } catch(e) {
           return json({ error: 'Failed to load sessions' }, 500, origin, env);
+        }
+      }
+
+      // ─── POST /api/interview/send-invite — Send Invitation Email via Resend ───
+      if (url.pathname === '/api/interview/send-invite' && request.method === 'POST') {
+        if (!apiClient) {
+          return json({ error: 'API key required.' }, 401, origin, env);
+        }
+
+        const company = await getInterviewCompany(apiClient.agent_id, env);
+        if (!company) {
+          return json({ error: 'Company not found.' }, 404, origin, env);
+        }
+
+        const body = await request.json();
+        const { candidate_email, candidate_name, role, level, interview_link, custom_body } = body;
+
+        if (!candidate_email || !role || !level || !interview_link) {
+          return json({ error: 'Missing candidate_email, role, level, or interview_link.' }, 400, origin, env);
+        }
+
+        const resendApiKey = env.RESEND_API_KEY;
+        if (!resendApiKey) {
+          console.warn('RESEND_API_KEY env variable is not set up.');
+          return json({ success: true, message: 'Mock email sent (RESEND_API_KEY not configured)' }, 200, origin, env);
+        }
+
+        const fromEmail = env.RESEND_FROM_EMAIL || 'Evalis AI <onboarding@resend.dev>';
+        
+        let htmlBody = '';
+        if (custom_body) {
+          htmlBody = custom_body
+            .replace(/{{candidate_name}}/g, candidate_name || 'Candidate')
+            .replace(/{{role}}/g, role)
+            .replace(/{{level}}/g, level)
+            .replace(/{{company}}/g, company.company_name)
+            .replace(/{{interview_link}}/g, interview_link);
+        } else {
+          htmlBody = `
+            <div style="font-family: sans-serif; padding: 24px; max-width: 600px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; color: #1a202c;">
+              <h2 style="color: #4f46e5; margin-top: 0;">AI Technical Screening</h2>
+              <p>Hello ${candidate_name || 'Candidate'},</p>
+              <p>You have been invited by <strong>${company.company_name}</strong> to complete a technical screening interview for the position of <strong>${role} (${level})</strong>.</p>
+              <p>This assessment is conducted dynamically by our AI Interviewer and will take approximately 15 minutes. You can choose to complete it via <strong>Voice Mode</strong> (conversational speaking) or <strong>Text Mode</strong>.</p>
+              <div style="margin: 30px 0; text-align: center;">
+                <a href="${interview_link}" style="background: #4f46e5; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block; box-shadow: 0 4px 6px rgba(79, 70, 229, 0.15);">Start Interview →</a>
+              </div>
+              <p style="font-size: 0.85rem; color: #718096; line-height: 1.5;"><strong>Important:</strong> Please ensure you are in a quiet environment with a working microphone and a stable internet connection before clicking the link.</p>
+              <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 30px 0;" />
+              <p style="font-size: 0.75rem; color: #a0aec0; text-align: center;">Powered by Simpatico HR & Evalis AI.</p>
+            </div>
+          `;
+        }
+
+        try {
+          const res = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${resendApiKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              from: fromEmail,
+              to: [candidate_email],
+              subject: `AI Technical Interview Invitation: ${role} at ${company.company_name}`,
+              html: htmlBody
+            })
+          });
+
+          if (!res.ok) {
+            const errText = await res.text();
+            throw new Error(`Resend API Error: ${res.status} - ${errText}`);
+          }
+
+          const resData = await res.json();
+          return json({ success: true, messageId: resData.id }, 200, origin, env);
+        } catch(e) {
+          return json({ error: 'Failed to send email: ' + e.message }, 500, origin, env);
+        }
+      }
+
+      // ─── POST /api/interview/match-resume — Match Candidate Resume against Job Description ───
+      if (url.pathname === '/api/interview/match-resume' && request.method === 'POST') {
+        const byok = parseBYOK(request);
+        const body = await request.json();
+        const { resume_text, role, level } = body;
+
+        if (!resume_text || !role || !level) {
+          return json({ error: 'Missing resume_text, role, or level.' }, 400, origin, env);
+        }
+
+        let aiProvider = byok.provider;
+        let aiKey = byok.key;
+
+        if (!byok.isByok && apiClient) {
+          const company = await getInterviewCompany(apiClient.agent_id, env);
+          if (company && company.settings) {
+            try {
+              const settings = typeof company.settings === 'string' ? JSON.parse(company.settings) : company.settings;
+              if (settings && settings.byok_key) {
+                aiProvider = settings.byok_provider || 'gemini';
+                aiKey = settings.byok_key;
+              }
+            } catch(e) {}
+          }
+        }
+
+        if (!aiKey) {
+          return json({ error: 'An AI API Key is required for resume matching.' }, 400, origin, env);
+        }
+
+        const systemPrompt = `You are a professional HR resume matching assistant.
+Evaluate the candidate's resume against the Target Role and Experience Level.
+Output a valid JSON object only. Do not wrap in markdown blocks.`;
+
+        const userPrompt = `Compare this candidate's resume against the Job Description of: "${role}" (${level}).
+Resume Content:
+"""
+${resume_text}
+"""
+
+Return a raw JSON object matching this schema:
+{
+  "matchPercentage": (integer between 0 and 100),
+  "qualified": (boolean true/false),
+  "summaryOfMatch": (2-3 sentences matching summary),
+  "keyMissingSkills": (array of strings of critical missing requirements)
+}`;
+
+        try {
+          const rawResponse = await aiGenerate(systemPrompt, userPrompt, env, {
+            provider: aiProvider,
+            byokKey: aiKey
+          });
+
+          let cleanStr = rawResponse.trim();
+          if (cleanStr.startsWith('```')) {
+            cleanStr = cleanStr.replace(/^```json\s*/, '').replace(/```$/, '').trim();
+          }
+
+          const parsed = JSON.parse(cleanStr);
+          return json(parsed, 200, origin, env);
+        } catch(e) {
+          return json({ error: 'Resume matching failed: ' + e.message }, 500, origin, env);
+        }
+      }
+
+      // ─── POST/PUT /api/interview/settings — Save Company Settings ───
+      if (url.pathname === '/api/interview/settings' && (request.method === 'POST' || request.method === 'PUT')) {
+        if (!apiClient) {
+          return json({ error: 'API key required.' }, 401, origin, env);
+        }
+
+        const company = await getInterviewCompany(apiClient.agent_id, env);
+        if (!company) {
+          return json({ error: 'Company not found.' }, 404, origin, env);
+        }
+
+        const body = await request.json();
+        const { settings } = body;
+
+        if (!settings || typeof settings !== 'object') {
+          return json({ error: 'Invalid settings object.' }, 400, origin, env);
+        }
+
+        try {
+          const updateData = { settings: settings };
+          if (settings.avatar_mode) {
+            updateData.avatar_mode = settings.avatar_mode;
+          }
+          const updated = await supabaseUpdate('interview_companies', `id=eq.${company.id}`, updateData, env);
+
+          return json({ success: true, settings: updated[0]?.settings || settings }, 200, origin, env);
+        } catch(e) {
+          return json({ error: 'Failed to save settings: ' + e.message }, 500, origin, env);
         }
       }
 

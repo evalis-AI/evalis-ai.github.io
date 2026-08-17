@@ -14,11 +14,14 @@ CREATE TABLE IF NOT EXISTS contributors (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
+    phone TEXT,
+    location TEXT,
     primary_skill TEXT NOT NULL,
     experience TEXT NOT NULL,
     languages TEXT,
     about TEXT,
     cv_url TEXT,
+    portfolio_url TEXT,
     status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected', 'active')),
     assigned_projects TEXT[],
     notes TEXT
@@ -124,3 +127,4 @@ INSERT INTO projects (title, description, category, tags, status, positions_avai
 ('Search Engine Evaluation', 'Evaluate and rank search engine results for relevance, freshness, and user intent satisfaction across web, image, and video search.', 'search', ARRAY['Search QA','SERP','Relevance','Intent'], 'upcoming', 60, '🔍', 'pb-7', 7),
 ('AI Image Generation QA', 'Evaluate AI-generated images for prompt accuracy, visual quality, artistic coherence, and safety. Compare outputs across diffusion models.', 'image', ARRAY['Image Gen','Diffusion','Prompt QA','Comparison'], 'upcoming', 35, '🎨', 'pb-8', 8),
 ('AI Content Moderation', 'Review AI platform content for policy violations, harmful material, misinformation, and NSFW detection. Multilingual moderation.', 'moderation', ARRAY['Moderation','Safety','Policy','Multilingual'], 'active', 45, '🛡️', 'pb-1', 9);
+

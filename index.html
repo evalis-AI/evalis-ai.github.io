@@ -59,6 +59,17 @@
     <link rel="icon" type="image/png" href="favicon-96x96.png">
     <link rel="stylesheet" href="css/style.css">
 
+    <!-- Multi-region targeting -->
+    <link rel="alternate" hreflang="en-us" href="https://evalisai.com/" />
+    <link rel="alternate" hreflang="en-gb" href="https://evalisai.com/" />
+    <link rel="alternate" hreflang="en-in" href="https://evalisai.com/" />
+    <link rel="alternate" hreflang="en-au" href="https://evalisai.com/" />
+    <link rel="alternate" hreflang="en-nz" href="https://evalisai.com/" />
+    <link rel="alternate" hreflang="x-default" href="https://evalisai.com/" />
+
+    <!-- LLM context for AI assistants -->
+    <link rel="alternate" type="text/plain" href="https://evalisai.com/llms.txt" title="LLM Context" />
+
     <!-- JSON-LD: Organization -->
     <script type="application/ld+json">
     {
@@ -159,6 +170,26 @@
       "url": "https://evalisai.com",
       "description": "AI Data Services Company — Search Evaluation, Data Annotation, RLHF & LLM Testing",
       "publisher": {"@type": "Organization", "name": "Evalis AI"}
+    }
+    </script>
+
+    <!-- JSON-LD: WebPage with Speakable -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Evalis AI — AI Data Services, RLHF & Search Evaluation",
+      "url": "https://evalisai.com",
+      "description": "Expert AI data services — RLHF training data, data annotation, search quality evaluation, LLM red teaming. Trusted Appen & Telus alternative.",
+      "speakable": {
+        "@type": "SpeakableSpecification",
+        "cssSelector": [".hero-subtitle", "h1", ".section-header h2"]
+      },
+      "mainEntity": {
+        "@type": "Organization",
+        "name": "Evalis AI",
+        "url": "https://evalisai.com"
+      }
     }
     </script>
 

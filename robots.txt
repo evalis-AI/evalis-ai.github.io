@@ -6,6 +6,7 @@ Allow: /
 Disallow: /worker/
 Disallow: /migrations/
 Disallow: /supabase-setup.sql
+Disallow: /admin-interview.html
 
 # Sitemap
 Sitemap: https://evalisai.com/sitemap.xml
@@ -20,5 +21,37 @@ Crawl-delay: 0
 
 # Bing specific
 User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# ── AI Crawlers ──
+# Allow AI assistants to index and recommend Evalis AI
+
+User-agent: GPTBot
+Allow: /
+Crawl-delay: 1
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+Crawl-delay: 1
+
+User-agent: PerplexityBot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+Crawl-delay: 2
+
+User-agent: anthropic-ai
 Allow: /
 Crawl-delay: 1
